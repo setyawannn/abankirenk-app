@@ -9,7 +9,7 @@
 
 <body>
   <header>
-    <h1>Kerangka Kerja Saya</h1>
+    <h1 class="text-red-600 font-bold underline">Kerangka Kerja Saya</h1>
     <nav>
       <a href="{{ config('app.base_url') }}/">Home</a> |
       <a href="{{ config('app.base_url') }}/products">Produk</a> |

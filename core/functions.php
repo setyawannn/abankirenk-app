@@ -33,7 +33,7 @@ function compile_view(string $viewName): string
         mkdir($cachedPath, 0755, true);
     }
 
-    if (!file_exists($cachedFile) || filemtime($viewPath) > filemtime($cachedFile)) {
+    if (config('app.env') === 'local' || !file_exists($cachedFile) || filemtime($viewPath) > filemtime($cachedFile)) {
         $content = file_get_contents($viewPath);
 
         preg_match('/@extends\s*\(\s*\'(.*)\'\s*\)/', $content, $matches);
