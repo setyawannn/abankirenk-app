@@ -1,6 +1,5 @@
 <?php
 
-
 function run_middleware($name)
 {
   if ($name === null) {
@@ -10,27 +9,23 @@ function run_middleware($name)
   switch ($name) {
     case 'auth':
       if (!isset($_SESSION['user'])) {
-        header('Location: /login');
-        exit();
+        redirect('/login');
       }
       break;
 
     case 'guest':
       if (isset($_SESSION['user'])) {
-        header('Location: /dashboard');
-        exit();
+        redirect('/dashboard');
       }
       break;
 
     case 'admin':
       if (!isset($_SESSION['user'])) {
-        header('Location: /login');
-        exit();
+        redirect('/login');
       }
+
       if ($_SESSION['user']['role'] !== 'admin') {
-        http_response_code(403);
-        echo "<h1>403 Akses Ditolak</h1><p>Anda tidak memiliki hak untuk mengakses halaman ini.</p>";
-        exit();
+        abort_403();
       }
       break;
   }

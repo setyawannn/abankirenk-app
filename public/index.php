@@ -1,7 +1,9 @@
 <?php
+
+session_start();
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Baru setelah autoloader dimuat, kita bisa gunakan class Dotenv
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
@@ -13,5 +15,4 @@ set_error_handler('custom_error_handler');
 set_exception_handler('custom_exception_handler');
 
 require_once __DIR__ . '/../routes/web.php';
-
 dispatch();

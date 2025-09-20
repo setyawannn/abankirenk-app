@@ -9,6 +9,8 @@ route_get('/products', ['controllers/product_controller.php', 'products_list_act
 
 route_get('/login', ['controllers/auth_controller.php', 'login_form_action'], 'guest');
 route_post('/login', ['controllers/auth_controller.php', 'login_process_action'], 'guest');
+route_get('/register', ['controllers/auth_controller.php', 'register_form_action'], 'guest');
+route_post('/register', ['controllers/auth_controller.php', 'register_process_action'], 'guest');
 
 route_get('/dashboard', ['controllers/dashboard_controller.php', 'index_action'], 'auth');
 route_get('/logout', ['controllers/auth_controller.php', 'logout_action'], 'auth');

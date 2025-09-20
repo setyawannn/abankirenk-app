@@ -2,18 +2,25 @@
 
 function index_action()
 {
+  $currentUser = auth();
+
+
+  $adminData = [
+    'total_users' => 150,
+    'server_status' => 'Online'
+  ];
+
+  $userData = [
+    'unread_messages' => 5,
+    'last_login' => '2025-09-21 10:30:00'
+  ];
+
   $data = [
     'title' => 'Dashboard',
-    'user' => $_SESSION['user']
+    'user' => $currentUser,
+    'admin_stats' => ($currentUser['role'] === 'admin') ? $adminData : [],
+    'user_stats' => ($currentUser['role'] === 'user') ? $userData : []
   ];
-  view('dashboard/index', $data);
-}
 
-function settings_action()
-{
-  $data = [
-    'title' => 'Pengaturan Admin',
-    'user' => $_SESSION['user']
-  ];
-  view('admin/settings', $data);
+  view('dashboard.index', $data);
 }
