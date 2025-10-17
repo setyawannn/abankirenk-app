@@ -1,3 +1,4 @@
+<!-- templates/layouts/admin.php -->
 <!DOCTYPE html>
 <html lang="id">
 
@@ -36,7 +37,7 @@
     </div>
   </div>
 
-  <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 lg:hidden hidden"></div>
+  <div id="sidebar-overlay" class="fixed inset-0 bg-gray-300/10 backdrop-blur-md z-20 lg:hidden hidden duration-100"></div>
 
   <script src="{{ url('/js/jquery.js') }}"></script>
   <script>
@@ -55,11 +56,10 @@
         $('#profile-dropdown-menu').toggleClass('hidden');
       });
 
-      $('#settings-toggle').on('click', function() {
-        $('#settings-menu').slideToggle('fast');
-        $(this).find('ion-icon[name="chevron-down-outline"]').toggleClass('rotate-180');
+      $('#sidebar').on('click', '.menu-toggle', function() {
+        $(this).next('.submenu-menu').slideToggle('fast');
+        $(this).find('.chevron-icon').toggleClass('rotate-180');
       });
-
       $(document).on('click', function(event) {
         if (!$(event.target).closest('#profile-dropdown-btn, #profile-dropdown-menu').length) {
           $('#profile-dropdown-menu').addClass('hidden');

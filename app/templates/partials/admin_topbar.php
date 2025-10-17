@@ -4,7 +4,7 @@ $user = auth();
 <header class="sticky top-0 z-10 bg-white border-b border-gray-200 flex-shrink-0">
   <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
     <div class="flex items-center space-x-4">
-      <button id="sidebar-open-btn" class="lg:hidden text-gray-500 hover:text-gray-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F97B06]">
+      <button id="sidebar-open-btn" class="lg:hidden text-gray-500 hover:text-gray-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
         <ion-icon name="menu-outline" class="w-6 h-6"></ion-icon>
       </button>
       <h1 class="text-base md:text-lg font-semibold text-gray-900">
@@ -14,8 +14,8 @@ $user = auth();
 
     <div class="flex items-center">
       <div class="relative">
-        <button id="profile-dropdown-btn" class="flex items-center space-x-2 rounded-full p-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F97B06]">
-          <img class="h-9 w-9 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($user['name']) }}&background=F97B06&color=fff" alt="User avatar">
+        <button id="profile-dropdown-btn" class="flex items-center space-x-2 rounded-full p-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+          <img class="h-9 w-9 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($user['name']) }}&background=4d94df&color=fff" alt="User avatar">
           <div class="flex-col items-start leading-tight hidden  md:flex">
             <p class="text-sm font-medium text-gray-900">{{ $user['name'] }}</p>
             <p class="text-xs text-gray-500 truncate">{{ $user['email'] ?? '404@emailnotfound' }}</p>

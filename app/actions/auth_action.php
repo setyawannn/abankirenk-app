@@ -1,6 +1,5 @@
 <?php
 
-// Muat file-file yang dibutuhkan di awal
 require_once __DIR__ . '/../../core/database.php';
 require_once __DIR__ . '/../data/user_data.php';
 
@@ -12,7 +11,6 @@ function register_form_action()
 function register_process_action()
 {
   $db = db_connect();
-  // Validasi sederhana
   if (empty($_POST['full_name']) || empty($_POST['email']) || empty($_POST['password'])) {
     flash_message('error', 'Semua kolom wajib diisi.');
     redirect('/register');
@@ -29,15 +27,15 @@ function register_process_action()
     exit();
   }
 
-  // Hash password sebelum disimpan
   $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
   $user_data = [
-    'full_name' => $_POST['full_name'],
-    'email' => $_POST['email'],
-    'phone_number' => $_POST['phone_number'] ?? null,
-    'password' => $hashed_password,
-    'role' => 'user' // Role default saat registrasi
+    'nama_lengkap'  => $_POST['full_name'],
+    'email'         => $_POST['email'],
+    'nomor_telepon' => $_POST['phone_number'] ?? '',
+    'password'      => $hashed_password,
+    'username'      => strtolower(strtok($_POST['email'], '@')),
+    'role'          => 'klien'
   ];
 
   if (user_create($db, $user_data)) {
@@ -65,9 +63,10 @@ function login_process_action()
 
   if ($user && password_verify($password, $user['password'])) {
     $_SESSION['user'] = [
-      'id' => $user['id'],
-      'name' => $user['full_name'],
-      'role' => $user['role']
+      'id'       => $user['user_id'],
+      'name'     => $user['nama_lengkap'],
+      'role'     => $user['role'],
+      'email'    => $user['email']
     ];
     log_message('info', "Pengguna '{$user['email']}' berhasil login.");
     redirect('/dashboard');
