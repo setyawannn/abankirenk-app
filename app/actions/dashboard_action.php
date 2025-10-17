@@ -18,6 +18,7 @@ function index_action()
   $data = [
     'title' => 'Dashboard',
     'user' => $currentUser,
+    'active_menu' => 'dashboard',
     'admin_stats' => ($currentUser['role'] === 'admin') ? $adminData : [],
     'user_stats' => ($currentUser['role'] === 'user') ? $userData : []
   ];
