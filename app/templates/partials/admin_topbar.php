@@ -15,16 +15,16 @@ $user = auth();
     <div class="flex items-center">
       <div class="relative">
         <button id="profile-dropdown-btn" class="flex items-center space-x-2 rounded-full p-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-          <img class="h-9 w-9 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($user['name']) }}&background=4d94df&color=fff" alt="User avatar">
+          <img class="h-9 w-9 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($user['nama_lengkap']) }}&background=4d94df&color=fff" alt="User avatar">
           <div class="flex-col items-start leading-tight hidden  md:flex">
-            <p class="text-sm font-medium text-gray-900">{{ $user['name'] }}</p>
+            <p class="text-sm font-medium text-gray-900">{{ $user['nama_lengkap'] }}</p>
             <p class="text-xs text-gray-500 truncate">{{ $user['email'] ?? '404@emailnotfound' }}</p>
           </div>
           <ion-icon name="chevron-down-outline" class="h-5 w-5 text-gray-500 hidden sm:block"></ion-icon>
         </button>
         <div id="profile-dropdown-menu" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border origin-top-right hidden">
           <div class="px-4 py-3 border-b">
-            <p class="text-sm font-medium text-gray-900">{{ $user['name'] }}</p>
+            <p class="text-sm font-medium text-gray-900">{{ $user['nama_lengkap'] }}</p>
             <p class="text-xs text-gray-500 truncate">{{ $user['email'] ?? 'email@notfound.com' }}</p>
           </div>
           <div class="py-1">

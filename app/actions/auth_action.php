@@ -63,16 +63,16 @@ function login_process_action()
 
   if ($user && password_verify($password, $user['password'])) {
     $_SESSION['user'] = [
-      'id'       => $user['user_id'],
-      'name'     => $user['nama_lengkap'],
-      'role'     => $user['role'],
-      'email'    => $user['email']
+      'id'            => $user['user_id'],
+      'nama_lengkap'  => $user['nama_lengkap'],
+      'role'          => $user['role'],
+      'email'         => $user['email']
     ];
-    log_message('info', "Pengguna '{$user['email']}' berhasil login.");
+    flash_message('success', 'Login Berhasil', 'Selamat datang kembali, ' . $user['nama_lengkap'] . '!');
     redirect('/dashboard');
   } else {
     log_message('error', "Percobaan login gagal untuk email '{$email}'.");
-    flash_message('error', 'Email atau password salah.');
+    flash_message('error', 'Login Gagal', 'Email atau password salah.');
     redirect('/login');
   }
   exit();

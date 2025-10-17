@@ -22,7 +22,7 @@ Daftar Produk
         @foreach ($products as $product)
         <tr>
             <td>{{ $product['id'] }}</td>
-            <td>{{ $product['name'] }}</td>
+            <td>{{ $product['nama_lengkap'] }}</td>
             <td>Rp {{ number_format($product['price']) }}</td>
         </tr>
         @endforeach

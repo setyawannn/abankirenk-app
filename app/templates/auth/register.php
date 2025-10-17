@@ -6,19 +6,10 @@ Register
 
 @section('content')
 
-@php
-$errorMessage = flash_message('error');
-@endphp
 
 <div class="flex items-center justify-center min-h-screen bg-gray-100">
   <div class="px-8 py-6 mt-4 text-left bg-white shadow-lg rounded-lg">
     <h3 class="text-2xl font-bold text-center">Buat Akun Baru</h3>
-
-    @if ($errorMessage)
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative my-4" role="alert">
-      {{ $errorMessage }}
-    </div>
-    @endif
 
     <form action="{{ url('register') }}" method="POST">
       <div class="mt-4">

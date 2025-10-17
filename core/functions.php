@@ -32,21 +32,13 @@ function redirect(string $to)
 }
 
 
-function flash_message(string $key, ?string $message = null)
+function flash_message(string $key, ?string $title = null, ?string $message = null)
 {
-    if (!isset($_SESSION['flash'])) {
-        $_SESSION['flash'] = [];
-    }
-    if ($message) {
-        $_SESSION['flash'][$key] = $message;
-        return null;
-    }
-    if (isset($_SESSION['flash'][$key])) {
-        $message = $_SESSION['flash'][$key];
-        unset($_SESSION['flash'][$key]);
-        return $message;
-    }
-    return null;
+    $_SESSION['flash_message'] = [
+        'key' => $key,
+        'title' => $title,
+        'message' => $message
+    ];
 }
 
 /**

@@ -15,6 +15,7 @@
 </head>
 
 <body class="bg-gray-50">
+  @include('partials.flash_alert')
 
   <div class="min-h-screen flex">
 
@@ -65,6 +66,36 @@
           $('#profile-dropdown-menu').addClass('hidden');
         }
       });
+
+
+      // Flash Alert Logic
+
+      var $alert = $('.flash-alert');
+
+      if ($alert.length > 0) {
+
+        function hideAlert() {
+          $alert.removeClass('opacity-100 translate-x-0');
+          $alert.addClass('opacity-0 translate-x-full');
+
+          setTimeout(function() {
+            $alert.closest('#alert-container').remove();
+          }, 500);
+        }
+
+        setTimeout(function() {
+          $alert.addClass('opacity-100 translate-x-0');
+          $alert.removeClass('opacity-0 translate-x-full');
+        }, 100);
+
+        var alertTimer = setTimeout(hideAlert, 5000);
+
+        $alert.find('.dismiss-alert').on('click', function() {
+          clearTimeout(alertTimer);
+          hideAlert();
+        });
+      }
+
     });
   </script>
   @stack('scripts')
