@@ -73,13 +73,13 @@ function dispatch()
 function abort_404()
 {
     http_response_code(404);
-    require_once __DIR__ . '/../app/views/errors/404.php';
+    require_once __DIR__ . '/../app/templates/errors/404.php';
     exit();
 }
 
 function abort_500()
 {
     http_response_code(500);
-    require_once __DIR__ . '/../app/views/errors/500.php';
+    require_once __DIR__ . '/../app/templates/errors/500.php';
     exit();
 }

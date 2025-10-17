@@ -2,7 +2,7 @@
 
 // Muat file-file yang dibutuhkan di awal
 require_once __DIR__ . '/../../core/database.php';
-require_once __DIR__ . '/../models/user_model.php';
+require_once __DIR__ . '/../data/user_data.php';
 
 function register_form_action()
 {

@@ -3,7 +3,7 @@
 function products_list_action()
 {
     require_once __DIR__ . '/../../core/database.php';
-    require_once __DIR__ . '/../models/product_model.php';
+    require_once __DIR__ . '/../data/product_data.php';
 
     $db_connection = db_connect();
 
@@ -12,8 +12,6 @@ function products_list_action()
     } else {
         $products = [];
     }
-
-    log_message('success', 'Halo Cek Satu dua TIga');
 
     $data = [
         'title' => 'Daftar Produk (MySQLi)',
