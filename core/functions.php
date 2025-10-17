@@ -127,7 +127,7 @@ function log_message(string $level, string $message)
 function abort_403()
 {
     http_response_code(403);
-    require_once __DIR__ . '/../app/views/errors/403.php';
+    require_once __DIR__ . '/../app/templates/errors/403.php';
     exit();
 }
 
@@ -151,8 +151,8 @@ function compile_view(string $viewName): string
     static $sections = [];
     static $stacks = [];
 
-    $viewPath = __DIR__ . '/../app/views/' . str_replace('.', '/', $viewName) . '.php';
-    $cachedPath = __DIR__ . '/../storage/views/';
+    $viewPath = __DIR__ . '/../app/templates/' . str_replace('.', '/', $viewName) . '.php';
+    $cachedPath = __DIR__ . '/../storage/templates/';
     $cachedFile = $cachedPath . md5($viewName) . '.php';
 
     if (!is_dir($cachedPath)) {
