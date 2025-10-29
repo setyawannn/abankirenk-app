@@ -81,8 +81,9 @@ Selamat datang di MafemWok (nama bisa Anda sesuaikan), sebuah kerangka kerja PHP
 
 ## 📁 Struktur Folder
 
-Berikut adalah struktur folder yang jelas, teliti, dan sudah mengadopsi penamaan Action-Data-Template (ADT) untuk kerangka kerja PHP prosedural kita:
+Struktur folder yang jelas, teliti, dan sudah mengadopsi penamaan Action-Data-Template (ADT) untuk kerangka kerja PHP prosedural kita:
 
+```
 /nama-proyek/
 │
 ├── 📁 app/                    # Folder inti logika aplikasi
@@ -157,6 +158,8 @@ Berikut adalah struktur folder yang jelas, teliti, dan sudah mengadopsi penamaan
 ├── composer.json           # Konfigurasi Composer (dependensi PHP, skrip CLI).
 ├── package.json            # Konfigurasi npm (dependensi Node.js, skrip dev).
 └── README.md               # Dokumentasi proyek.
+
+```
 
 ---
 
