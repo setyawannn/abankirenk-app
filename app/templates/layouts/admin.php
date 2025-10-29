@@ -26,6 +26,18 @@
       @include('partials.admin_topbar')
 
       <main class="flex-1 p-4 md:p-6 lg:p-8">
+        <h1 class="text-base md:text-3xl font-semibold text-gray-900">
+          {{ $page_title ?? 'Dashboard' }}
+        </h1>
+        <div class="flex gap-4 items-center mt-1 mb-6 text-base text-gray-600">
+          <span class="text-primary font-medium">
+            {{ $page_title ?? 'Dashboard' }}
+          </span>
+          <span>
+            /
+          </span>
+          @yield('breadcrumbs')
+        </div>
         @yield('content')
       </main>
 

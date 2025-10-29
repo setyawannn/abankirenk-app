@@ -16,3 +16,9 @@ route_get('/dashboard', ['actions/dashboard_action.php', 'index_action'], 'auth'
 route_get('/logout', ['actions/auth_action.php', 'logout_action'], 'auth');
 
 route_get('/admin/settings', ['actions/admin_action.php', 'settings_action'], 'admin');
+
+// MANAGER MARKETING
+route_get('/manager-marketing/manajemen-prospek', ['actions/manajer_marketing/prospek_action.php', 'index_action'], 'auth');
+
+// AJAX Routes
+route_get('/ajax/prospek', ['actions/manajer_marketing/prospek_action.php', 'ajax_list_action'], 'auth');

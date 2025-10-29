@@ -3,24 +3,24 @@
 // config/menu.php
 
 return [
-  'supervisor_marketing' => [
+  'manajer_marketing' => [
     [
-      'id' => 'dash_sm',
+      'id' => 'dash_mm',
       'nama' => 'Dashboard',
       'icon' => 'home-outline',
       'redirect_url' => '/dashboard'
     ],
     [
-      'id' => 'prospek_sm',
+      'id' => 'prospek_mm',
       'nama' => 'Manajemen Prospek',
       'icon' => 'people-outline',
-      'redirect_url' => '/prospek/manage'
+      'redirect_url' => '/manager-marketing/manajemen-prospek'
     ],
     [
-      'id' => 'laporan_sm',
-      'nama' => 'Laporan Tim',
+      'id' => 'laporan_mm',
+      'nama' => 'Laporan',
       'icon' => 'stats-chart-outline',
-      'redirect_url' => '/laporan/marketing'
+      'redirect_url' => '/manager-marketing/laporan'
     ]
   ],
   'tim_marketing' => [
@@ -108,7 +108,7 @@ return [
       'redirect_url' => '/template/desain'
     ]
   ],
-  'tim_produksi' => [
+  'manajer_produksi' => [
     [
       'id' => 'dash_prod',
       'nama' => 'Dashboard Produksi',
@@ -141,7 +141,7 @@ return [
       'id' => 'dash_klien',
       'nama' => 'Dashboard',
       'icon' => 'home-outline',
-      'redirect_url' => '/klien/dashboard'
+      'redirect_url' => '/dashboard'
     ],
     [
       'id' => 'order_klien',

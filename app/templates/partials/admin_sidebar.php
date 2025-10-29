@@ -9,16 +9,16 @@ $active_menu = $active_menu ?? '';
 $active_parent_id = null;
 
 if ($active_menu) {
-foreach ($menuItems as $item) {
-if (isset($item['children']) && count($item['children']) > 0) {
-foreach ($item['children'] as $child) {
-if ($child['id'] === $active_menu) {
-$active_parent_id = $item['id'];
-break 2;
-}
-}
-}
-}
+  foreach ($menuItems as $item) {
+    if (isset($item['children']) && count($item['children']) > 0) {
+      foreach ($item['children'] as $child) {
+        if ($child['id'] === $active_menu) {
+          $active_parent_id = $item['id'];
+          break 2;
+        }
+      }
+    }
+  }
 }
 @endphp
 

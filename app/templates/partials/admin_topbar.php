@@ -7,9 +7,6 @@ $user = auth();
       <button id="sidebar-open-btn" class="lg:hidden text-gray-500 hover:text-gray-700 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
         <ion-icon name="menu-outline" class="w-6 h-6"></ion-icon>
       </button>
-      <h1 class="text-base md:text-lg font-semibold text-gray-900">
-        {{ $page_title ?? 'Dashboard' }}
-      </h1>
     </div>
 
     <div class="flex items-center">
