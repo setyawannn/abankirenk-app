@@ -80,9 +80,9 @@ if ($active_menu) {
 
   {{-- <div class="border-t border-gray-200 p-4 flex-shrink-0">
     <div class="flex items-center space-x-3">
-      <img src="https://ui-avatars.com/api/?name={{ urlencode($user['nama_lengkap'] ?? 'User') }}&background=F97B06&color=fff" alt="User Avatar" class="w-10 h-10 rounded-full">
+      <img src="https://ui-avatars.com/api/?name={{ urlencode($user['nama'] ?? 'User') }}&background=F97B06&color=fff" alt="User Avatar" class="w-10 h-10 rounded-full">
   <div class="flex-1 min-w-0">
-    <p class="text-sm font-medium text-gray-900 truncate">{{ $user['nama_lengkap'] ?? 'Nama Pengguna' }}</p>
+    <p class="text-sm font-medium text-gray-900 truncate">{{ $user['nama'] ?? 'Nama Pengguna' }}</p>
     <p class="text-xs text-gray-500 truncate">{{ $user['email'] ?? 'email@notfound.com' }}</p>
   </div>
   </div>

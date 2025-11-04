@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2025 at 10:15 PM
+-- Generation Time: Nov 04, 2025 at 10:29 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `abankirenk_db`
+-- Database: `abankirenk_db_new`
 --
 
 -- --------------------------------------------------------
@@ -28,15 +28,19 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `desain` (
-  `design_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `template_desain_id` int(11) DEFAULT NULL,
-  `desainer_id` int(11) NOT NULL,
-  `preview_path` varchar(255) DEFAULT NULL,
-  `status_approval` varchar(20) NOT NULL,
-  `feedback_klien` text DEFAULT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_desain` smallint(5) UNSIGNED NOT NULL,
+  `id_user` smallint(5) UNSIGNED NOT NULL,
+  `id_order_produksi` varchar(20) NOT NULL,
+  `id_template_desain` smallint(5) UNSIGNED NOT NULL,
+  `desain` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `desain`
+--
+
+INSERT INTO `desain` (`id_desain`, `id_user`, `id_order_produksi`, `id_template_desain`, `desain`) VALUES
+(1, 4, 'ORD251104001', 1, 'path/to/final_design_cover.jpg');
 
 -- --------------------------------------------------------
 
@@ -45,15 +49,18 @@ CREATE TABLE `desain` (
 --
 
 CREATE TABLE `feedback` (
-  `feedback_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `pengiriman_id` int(11) DEFAULT NULL,
-  `rating` int(11) DEFAULT NULL,
-  `nps_score` int(11) DEFAULT NULL,
-  `komentar` text DEFAULT NULL,
-  `sentimen` varchar(20) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_feedback` smallint(5) UNSIGNED NOT NULL,
+  `id_order_produksi` varchar(20) NOT NULL,
+  `rating` tinyint(3) UNSIGNED DEFAULT NULL,
+  `komentar` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `feedback`
+--
+
+INSERT INTO `feedback` (`id_feedback`, `id_order_produksi`, `rating`, `komentar`) VALUES
+(1, 'ORD251104001', 4, 'Pelayanan komplain cepat, meskipun ada sedikit masalah di awal. Hasil akhir bagus.');
 
 -- --------------------------------------------------------
 
@@ -62,35 +69,69 @@ CREATE TABLE `feedback` (
 --
 
 CREATE TABLE `mou` (
-  `mou_id` int(11) NOT NULL,
-  `nomor_mou` varchar(40) DEFAULT NULL,
-  `prospek_id` int(11) NOT NULL,
-  `versi` int(11) DEFAULT 1,
-  `nilai_kontrak` decimal(15,2) DEFAULT NULL,
-  `ruang_lingkup` text DEFAULT NULL,
-  `timeline` date DEFAULT NULL,
-  `status` varchar(20) NOT NULL,
-  `template_id` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_mou` smallint(5) UNSIGNED NOT NULL,
+  `id_template_mou` smallint(5) UNSIGNED NOT NULL,
+  `id_user` smallint(5) UNSIGNED NOT NULL,
+  `mou` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `mou`
+--
+
+INSERT INTO `mou` (`id_mou`, `id_template_mou`, `id_user`, `mou`) VALUES
+(1, 1, 5, 'Isi MoU yang sudah disesuaikan untuk SMAN 1 Contoh Kota...');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `order`
+-- Table structure for table `order_produksi`
 --
 
-CREATE TABLE `order` (
-  `order_id` int(11) NOT NULL,
-  `nomor_order` varchar(40) DEFAULT NULL,
-  `mou_id` int(11) NOT NULL,
+CREATE TABLE `order_produksi` (
+  `id_order_produksi` varchar(20) NOT NULL,
+  `id_sekolah` smallint(5) UNSIGNED NOT NULL,
+  `id_mou` smallint(5) UNSIGNED NOT NULL,
+  `id_user` smallint(5) UNSIGNED NOT NULL,
+  `status_order` enum('baru','proses','selesai','batal') DEFAULT NULL,
+  `narahubung` varchar(100) DEFAULT NULL,
+  `no_narahubung` varchar(40) DEFAULT NULL,
+  `kuantitas` smallint(5) UNSIGNED DEFAULT NULL,
+  `halaman` smallint(6) DEFAULT NULL,
   `konsep` text DEFAULT NULL,
-  `jumlah_halaman` int(11) DEFAULT NULL,
-  `kuantitas_cetak` int(11) DEFAULT NULL,
-  `deadline` date DEFAULT NULL,
-  `status` varchar(20) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `deadline` timestamp NULL DEFAULT NULL,
+  `sequence` int(10) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `order_produksi`
+--
+
+INSERT INTO `order_produksi` (`id_order_produksi`, `id_sekolah`, `id_mou`, `id_user`, `status_order`, `narahubung`, `no_narahubung`, `kuantitas`, `halaman`, `konsep`, `deadline`, `sequence`) VALUES
+('ORD251104001', 1, 1, 5, 'baru', 'Ibu Rina', '081234567890', 150, 64, 'Konsep modern dengan tema angkasa.', '2026-03-30 17:00:00', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pengajuan_order`
+--
+
+CREATE TABLE `pengajuan_order` (
+  `id_pengajuan` smallint(5) UNSIGNED NOT NULL,
+  `id_sekolah` smallint(5) UNSIGNED NOT NULL,
+  `id_user` smallint(5) UNSIGNED NOT NULL,
+  `status_pengajuan` enum('berhasil','gagal','batal','dalam proses') DEFAULT NULL,
+  `pesan` text DEFAULT NULL,
+  `narahubung` varchar(100) DEFAULT NULL,
+  `no_narahubung` varchar(40) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `pengajuan_order`
+--
+
+INSERT INTO `pengajuan_order` (`id_pengajuan`, `id_sekolah`, `id_user`, `status_pengajuan`, `pesan`, `narahubung`, `no_narahubung`) VALUES
+(1, 2, 8, 'dalam proses', 'Kami dari SMA Harapan Bangsa tertarik untuk membuat yearbook.', 'Hani', '089876543210');
 
 -- --------------------------------------------------------
 
@@ -99,64 +140,68 @@ CREATE TABLE `order` (
 --
 
 CREATE TABLE `pengiriman` (
-  `pengiriman_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `nomor_resi` varchar(60) DEFAULT NULL,
-  `kurir` varchar(40) DEFAULT NULL,
-  `status_pengiriman` varchar(30) NOT NULL,
-  `tanggal_kirim` date DEFAULT NULL,
-  `tanggal_terima` date DEFAULT NULL,
-  `tracking_link` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_pengiriman` smallint(5) UNSIGNED NOT NULL,
+  `id_order_produksi` varchar(20) NOT NULL,
+  `ekspedisi` varchar(100) DEFAULT NULL,
+  `no_resi` varchar(50) DEFAULT NULL,
+  `tanggal_buat` timestamp NULL DEFAULT NULL,
+  `tanggal_sampai` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `pengiriman`
+--
+
+INSERT INTO `pengiriman` (`id_pengiriman`, `id_order_produksi`, `ekspedisi`, `no_resi`, `tanggal_buat`, `tanggal_sampai`) VALUES
+(1, 'ORD251104001', 'JNE Express', 'CGK12345678925', '2025-11-04 09:23:36', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `prospek_sekolah`
+-- Table structure for table `prospek`
 --
 
-CREATE TABLE `prospek_sekolah` (
-  `prospek_id` int(11) NOT NULL,
-  `status` varchar(30) NOT NULL,
-  `staf_id` int(11) DEFAULT NULL,
-  `tipe_prospek` varchar(20) NOT NULL,
-  `tanggal_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+CREATE TABLE `prospek` (
+  `id_prospek` smallint(5) UNSIGNED NOT NULL,
+  `id_user` smallint(5) UNSIGNED NOT NULL,
+  `id_sekolah` smallint(5) UNSIGNED NOT NULL,
+  `status_prospek` enum('berhasil','gagal','batal','dalam proses') DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
   `catatan` text DEFAULT NULL,
-  `sekolah_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `narahbung` varchar(100) DEFAULT NULL,
+  `no_narahubung` varchar(40) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `prospek`
+--
+
+INSERT INTO `prospek` (`id_prospek`, `id_user`, `id_sekolah`, `status_prospek`, `deskripsi`, `catatan`, `narahbung`, `no_narahubung`) VALUES
+(1, 2, 1, 'berhasil', 'Prospek awal untuk SMAN 1 Contoh Kota, tahun ajaran 2025/2026.', 'Deal tercapai setelah presentasi.', 'Ibu Rina', '081234567890');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `qc_checklist`
+-- Table structure for table `qc`
 --
 
-CREATE TABLE `qc_checklist` (
-  `qc_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `batch_number` varchar(30) DEFAULT NULL,
-  `qc_by` int(11) NOT NULL,
-  `qc_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `jumlah_sampel_diperiksa` int(11) DEFAULT NULL,
-  `check_cover_material` tinyint(1) DEFAULT NULL,
-  `check_cover_fisik` tinyint(1) DEFAULT NULL,
-  `check_jilid_kekuatan` tinyint(1) DEFAULT NULL,
-  `check_laminasi_kerapian` tinyint(1) DEFAULT NULL,
-  `check_cover_posisi` tinyint(1) DEFAULT NULL,
-  `check_cetak_ketajaman` tinyint(1) DEFAULT NULL,
-  `check_cetak_warna` tinyint(1) DEFAULT NULL,
-  `check_cetak_kecerahan` tinyint(1) DEFAULT NULL,
-  `check_cetak_kebersihan` tinyint(1) DEFAULT NULL,
-  `check_halaman_urutan` tinyint(1) DEFAULT NULL,
-  `check_halaman_kelengkapan` tinyint(1) DEFAULT NULL,
-  `check_pemotongan_presisi` tinyint(1) DEFAULT NULL,
-  `check_halaman_nomor` tinyint(1) DEFAULT NULL,
-  `status_kelolosan` varchar(20) NOT NULL,
-  `jenis_cacat` varchar(120) DEFAULT NULL,
-  `jumlah_cacat` int(11) DEFAULT NULL,
-  `bukti_foto` varchar(255) DEFAULT NULL,
-  `catatan_qc` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `qc` (
+  `id_qc` smallint(5) UNSIGNED NOT NULL,
+  `id_order_produksi` varchar(20) NOT NULL,
+  `id_user` smallint(5) UNSIGNED NOT NULL,
+  `batch_number` int(11) DEFAULT NULL,
+  `status_qc` enum('pending','lulus','gagal') DEFAULT NULL,
+  `tanggal` timestamp NULL DEFAULT NULL,
+  `hasil` enum('lulus','tidak lulus','rework') DEFAULT NULL,
+  `sequence` int(10) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `qc`
+--
+
+INSERT INTO `qc` (`id_qc`, `id_order_produksi`, `id_user`, `batch_number`, `status_qc`, `tanggal`, `hasil`, `sequence`) VALUES
+(1, 'ORD251104001', 6, 1, 'lulus', '2025-11-04 09:23:36', 'lulus', 1);
 
 -- --------------------------------------------------------
 
@@ -165,12 +210,20 @@ CREATE TABLE `qc_checklist` (
 --
 
 CREATE TABLE `sekolah` (
-  `sekolah_id` int(11) NOT NULL,
-  `nama_sekolah` varchar(120) NOT NULL,
-  `wilayah` varchar(80) DEFAULT NULL,
-  `kontak_sekolah` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_sekolah` smallint(5) UNSIGNED NOT NULL,
+  `nama` varchar(100) DEFAULT NULL,
+  `lokasi` varchar(100) DEFAULT NULL,
+  `kontak` varchar(40) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `sekolah`
+--
+
+INSERT INTO `sekolah` (`id_sekolah`, `nama`, `lokasi`, `kontak`) VALUES
+(1, 'SMA Negeri 1 Contoh Kota', 'Jl. Pendidikan No. 1, Contoh Kota', '021-123456'),
+(2, 'SMA Harapan Bangsa', 'Jl. Merdeka No. 10, Kota Maju', '022-789012'),
+(3, 'SMK Karya Muda', 'Jl. Industri No. 5, Distrik Kreatif', '031-345678');
 
 -- --------------------------------------------------------
 
@@ -179,15 +232,19 @@ CREATE TABLE `sekolah` (
 --
 
 CREATE TABLE `template_desain` (
-  `template_desain_id` int(11) NOT NULL,
-  `nama_template` varchar(80) NOT NULL,
-  `versi` varchar(120) DEFAULT NULL,
-  `font` varchar(120) DEFAULT NULL,
-  `grid` varchar(60) DEFAULT NULL,
-  `warna` varchar(255) DEFAULT NULL,
-  `file_path` varchar(255) DEFAULT NULL,
-  `status_approval` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_template_desain` smallint(5) UNSIGNED NOT NULL,
+  `judul` varchar(40) DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `template_desain` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `template_desain`
+--
+
+INSERT INTO `template_desain` (`id_template_desain`, `judul`, `deskripsi`, `template_desain`) VALUES
+(1, 'Desain Modern Minimalis', 'Template dengan layout bersih dan modern.', 'data:text/plain;base64,VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIGRlc2lnbiBmaWxlLg=='),
+(2, 'Desain Tema Vintage', 'Template dengan nuansa retro dan klasik.', 'data:text/plain;base64,VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIGRlc2lnbiBmaWxlLg==');
 
 -- --------------------------------------------------------
 
@@ -196,12 +253,18 @@ CREATE TABLE `template_desain` (
 --
 
 CREATE TABLE `template_mou` (
-  `template_id` int(11) NOT NULL,
-  `nama_template` varchar(80) NOT NULL,
-  `jenis_paket` varchar(20) NOT NULL,
-  `konten` text DEFAULT NULL,
-  `is_active` tinyint(1) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_template_mou` smallint(5) UNSIGNED NOT NULL,
+  `judul` varchar(40) DEFAULT NULL,
+  `mou` text DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `template_mou`
+--
+
+INSERT INTO `template_mou` (`id_template_mou`, `judul`, `mou`, `deskripsi`) VALUES
+(1, 'Template MoU Standar', 'Ini adalah isi dari template MoU standar untuk proyek yearbook...', 'Gunakan untuk penawaran umum');
 
 -- --------------------------------------------------------
 
@@ -210,16 +273,24 @@ CREATE TABLE `template_mou` (
 --
 
 CREATE TABLE `tiket` (
-  `tiket_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `jenis_cacat` varchar(120) DEFAULT NULL,
-  `jumlah_buku` int(11) DEFAULT NULL,
-  `bukti_cacat` varchar(255) DEFAULT NULL,
-  `batch_number` varchar(30) DEFAULT NULL,
-  `status_tiket` varchar(30) NOT NULL,
-  `tanggal_konfirmasi` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `handled_by` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_tiket` smallint(5) UNSIGNED NOT NULL,
+  `id_user` smallint(5) UNSIGNED NOT NULL,
+  `id_order_produksi` varchar(20) NOT NULL,
+  `kategori` enum('keluhan','pertanyaan','lainnya') DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `tanggal` timestamp NULL DEFAULT NULL,
+  `status_tiket` enum('baru','proses','selesai','ditutup') DEFAULT NULL,
+  `respon` text DEFAULT NULL,
+  `status_retur` enum('pending','disetujui','ditolak') DEFAULT NULL,
+  `tanggal_respon` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tiket`
+--
+
+INSERT INTO `tiket` (`id_tiket`, `id_user`, `id_order_produksi`, `kategori`, `deskripsi`, `tanggal`, `status_tiket`, `respon`, `status_retur`, `tanggal_respon`) VALUES
+(1, 8, 'ORD251104001', 'keluhan', 'Ada beberapa halaman yang warnanya sedikit pudar.', '2025-11-04 09:23:36', 'proses', 'Baik, kami akan investigasi dan segera kabari untuk solusi retur barang yang cacat.', NULL, '2025-11-04 09:23:36');
 
 -- --------------------------------------------------------
 
@@ -228,32 +299,51 @@ CREATE TABLE `tiket` (
 --
 
 CREATE TABLE `timeline` (
-  `timeline_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `nama_tahapan` varchar(40) NOT NULL,
-  `status` varchar(20) NOT NULL,
-  `deadline` date DEFAULT NULL,
-  `pic_id` int(11) DEFAULT NULL,
-  `catatan` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_timeline` smallint(5) UNSIGNED NOT NULL,
+  `id_order_produksi` varchar(20) NOT NULL,
+  `id_user` smallint(5) UNSIGNED NOT NULL,
+  `judul` varchar(100) DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `status_timeline` enum('Ditugaskan','Dalam Proses','Selesai') DEFAULT NULL,
+  `deadline` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `timeline`
+--
+
+INSERT INTO `timeline` (`id_timeline`, `id_order_produksi`, `id_user`, `judul`, `deskripsi`, `status_timeline`, `deadline`) VALUES
+(1, 'ORD251104001', 3, 'Tahap Desain Cover', 'Desain cover depan dan belakang yearbook.', 'Dalam Proses', '2025-12-14 17:00:00'),
+(2, 'ORD251104001', 3, 'Tahap Cetak Batch 1', 'Cetak 50 buku pertama untuk QC.', 'Ditugaskan', '2026-02-14 17:00:00');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Table structure for table `users`
 --
 
-CREATE TABLE `user` (
-  `user_id` int(11) NOT NULL,
-  `nama_lengkap` varchar(255) NOT NULL,
-  `email` varchar(256) NOT NULL,
-  `nomor_telepon` varchar(20) NOT NULL,
-  `password` varchar(256) NOT NULL,
-  `username` varchar(60) NOT NULL,
-  `role` varchar(50) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `users` (
+  `id_user` smallint(5) UNSIGNED NOT NULL,
+  `nama` varchar(255) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `role` enum('manajer_marketing','tim_marketing','manajer_produksi','desainer','project_officer','tim_percetakan','customer_service','klien') DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id_user`, `nama`, `username`, `password`, `email`, `role`) VALUES
+(1, 'Andi Manajer', 'manajer_marketing', '$2y$10$5D0wUNWYHTx1/TzF67IpA.zXErtKUJBAgzrrnELUoXn3wv7spg1uG', 'andi.manajer@example.com', 'manajer_marketing'),
+(2, 'Budi Marketing', 'tim_marketing_1', '$2y$10$5D0wUNWYHTx1/TzF67IpA.zXErtKUJBAgzrrnELUoXn3wv7spg1uG', 'budi.marketing@example.com', 'tim_marketing'),
+(3, 'Charlie Produksi', 'manajer_produksi', '$2y$10$5D0wUNWYHTx1/TzF67IpA.zXErtKUJBAgzrrnELUoXn3wv7spg1uG', 'charlie.produksi@example.com', 'manajer_produksi'),
+(4, 'Dina Desainer', 'desainer_1', '$2y$10$5D0wUNWYHTx1/TzF67IpA.zXErtKUJBAgzrrnELUoXn3wv7spg1uG', 'dina.desainer@example.com', 'desainer'),
+(5, 'Eko Project Officer', 'project_officer_1', '$2y$10$5D0wUNWYHTx1/TzF67IpA.zXErtKUJBAgzrrnELUoXn3wv7spg1uG', 'eko.po@example.com', 'project_officer'),
+(6, 'Fani Percetakan', 'tim_percetakan_1', '$2y$10$5D0wUNWYHTx1/TzF67IpA.zXErtKUJBAgzrrnELUoXn3wv7spg1uG', 'fani.cetak@example.com', 'tim_percetakan'),
+(7, 'Gilang CS', 'cs_1', '$2y$10$5D0wUNWYHTx1/TzF67IpA.zXErtKUJBAgzrrnELUoXn3wv7spg1uG', 'gilang.cs@example.com', 'customer_service'),
+(8, 'Hani Klien', 'klien_1', '$2y$10$5D0wUNWYHTx1/TzF67IpA.zXErtKUJBAgzrrnELUoXn3wv7spg1uG', 'hani.klien@example.com', 'klien');
 
 --
 -- Indexes for dumped tables
@@ -263,99 +353,106 @@ CREATE TABLE `user` (
 -- Indexes for table `desain`
 --
 ALTER TABLE `desain`
-  ADD PRIMARY KEY (`design_id`),
-  ADD KEY `order_id` (`order_id`),
-  ADD KEY `template_desain_id` (`template_desain_id`),
-  ADD KEY `desainer_id` (`desainer_id`);
+  ADD PRIMARY KEY (`id_desain`),
+  ADD KEY `idx_desain_template` (`id_template_desain`),
+  ADD KEY `idx_desain_order` (`id_order_produksi`),
+  ADD KEY `idx_desain_user` (`id_user`);
 
 --
 -- Indexes for table `feedback`
 --
 ALTER TABLE `feedback`
-  ADD PRIMARY KEY (`feedback_id`),
-  ADD KEY `order_id` (`order_id`),
-  ADD KEY `pengiriman_id` (`pengiriman_id`);
+  ADD PRIMARY KEY (`id_feedback`),
+  ADD KEY `idx_feedback_order` (`id_order_produksi`);
 
 --
 -- Indexes for table `mou`
 --
 ALTER TABLE `mou`
-  ADD PRIMARY KEY (`mou_id`),
-  ADD UNIQUE KEY `nomor_mou` (`nomor_mou`),
-  ADD KEY `prospek_id` (`prospek_id`),
-  ADD KEY `template_id` (`template_id`);
+  ADD PRIMARY KEY (`id_mou`),
+  ADD KEY `idx_mou_user` (`id_user`),
+  ADD KEY `idx_mou_template` (`id_template_mou`);
 
 --
--- Indexes for table `order`
+-- Indexes for table `order_produksi`
 --
-ALTER TABLE `order`
-  ADD PRIMARY KEY (`order_id`),
-  ADD UNIQUE KEY `nomor_order` (`nomor_order`),
-  ADD KEY `mou_id` (`mou_id`);
+ALTER TABLE `order_produksi`
+  ADD PRIMARY KEY (`id_order_produksi`),
+  ADD KEY `idx_order_user` (`id_user`),
+  ADD KEY `idx_order_mou` (`id_mou`),
+  ADD KEY `idx_order_sekolah` (`id_sekolah`);
+
+--
+-- Indexes for table `pengajuan_order`
+--
+ALTER TABLE `pengajuan_order`
+  ADD PRIMARY KEY (`id_pengajuan`),
+  ADD KEY `idx_pengajuan_user` (`id_user`),
+  ADD KEY `idx_pengajuan_sekolah` (`id_sekolah`);
 
 --
 -- Indexes for table `pengiriman`
 --
 ALTER TABLE `pengiriman`
-  ADD PRIMARY KEY (`pengiriman_id`),
-  ADD KEY `order_id` (`order_id`);
+  ADD PRIMARY KEY (`id_pengiriman`),
+  ADD KEY `idx_pengiriman_order` (`id_order_produksi`);
 
 --
--- Indexes for table `prospek_sekolah`
+-- Indexes for table `prospek`
 --
-ALTER TABLE `prospek_sekolah`
-  ADD PRIMARY KEY (`prospek_id`),
-  ADD KEY `staf_id` (`staf_id`),
-  ADD KEY `sekolah_id` (`sekolah_id`);
+ALTER TABLE `prospek`
+  ADD PRIMARY KEY (`id_prospek`),
+  ADD KEY `idx_prospek_user` (`id_user`),
+  ADD KEY `idx_prospek_sekolah` (`id_sekolah`);
 
 --
--- Indexes for table `qc_checklist`
+-- Indexes for table `qc`
 --
-ALTER TABLE `qc_checklist`
-  ADD PRIMARY KEY (`qc_id`),
-  ADD KEY `order_id` (`order_id`),
-  ADD KEY `qc_by` (`qc_by`);
+ALTER TABLE `qc`
+  ADD PRIMARY KEY (`id_qc`),
+  ADD KEY `idx_qc_user` (`id_user`),
+  ADD KEY `idx_qc_order` (`id_order_produksi`);
 
 --
 -- Indexes for table `sekolah`
 --
 ALTER TABLE `sekolah`
-  ADD PRIMARY KEY (`sekolah_id`),
-  ADD UNIQUE KEY `nama_sekolah` (`nama_sekolah`);
+  ADD PRIMARY KEY (`id_sekolah`);
 
 --
 -- Indexes for table `template_desain`
 --
 ALTER TABLE `template_desain`
-  ADD PRIMARY KEY (`template_desain_id`);
+  ADD PRIMARY KEY (`id_template_desain`);
 
 --
 -- Indexes for table `template_mou`
 --
 ALTER TABLE `template_mou`
-  ADD PRIMARY KEY (`template_id`);
+  ADD PRIMARY KEY (`id_template_mou`);
 
 --
 -- Indexes for table `tiket`
 --
 ALTER TABLE `tiket`
-  ADD PRIMARY KEY (`tiket_id`),
-  ADD KEY `order_id` (`order_id`),
-  ADD KEY `handled_by` (`handled_by`);
+  ADD PRIMARY KEY (`id_tiket`),
+  ADD KEY `idx_tiket_order` (`id_order_produksi`),
+  ADD KEY `idx_tiket_user` (`id_user`);
 
 --
 -- Indexes for table `timeline`
 --
 ALTER TABLE `timeline`
-  ADD PRIMARY KEY (`timeline_id`),
-  ADD KEY `order_id` (`order_id`),
-  ADD KEY `pic_id` (`pic_id`);
+  ADD PRIMARY KEY (`id_timeline`),
+  ADD KEY `idx_timeline_user` (`id_user`),
+  ADD KEY `idx_timeline_order` (`id_order_produksi`);
 
 --
--- Indexes for table `user`
+-- Indexes for table `users`
 --
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`user_id`),
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id_user`),
+  ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
@@ -366,79 +463,79 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `desain`
 --
 ALTER TABLE `desain`
-  MODIFY `design_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_desain` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_feedback` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `mou`
 --
 ALTER TABLE `mou`
-  MODIFY `mou_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_mou` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `order`
+-- AUTO_INCREMENT for table `pengajuan_order`
 --
-ALTER TABLE `order`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `pengajuan_order`
+  MODIFY `id_pengajuan` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pengiriman`
 --
 ALTER TABLE `pengiriman`
-  MODIFY `pengiriman_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_pengiriman` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `prospek_sekolah`
+-- AUTO_INCREMENT for table `prospek`
 --
-ALTER TABLE `prospek_sekolah`
-  MODIFY `prospek_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `prospek`
+  MODIFY `id_prospek` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `qc_checklist`
+-- AUTO_INCREMENT for table `qc`
 --
-ALTER TABLE `qc_checklist`
-  MODIFY `qc_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `qc`
+  MODIFY `id_qc` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `sekolah`
 --
 ALTER TABLE `sekolah`
-  MODIFY `sekolah_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_sekolah` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `template_desain`
 --
 ALTER TABLE `template_desain`
-  MODIFY `template_desain_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_template_desain` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `template_mou`
 --
 ALTER TABLE `template_mou`
-  MODIFY `template_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_template_mou` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `tiket`
 --
 ALTER TABLE `tiket`
-  MODIFY `tiket_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_tiket` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `timeline`
 --
 ALTER TABLE `timeline`
-  MODIFY `timeline_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_timeline` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `user`
+-- AUTO_INCREMENT for table `users`
 --
-ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `users`
+  MODIFY `id_user` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
@@ -448,63 +545,71 @@ ALTER TABLE `user`
 -- Constraints for table `desain`
 --
 ALTER TABLE `desain`
-  ADD CONSTRAINT `desain_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
-  ADD CONSTRAINT `desain_ibfk_2` FOREIGN KEY (`template_desain_id`) REFERENCES `template_desain` (`template_desain_id`),
-  ADD CONSTRAINT `desain_ibfk_3` FOREIGN KEY (`desainer_id`) REFERENCES `user` (`user_id`);
+  ADD CONSTRAINT `desain_ibfk_1` FOREIGN KEY (`id_template_desain`) REFERENCES `template_desain` (`id_template_desain`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `desain_ibfk_2` FOREIGN KEY (`id_order_produksi`) REFERENCES `order_produksi` (`id_order_produksi`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `desain_ibfk_3` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `feedback`
 --
 ALTER TABLE `feedback`
-  ADD CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
-  ADD CONSTRAINT `feedback_ibfk_2` FOREIGN KEY (`pengiriman_id`) REFERENCES `pengiriman` (`pengiriman_id`);
+  ADD CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`id_order_produksi`) REFERENCES `order_produksi` (`id_order_produksi`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `mou`
 --
 ALTER TABLE `mou`
-  ADD CONSTRAINT `mou_ibfk_1` FOREIGN KEY (`prospek_id`) REFERENCES `prospek_sekolah` (`prospek_id`),
-  ADD CONSTRAINT `mou_ibfk_2` FOREIGN KEY (`template_id`) REFERENCES `template_mou` (`template_id`);
+  ADD CONSTRAINT `mou_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `mou_ibfk_2` FOREIGN KEY (`id_template_mou`) REFERENCES `template_mou` (`id_template_mou`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `order`
+-- Constraints for table `order_produksi`
 --
-ALTER TABLE `order`
-  ADD CONSTRAINT `order_ibfk_1` FOREIGN KEY (`mou_id`) REFERENCES `mou` (`mou_id`);
+ALTER TABLE `order_produksi`
+  ADD CONSTRAINT `order_produksi_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `order_produksi_ibfk_2` FOREIGN KEY (`id_mou`) REFERENCES `mou` (`id_mou`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `order_produksi_ibfk_3` FOREIGN KEY (`id_sekolah`) REFERENCES `sekolah` (`id_sekolah`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `pengajuan_order`
+--
+ALTER TABLE `pengajuan_order`
+  ADD CONSTRAINT `pengajuan_order_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `pengajuan_order_ibfk_2` FOREIGN KEY (`id_sekolah`) REFERENCES `sekolah` (`id_sekolah`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `pengiriman`
 --
 ALTER TABLE `pengiriman`
-  ADD CONSTRAINT `pengiriman_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`);
+  ADD CONSTRAINT `pengiriman_ibfk_1` FOREIGN KEY (`id_order_produksi`) REFERENCES `order_produksi` (`id_order_produksi`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `prospek_sekolah`
+-- Constraints for table `prospek`
 --
-ALTER TABLE `prospek_sekolah`
-  ADD CONSTRAINT `prospek_sekolah_ibfk_1` FOREIGN KEY (`staf_id`) REFERENCES `user` (`user_id`),
-  ADD CONSTRAINT `prospek_sekolah_ibfk_2` FOREIGN KEY (`sekolah_id`) REFERENCES `sekolah` (`sekolah_id`);
+ALTER TABLE `prospek`
+  ADD CONSTRAINT `prospek_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `prospek_ibfk_2` FOREIGN KEY (`id_sekolah`) REFERENCES `sekolah` (`id_sekolah`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `qc_checklist`
+-- Constraints for table `qc`
 --
-ALTER TABLE `qc_checklist`
-  ADD CONSTRAINT `qc_checklist_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
-  ADD CONSTRAINT `qc_checklist_ibfk_2` FOREIGN KEY (`qc_by`) REFERENCES `user` (`user_id`);
+ALTER TABLE `qc`
+  ADD CONSTRAINT `qc_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `qc_ibfk_2` FOREIGN KEY (`id_order_produksi`) REFERENCES `order_produksi` (`id_order_produksi`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tiket`
 --
 ALTER TABLE `tiket`
-  ADD CONSTRAINT `tiket_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
-  ADD CONSTRAINT `tiket_ibfk_2` FOREIGN KEY (`handled_by`) REFERENCES `user` (`user_id`);
+  ADD CONSTRAINT `tiket_ibfk_1` FOREIGN KEY (`id_order_produksi`) REFERENCES `order_produksi` (`id_order_produksi`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `tiket_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `timeline`
 --
 ALTER TABLE `timeline`
-  ADD CONSTRAINT `timeline_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
-  ADD CONSTRAINT `timeline_ibfk_2` FOREIGN KEY (`pic_id`) REFERENCES `user` (`user_id`);
+  ADD CONSTRAINT `timeline_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `timeline_ibfk_2` FOREIGN KEY (`id_order_produksi`) REFERENCES `order_produksi` (`id_order_produksi`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

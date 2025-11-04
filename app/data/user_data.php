@@ -9,7 +9,7 @@
  */
 function user_find_by_email(mysqli $mysqli, string $email): ?array
 {
-  $stmt = mysqli_prepare($mysqli, "SELECT * FROM user WHERE email = ?");
+  $stmt = mysqli_prepare($mysqli, "SELECT * FROM users WHERE email = ?");
   mysqli_stmt_bind_param($stmt, "s", $email);
   mysqli_stmt_execute($stmt);
   $result = mysqli_stmt_get_result($stmt);
@@ -25,11 +25,11 @@ function user_find_by_email(mysqli $mysqli, string $email): ?array
  */
 function user_create(mysqli $mysqli, array $data): bool
 {
-  $stmt = mysqli_prepare($mysqli, "INSERT INTO user (nama_lengkap, email, nomor_telepon, password, username, role) VALUES (?, ?, ?, ?, ?, ?)");
+  $stmt = mysqli_prepare($mysqli, "INSERT INTO users (nama, email, nomor_telepon, password, username, role) VALUES (?, ?, ?, ?, ?, ?)");
   mysqli_stmt_bind_param(
     $stmt,
     "ssssss",
-    $data['nama_lengkap'],
+    $data['nama'],
     $data['email'],
     $data['nomor_telepon'],
     $data['password'],

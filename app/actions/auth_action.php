@@ -30,7 +30,7 @@ function register_process_action()
   $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
   $user_data = [
-    'nama_lengkap'  => $_POST['full_name'],
+    'nama'  => $_POST['full_name'],
     'email'         => $_POST['email'],
     'nomor_telepon' => $_POST['phone_number'] ?? '',
     'password'      => $hashed_password,
@@ -63,12 +63,12 @@ function login_process_action()
 
   if ($user && password_verify($password, $user['password'])) {
     $_SESSION['user'] = [
-      'id'            => $user['user_id'],
-      'nama_lengkap'  => $user['nama_lengkap'],
+      'id'            => $user['id_user'],
+      'nama'  => $user['nama'],
       'role'          => $user['role'],
       'email'         => $user['email']
     ];
-    flash_message('success', 'Login Berhasil', 'Selamat datang kembali, ' . $user['nama_lengkap'] . '!');
+    flash_message('success', 'Login Berhasil', 'Selamat datang kembali, ' . $user['nama'] . '!');
     redirect('/dashboard');
   } else {
     log_message('error', "Percobaan login gagal untuk email '{$email}'.");
