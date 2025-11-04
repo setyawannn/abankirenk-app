@@ -8,13 +8,13 @@ function prospek_get_all(mysqli $mysqli, array $options = []): array
   $status = $options['status'] ?? '';
   $offset = ($page - 1) * $limit;
 
-  $baseQuery = "FROM prospek_sekolah p JOIN sekolah s ON p.sekolah_id = s.sekolah_id";
+  $baseQuery = "FROM prospek p JOIN sekolah s ON p.id_sekolah = s.id_sekolah";
   $whereClauses = [];
   $params = [];
   $types = "";
 
   if (!empty($search)) {
-    $whereClauses[] = "(s.nama_sekolah LIKE ? OR p.catatan LIKE ?)";
+    $whereClauses[] = "(s.nama LIKE ? OR p.catatan LIKE ?)";
     $searchTerm = "%{$search}%";
     $params[] = $searchTerm;
     $params[] = $searchTerm;
@@ -32,7 +32,7 @@ function prospek_get_all(mysqli $mysqli, array $options = []): array
     $whereSql = " WHERE " . implode(" AND ", $whereClauses);
   }
 
-  $totalQuery = "SELECT COUNT(p.prospek_id) as total " . $baseQuery . $whereSql;
+  $totalQuery = "SELECT COUNT(p.id_prospek) as total " . $baseQuery . $whereSql;
   $totalStmt = mysqli_prepare($mysqli, $totalQuery);
   if (!empty($params)) {
     mysqli_stmt_bind_param($totalStmt, $types, ...$params);
@@ -43,7 +43,7 @@ function prospek_get_all(mysqli $mysqli, array $options = []): array
   mysqli_stmt_close($totalStmt);
 
 
-  $dataQuery = "SELECT p.*, s.nama_sekolah AS nama_sekolah " . $baseQuery . $whereSql . " ORDER BY p.prospek_id DESC LIMIT ? OFFSET ?";
+  $dataQuery = "SELECT p.*, s.nama AS nama_sekolah " . $baseQuery . $whereSql . " ORDER BY p.id_prospek DESC LIMIT ? OFFSET ?";
   $dataStmt = mysqli_prepare($mysqli, $dataQuery);
 
   $allParams = $params;
@@ -64,4 +64,54 @@ function prospek_get_all(mysqli $mysqli, array $options = []): array
     'data' => $data,
     'total' => $totalRows
   ];
+}
+
+function prospek_create(mysqli $mysqli, array $data): int
+{
+    $stmt = mysqli_prepare($mysqli, "INSERT INTO prospek (id_sekolah, id_user, narahubung, no_narahubung, status_prospek, catatan) VALUES (?, ?, ?, ?, ?, ?)");
+    mysqli_stmt_bind_param(
+        $stmt,
+        "iissss",
+        $data['id_sekolah'],
+        $data['id_user'],
+        $data['narahubung'],
+        $data['no_narahubung'],
+        $data['status_prospek'],
+        $data['catatan']
+    );
+    mysqli_stmt_execute($stmt);
+    $newId = mysqli_insert_id($mysqli);
+    mysqli_stmt_close($stmt);
+    return $newId;
+}
+
+function prospek_get_by_id(mysqli $mysqli, int $id): ?array
+{
+    $stmt = mysqli_prepare($mysqli, "SELECT p.*, s.nama AS nama_sekolah FROM prospek p JOIN sekolah s ON p.id_sekolah = s.id_sekolah WHERE p.id_prospek = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $data = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
+    return $data;
+}
+
+function prospek_update(mysqli $mysqli, int $id, array $data): int
+{
+    $stmt = mysqli_prepare($mysqli, "UPDATE prospek SET id_sekolah = ?, id_user = ?, narahubung = ?, no_narahubung = ?, status_prospek = ?, catatan = ? WHERE id_prospek = ?");
+    mysqli_stmt_bind_param(
+        $stmt,
+        "iissssi",
+        $data['id_sekolah'],
+        $data['id_user'],
+        $data['narahubung'],
+        $data['no_narahubung'],
+        $data['status_prospek'],
+        $data['catatan'],
+        $id
+    );
+    mysqli_stmt_execute($stmt);
+    $affectedRows = mysqli_stmt_affected_rows($stmt);
+    mysqli_stmt_close($stmt);
+    return $affectedRows;
 }

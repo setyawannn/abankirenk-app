@@ -7,26 +7,26 @@ Dashboard
 @section('content')
 <div class="space-y-6">
     {{-- Filter dan Search Bar --}}
-    <div class="bg-white p-4 shadow rounded-lg flex items-center space-x-4">
+    <div class="rounded-lg flex items-center space-x-4">
         <div class="flex-grow">
             <label for="search-prospek" class="sr-only">Cari Prospek</label>
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <ion-icon name="search-outline" class="text-gray-400"></ion-icon>
                 </div>
-                <input type="text" id="search-prospek" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-[#F97B06] focus:border-[#F97B06] sm:text-sm" placeholder="Cari nama sekolah atau catatan...">
+                <input type="text" id="search-prospek" class="block w-[300px] pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" placeholder="Cari nama sekolah atau catatan...">
             </div>
         </div>
         <div>
             <label for="status-filter" class="sr-only">Filter Status</label>
-            <select id="status-filter" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#F97B06] focus:border-[#F97B06] sm:text-sm rounded-md">
+            <select id="status-filter" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
                 <option value="">Semua Status</option>
                 @foreach ($status_options as $status)
                     <option value="{{ $status }}">{{ ucfirst(str_replace('_', ' ', $status)) }}</option>
                 @endforeach
             </select>
         </div>
-         <button id="add-prospek-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#F97B06] hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F97B06]">
+         <button id="add-prospek-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
              <ion-icon name="add-outline" class="-ml-1 mr-2"></ion-icon>
              Tambah Prospek
         </button>
@@ -53,27 +53,29 @@ Dashboard
                 </tbody>
             </table>
         </div>
+
+        {{-- Pagination --}}
+        <div class="px-4 py-3 flex items-center justify-between sm:px-6 rounded-b-lg">
+            <div class="flex-1 flex justify-between sm:hidden">
+                <button id="prev-mobile" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50" disabled> Previous </button>
+                <button id="next-mobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50" disabled> Next </button>
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700" id="pagination-info">
+                        Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">0</span> results
+                    </p>
+                </div>
+                <div>
+                    <nav id="pagination-controls" class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        {{-- Tombol pagination akan diisi oleh AJAX --}}
+                    </nav>
+                </div>
+            </div>
+        </div>
     </div>
 
-    {{-- Pagination --}}
-    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 rounded-b-lg shadow">
-        <div class="flex-1 flex justify-between sm:hidden">
-            <button id="prev-mobile" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50" disabled> Previous </button>
-            <button id="next-mobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50" disabled> Next </button>
-        </div>
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-                <p class="text-sm text-gray-700" id="pagination-info">
-                    Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">0</span> results
-                </p>
-            </div>
-            <div>
-                <nav id="pagination-controls" class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                    {{-- Tombol pagination akan diisi oleh AJAX --}}
-                </nav>
-            </div>
-        </div>
-    </div>
+    
 </div>
 @endsection
 
@@ -117,7 +119,6 @@ $(document).ready(function() {
         });
     }
 
-    // Fungsi untuk merender baris tabel
     function renderTable(data) {
         const tableBody = $('#prospek-table-body');
         tableBody.empty(); // Kosongkan tabel
@@ -128,17 +129,14 @@ $(document).ready(function() {
         }
 
         data.forEach(prospek => {
-            // Gunakan helper PHP di sini (atau generate HTML di backend)
-            const statusBadge = `<?php echo generate_status_badge('${prospek.status_prospek}'); ?>`;
-            
             const row = `
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${prospek.id_prospek}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${prospek.nama_sekolah}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">${statusBadge}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">${prospek.status_badge}</td>
                     <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">${prospek.catatan || '-'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="#" class="text-[#F97B06] hover:text-orange-700">Edit</a>
+                        <a href="#" class="text-primary hover:text-primary-700">Edit</a>
                     </td>
                 </tr>
             `;
@@ -184,7 +182,7 @@ $(document).ready(function() {
         }
 
         for (let i = startPage; i <= endPage; i++) {
-            const activeClass = i === current_page ? 'z-10 bg-orange-50 border-[#F97B06] text-[#F97B06]' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50';
+            const activeClass = i === current_page ? 'z-10 bg-primary-50 border-primary text-primary' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50';
             paginationControls.append(`
                 <button data-page="${i}" class="relative inline-flex items-center px-4 py-2 border text-sm font-medium ${activeClass}">
                     ${i}

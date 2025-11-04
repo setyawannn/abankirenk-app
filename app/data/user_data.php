@@ -38,3 +38,9 @@ function user_create(mysqli $mysqli, array $data): bool
   );
   return mysqli_stmt_execute($stmt);
 }
+
+function user_get_all_by_role(mysqli $mysqli, string $role): array
+{
+  $result = mysqli_query($mysqli, "SELECT * FROM users WHERE role = '$role'");
+  return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}

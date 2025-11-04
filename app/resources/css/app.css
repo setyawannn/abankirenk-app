@@ -2,4 +2,14 @@
 
 @theme {
   --color-primary: #4d94df;
+  --color-primary-50: #e7f5ff;
+  --color-primary-100: #cfe8ff;
+  --color-primary-200: #99d0ff;
+  --color-primary-300: #66b8ff;
+  --color-primary-400: #33a0ff;
+  --color-primary-500: #0088ff;
+  --color-primary-600: #0072e6;
+  --color-primary-700: #005cbf;
+  --color-primary-800: #004699;
+  --color-primary-900: #003073;
 }
