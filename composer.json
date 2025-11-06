@@ -17,6 +17,9 @@
     }
   },
   "scripts": {
-    "template:clear": "php scripts/clear-template-cache.php"
+    "template:clear": "php scripts/clear-template-cache.php",
+    "storage:link": [
+      "php scripts/create_storage_link.php"
+    ]
   }
 }

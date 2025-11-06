@@ -45,12 +45,12 @@ Manajemen Prospek
                 </div>
             </div>
         </div>
-        
+
         <div class="card-df">
             <form action="{{ url('/tim-marketing/prospek-saya/' . $prospek['id_prospek'] . '/update') }}" method="POST">
                 <div class="p-6 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-1 gap-6"> 
-                        <div class="col-span-1"> 
+                    <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+                        <div class="col-span-1">
                             <label for="catatan" class="block mb-2 text-lg font-medium text-gray-800">
                                 Catatan
                             </label>
@@ -68,7 +68,7 @@ Manajemen Prospek
                                 name="catatan"
                                 id="catatan"
                                 rows="4"
-                                class="input-df resize-none hidden" 
+                                class="input-df resize-none hidden"
                                 placeholder="Tulis catatan tindak lanjut di sini...">{{ $prospek['catatan'] ?? '' }}</textarea>
                         </div>
                     </div>
@@ -98,74 +98,74 @@ Manajemen Prospek
 
 <script>
     $(document).ready(function() {
+
         const $skeleton = $('#ckeditor-skeleton');
         const $textarea = $('#catatan');
 
         CKEDITOR.ClassicEditor.create(document.querySelector('#catatan'), {
-            toolbar: {
-                items: [
-                    'heading', '|',
-                    'bold', 'italic', 'strikethrough', 'underline', 'link', '|',
-                    'bulletedList', 'numberedList', '|',
-                    'outdent', 'indent', '|',
-                    'imageUpload', 'insertTable', 'blockQuote', 'mediaEmbed', 'codeBlock', '|',
-                    'undo', 'redo', '|',
-                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
-                    'alignment', 'todoList', 'horizontalLine'
-                ],
-                shouldNotGroupWhenFull: true
-            },
-            simpleUpload: {
-                uploadUrl: '{{ url("/ajax/upload/wysiwyg") }}'
-            },
-            image: {
-                toolbar: [ 'imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative' ],
-                upload: {
-                    types: [ 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'svg+xml' ]
-                }
-            },
-            list: {
-                properties: {
-                    styles: true,
-                    startIndex: true,
-                    reversed: true
-                }
-            },
-            placeholder: 'Tulis catatan tindak lanjut di sini...',
-            removePlugins: [
-                'Comments','TrackChanges','TrackChangesData','TrackChangesEditing',
-                'RealTimeCollaborativeComments','RealTimeCollaborativeTrackChanges',
-                'RealTimeCollaborativeEditing','RealTimeCollaborativeRevisionHistory',
-                'RevisionHistory','PresenceList','UsersInit','CKFinder','WProofreader',
-                'DocumentOutline','TableOfContents','AIAssistant','MultiLevelList',
-                'Pagination','FormatPainter','Template','SlashCommand',
-                'PasteFromOfficeEnhanced','CaseChange'
-            ]
-        })
-        .then(editor => {
-            $skeleton.hide();
-        })
-        .catch(error => {
-            console.error('Gagal memuat CKEditor 5:', error);
-            $skeleton.hide();
-            $textarea.removeClass('hidden');
-        });
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'strikethrough', 'underline', 'link', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'outdent', 'indent', '|',
+                        'imageUpload',
+                        'insertTable', 'blockQuote', 'mediaEmbed', 'codeBlock', '|',
+                        'undo', 'redo', '|',
+                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+                        'alignment', 'todoList', 'horizontalLine'
+                    ],
+                    shouldNotGroupWhenFull: true
+                },
+                ckfinder: {
+                    uploadUrl: '{{ url("/ajax/upload/wysiwyg") }}'
+                },
+
+                list: {
+                    properties: {
+                        styles: true,
+                        startIndex: true,
+                        reversed: true
+                    }
+                },
+                placeholder: 'Tulis catatan tindak lanjut di sini...',
+                removePlugins: [
+                    'Comments', 'TrackChanges', 'TrackChangesData', 'TrackChangesEditing',
+                    'RealTimeCollaborativeComments', 'RealTimeCollaborativeTrackChanges',
+                    'RealTimeCollaborativeEditing', 'RealTimeCollaborativeRevisionHistory',
+                    'RevisionHistory', 'PresenceList', 'UsersInit', 'WProofreader',
+                    'DocumentOutline', 'TableOfContents', 'AIAssistant', 'MultiLevelList',
+                    'Pagination', 'FormatPainter', 'Template', 'SlashCommand',
+                    'PasteFromOfficeEnhanced', 'CaseChange', 'ExportPdf', 'ExportWord', 'ImportWord',
+                ]
+
+            })
+            .then(editor => {
+                console.log('CKEditor 5 berhasil dimuat.');
+                $skeleton.hide();
+            })
+            .catch(error => {
+                console.error('Gagal memuat CKEditor 5:', error);
+                $skeleton.hide();
+                $textarea.removeClass('hidden');
+            });
     });
 </script>
 @endpush
-
 
 @push('styles')
 <style>
     .ck-editor__editable {
         min-height: 250px;
     }
-    .ck.ck-editor__main > .ck-editor__editable:focus {
+
+    .ck.ck-editor__main>.ck-editor__editable:focus {
         border-color: var(--color-primary);
-        border-color: #4F46E5; 
+        border-color: #4F46E5;
         box-shadow: 0 0 0 1px #4F46E5;
     }
-    .ck.ck-editor__main > .ck-editor__editable,
+
+    .ck.ck-editor__main>.ck-editor__editable,
     .ck.ck-editor__editable.ck-focused {
         border-radius: 0.375rem;
         border-color: #D1D5DB;

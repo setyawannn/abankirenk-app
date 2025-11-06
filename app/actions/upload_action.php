@@ -10,6 +10,7 @@ function wysiwyg_upload_action()
   if (!isset($_SESSION['user'])) {
     http_response_code(403);
     echo json_encode([
+      "uploaded" => 0,
       "error" => ["message" => "Otentikasi diperlukan."]
     ]);
     exit();
@@ -18,6 +19,7 @@ function wysiwyg_upload_action()
   if (!isset($_FILES['upload'])) {
     http_response_code(400);
     echo json_encode([
+      "uploaded" => 0,
       "error" => ["message" => "Tidak ada file yang di-upload."]
     ]);
     exit();
@@ -27,11 +29,14 @@ function wysiwyg_upload_action()
 
   if ($result['success']) {
     echo json_encode([
+      "uploaded" => 1,
+      "fileName" => $result['fileName'],
       "url" => url($result['url'])
     ]);
   } else {
     http_response_code(500);
     echo json_encode([
+      "uploaded" => 0,
       "error" => ["message" => $result['message']]
     ]);
   }

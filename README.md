@@ -77,6 +77,19 @@ Selamat datang di MafemWok (nama bisa Anda sesuaikan), sebuah kerangka kerja PHP
 
 8.  **Siapkan Database:** Impor struktur database Anda (jika ada) dan jalankan kueri `INSERT` (atau *seeder*) untuk data awal (seperti pengguna admin).
 
+9. **Penting: Buat Storage Link**
+
+    Untuk memastikan file yang di-upload (seperti gambar dari CKEditor) dapat diakses oleh publik, Anda harus membuat *symbolic link*.
+
+    Jalankan perintah Composer berikut:
+
+    ```bash
+    composer storage:link
+    ```
+
+    **PENTING (Khusus Pengguna Windows):**
+    Di Windows, pembuatan *symbolic link* (`mklink`) memerlukan hak akses Administrator. Anda **HARUS** menjalankan perintah ini dari terminal (CMD, PowerShell, atau Git Bash) yang telah dibuka dengan **"Run as administrator"**.
+
 ---
 
 ## 📁 Struktur Folder
