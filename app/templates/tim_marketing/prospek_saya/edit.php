@@ -118,6 +118,12 @@ Manajemen Prospek
             simpleUpload: {
                 uploadUrl: '{{ url("/ajax/upload/wysiwyg") }}'
             },
+            image: {
+                toolbar: [ 'imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative' ],
+                upload: {
+                    types: [ 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'svg+xml' ]
+                }
+            },
             list: {
                 properties: {
                     styles: true,
