@@ -14,13 +14,13 @@ return [
       'id' => 'prospek_mm',
       'nama' => 'Manajemen Prospek',
       'icon' => 'people-outline',
-      'redirect_url' => '/manager-marketing/manajemen-prospek'
+      'redirect_url' => '/manajer-marketing/manajemen-prospek'
     ],
     [
       'id' => 'laporan_mm',
       'nama' => 'Laporan',
       'icon' => 'stats-chart-outline',
-      'redirect_url' => '/manager-marketing/laporan'
+      'redirect_url' => '/manajer-marketing/laporan'
     ]
   ],
   'tim_marketing' => [

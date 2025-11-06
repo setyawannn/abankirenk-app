@@ -33,9 +33,6 @@
           <span class="text-primary font-medium">
             {{ $page_title ?? 'Dashboard' }}
           </span>
-          <span>
-            /
-          </span>
           @yield('breadcrumbs')
         </div>
         @yield('content')

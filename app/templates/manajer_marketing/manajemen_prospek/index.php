@@ -19,17 +19,17 @@ Dashboard
         </div>
         <div>
             <label for="status-filter" class="sr-only">Filter Status</label>
-            <select id="status-filter" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
+            <select id="status-filter" class="input-df">
                 <option value="">Semua Status</option>
                 @foreach ($status_options as $status)
-                    <option value="{{ $status }}">{{ ucfirst(str_replace('_', ' ', $status)) }}</option>
+                <option value="{{ $status }}">{{ ucfirst(str_replace('_', ' ', $status)) }}</option>
                 @endforeach
             </select>
         </div>
-         <button id="add-prospek-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-             <ion-icon name="add-outline" class="-ml-1 mr-2"></ion-icon>
-             Tambah Prospek
-        </button>
+        <a href="{{ url('manajer-marketing/manajemen-prospek/create') }}" class="btn-df">
+            <ion-icon name="add-outline" class="-ml-1 mr-2"></ion-icon>
+            Tambah Prospek
+        </a>
     </div>
 
     {{-- Tabel Prospek --}}
@@ -49,7 +49,9 @@ Dashboard
                 </thead>
                 <tbody id="prospek-table-body" class="bg-white divide-y divide-gray-200">
                     {{-- Baris akan diisi oleh AJAX --}}
-                    <tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Memuat data...</td></tr>
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">Memuat data...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -75,61 +77,62 @@ Dashboard
         </div>
     </div>
 
-    
+
 </div>
 @endsection
 
 @push('scripts')
+<script src="{{ url('/js/helper.js') }}"></script>
 <script>
-$(document).ready(function() {
-    let currentPage = 1;
-    let currentSearch = '';
-    let currentStatus = '';
-    const limit = 10; // Jumlah item per halaman
+    $(document).ready(function() {
+        let currentPage = 1;
+        let currentSearch = '';
+        let currentStatus = '';
+        const limit = 10; // Jumlah item per halaman
 
-    // Fungsi utama untuk mengambil dan merender data
-    function fetchData(page = 1) {
-        currentPage = page;
-        currentSearch = $('#search-prospek').val();
-        currentStatus = $('#status-filter').val();
+        // Fungsi utama untuk mengambil dan merender data
+        function fetchData(page = 1) {
+            currentPage = page;
+            currentSearch = $('#search-prospek').val();
+            currentStatus = $('#status-filter').val();
 
-        // Tampilkan loading
-        $('#prospek-table-body').html('<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Memuat data...</td></tr>');
-        $('#pagination-controls').empty();
-        $('#prev-mobile, #next-mobile').prop('disabled', true);
+            // Tampilkan loading
+            $('#prospek-table-body').html('<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Memuat data...</td></tr>');
+            $('#pagination-controls').empty();
+            $('#prev-mobile, #next-mobile').prop('disabled', true);
 
-        $.ajax({
-            url: "{{ url('/ajax/prospek') }}",
-            type: 'GET',
-            data: {
-                page: currentPage,
-                limit: limit,
-                search: currentSearch,
-                status: currentStatus
-            },
-            dataType: 'json',
-            success: function(response) {
-                renderTable(response.data);
-                renderPagination(response.pagination);
-            },
-            error: function() {
-                $('#prospek-table-body').html('<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Gagal memuat data. Silakan coba lagi.</td></tr>');
-                 $('#pagination-info').text('Tidak ada data');
-            }
-        });
-    }
-
-    function renderTable(data) {
-        const tableBody = $('#prospek-table-body');
-        tableBody.empty(); // Kosongkan tabel
-
-        if (data.length === 0) {
-            tableBody.html('<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data prospek ditemukan.</td></tr>');
-            return;
+            $.ajax({
+                url: "{{ url('/ajax/prospek') }}",
+                type: 'GET',
+                data: {
+                    page: currentPage,
+                    limit: limit,
+                    search: currentSearch,
+                    status: currentStatus
+                },
+                dataType: 'json',
+                success: function(response) {
+                    renderTable(response.data);
+                    renderPagination(response.pagination);
+                },
+                error: function() {
+                    $('#prospek-table-body').html('<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Gagal memuat data. Silakan coba lagi.</td></tr>');
+                    $('#pagination-info').text('Tidak ada data');
+                }
+            });
         }
 
-        data.forEach(prospek => {
-            const row = `
+        function renderTable(data) {
+            const tableBody = $('#prospek-table-body');
+            tableBody.empty(); // Kosongkan tabel
+
+            if (data.length === 0) {
+                tableBody.html('<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data prospek ditemukan.</td></tr>');
+                return;
+            }
+
+            data.forEach(prospek => {
+                const row = `
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${prospek.id_prospek}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${prospek.nama_sekolah}</td>
@@ -140,110 +143,102 @@ $(document).ready(function() {
                     </td>
                 </tr>
             `;
-            tableBody.append(row);
-        });
-    }
-
-    // Fungsi untuk merender kontrol pagination
-    function renderPagination(pagination) {
-        const { total, per_page, current_page, last_page } = pagination;
-        const paginationControls = $('#pagination-controls');
-        paginationControls.empty();
-
-        const from = (current_page - 1) * per_page + 1;
-        const to = Math.min(current_page * per_page, total);
-        
-        if (total > 0) {
-            $('#pagination-info').html(`Menampilkan <span class="font-medium">${from}</span> sampai <span class="font-medium">${to}</span> dari <span class="font-medium">${total}</span> hasil`);
-        } else {
-             $('#pagination-info').text('Tidak ada data');
+                tableBody.append(row);
+            });
         }
 
-        // Tombol Previous (Desktop & Mobile)
-        const prevDisabled = current_page <= 1;
-        paginationControls.append(`
+        // Fungsi untuk merender kontrol pagination
+        function renderPagination(pagination) {
+            const {
+                total,
+                per_page,
+                current_page,
+                last_page
+            } = pagination;
+            const paginationControls = $('#pagination-controls');
+            paginationControls.empty();
+
+            const from = (current_page - 1) * per_page + 1;
+            const to = Math.min(current_page * per_page, total);
+
+            if (total > 0) {
+                $('#pagination-info').html(`Menampilkan <span class="font-medium">${from}</span> sampai <span class="font-medium">${to}</span> dari <span class="font-medium">${total}</span> hasil`);
+            } else {
+                $('#pagination-info').text('Tidak ada data');
+            }
+
+            // Tombol Previous (Desktop & Mobile)
+            const prevDisabled = current_page <= 1;
+            paginationControls.append(`
             <button data-page="${current_page - 1}" ${prevDisabled ? 'disabled' : ''} class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span class="sr-only">Previous</span>
                 <ion-icon name="chevron-back-outline" class="h-5 w-5"></ion-icon>
             </button>
         `);
-         $('#prev-mobile').prop('disabled', prevDisabled).data('page', current_page - 1);
+            $('#prev-mobile').prop('disabled', prevDisabled).data('page', current_page - 1);
 
 
-        // Tombol Halaman (Maksimal 5 tombol untuk sederhana)
-        let startPage = Math.max(1, current_page - 2);
-        let endPage = Math.min(last_page, current_page + 2);
+            // Tombol Halaman (Maksimal 5 tombol untuk sederhana)
+            let startPage = Math.max(1, current_page - 2);
+            let endPage = Math.min(last_page, current_page + 2);
 
-        if (startPage > 1) {
-            paginationControls.append(`<button data-page="1" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">1</button>`);
-            if (startPage > 2) {
-                 paginationControls.append(`<span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>`);
+            if (startPage > 1) {
+                paginationControls.append(`<button data-page="1" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">1</button>`);
+                if (startPage > 2) {
+                    paginationControls.append(`<span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>`);
+                }
             }
-        }
 
-        for (let i = startPage; i <= endPage; i++) {
-            const activeClass = i === current_page ? 'z-10 bg-primary-50 border-primary text-primary' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50';
-            paginationControls.append(`
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === current_page ? 'z-10 bg-primary-50 border-primary text-primary' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50';
+                paginationControls.append(`
                 <button data-page="${i}" class="relative inline-flex items-center px-4 py-2 border text-sm font-medium ${activeClass}">
                     ${i}
                 </button>
             `);
-        }
+            }
 
-         if (endPage < last_page) {
-             if (endPage < last_page - 1) {
-                  paginationControls.append(`<span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>`);
-             }
-             paginationControls.append(`<button data-page="${last_page}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">${last_page}</button>`);
-        }
+            if (endPage < last_page) {
+                if (endPage < last_page - 1) {
+                    paginationControls.append(`<span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>`);
+                }
+                paginationControls.append(`<button data-page="${last_page}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">${last_page}</button>`);
+            }
 
 
-        // Tombol Next (Desktop & Mobile)
-        const nextDisabled = current_page >= last_page;
-        paginationControls.append(`
+            // Tombol Next (Desktop & Mobile)
+            const nextDisabled = current_page >= last_page;
+            paginationControls.append(`
             <button data-page="${current_page + 1}" ${nextDisabled ? 'disabled' : ''} class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span class="sr-only">Next</span>
                 <ion-icon name="chevron-forward-outline" class="h-5 w-5"></ion-icon>
             </button>
         `);
-        $('#next-mobile').prop('disabled', nextDisabled).data('page', current_page + 1);
-    }
-
-    // -- Event Listeners --
-
-    // Fungsi debounce untuk search agar tidak request terus-menerus
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    };
-
-    // Listener untuk search input (dengan debounce)
-    $('#search-prospek').on('keyup', debounce(function() {
-        fetchData(1); // Kembali ke halaman 1 setiap kali search
-    }, 500)); // Tunggu 500ms setelah user berhenti mengetik
-
-    // Listener untuk filter status
-    $('#status-filter').on('change', function() {
-        fetchData(1); // Kembali ke halaman 1 setiap kali filter berubah
-    });
-
-    // Listener untuk klik tombol pagination (desktop & mobile)
-    $('#pagination-controls, #prev-mobile, #next-mobile').on('click', 'button[data-page]', function() {
-        if (!$(this).prop('disabled')) {
-            const page = $(this).data('page');
-            fetchData(page);
+            $('#next-mobile').prop('disabled', nextDisabled).data('page', current_page + 1);
         }
-    });
 
-    // --- Inisialisasi ---
-    fetchData(); // Panggil pertama kali saat halaman dimuat
-});
+
+
+        // Listener untuk search input (dengan debounce)
+        $('#search-prospek').on('keyup', debounce(function() {
+            fetchData(1); // Kembali ke halaman 1 setiap kali search
+        }, 500)); // Tunggu 500ms setelah user berhenti mengetik
+
+        // Listener untuk filter status
+        $('#status-filter').on('change', function() {
+            fetchData(1); // Kembali ke halaman 1 setiap kali filter berubah
+        });
+
+        // Listener untuk klik tombol pagination (desktop & mobile)
+        $('#pagination-controls, #prev-mobile, #next-mobile').on('click', 'button[data-page]', function() {
+            if (!$(this).prop('disabled')) {
+                const page = $(this).data('page');
+                fetchData(page);
+            }
+        });
+
+        // --- Inisialisasi ---
+        fetchData(); // Panggil pertama kali saat halaman dimuat
+    });
 </script>
 @endpush
