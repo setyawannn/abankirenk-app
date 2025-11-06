@@ -125,6 +125,16 @@ function prospek_update(mysqli $mysqli, int $id, array $data): int
   return (int) $affectedRows;
 }
 
+function prospek_update_catatan(mysqli $mysqli, int $id, string $catatan): int
+{
+  $sql = "UPDATE prospek SET catatan = ? WHERE id_prospek = ?";
+  $params = [$catatan, $id];
+
+  $affectedRows = db_query($mysqli, $sql, $params);
+
+  return (int) $affectedRows;
+}
+
 function prospek_delete(mysqli $mysqli, int $id): int
 {
   $sql = "DELETE FROM prospek WHERE id_prospek = ?";

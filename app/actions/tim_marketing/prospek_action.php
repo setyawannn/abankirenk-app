@@ -55,10 +55,37 @@ function edit_action($params)
   view('tim_marketing.prospek_saya.edit', $data);
 }
 
+function update_action($params)
+{
+  $db = db_connect();
+  if (!$db) {
+    flash_message('error', 'Database Error', 'Gagal terhubung ke database.');
+    return redirect('/tim-marketing/prospek-saya');
+  }
+
+  $id = (int) ($params['id'] ?? 0);
+  if ($id <= 0) {
+    flash_message('error', 'Error', 'ID Prospek tidak valid.');
+    return redirect('/tim-marketing/prospek-saya');
+  }
+
+  $catatan = $_POST['catatan'] ?? '';
+
+  $updatedRows = prospek_update_catatan($db, $id, $catatan);
+
+  if ($updatedRows > 0) {
+    flash_message('success', 'Berhasil', 'Catatan prospek berhasil diperbarui.');
+  } else {
+    flash_message('error', 'Gagal', 'Gagal memperbarui catatan prospek.');
+  }
+
+  return redirect('/tim-marketing/prospek-saya/' . $id);
+}
+
 
 function generate_status_badge($status)
 {
-  $baseClass = "px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full";
+  $baseClass = "px-4 py-1.25 inline-flex text-sm leading-5 font-semibold rounded-full";
   switch ($status) {
     case 'baru':
       return "<span class='{$baseClass} bg-yellow-100 text-yellow-800'>Baru</span>";

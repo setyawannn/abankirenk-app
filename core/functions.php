@@ -50,6 +50,81 @@ function format_role_name(string $role_string): string
     return $formatted_name;
 }
 
+function handle_file_upload(array $fileData, string $grouping): array
+{
+    try {
+        if ($fileData['error'] !== UPLOAD_ERR_OK) {
+            throw new Exception('Gagal meng-upload file. Error code: ' . $fileData['error']);
+        }
+
+        $maxSize = 10 * 1024 * 1024;
+        if ($fileData['size'] > $maxSize) {
+            throw new Exception('Ukuran file tidak boleh lebih dari 10 MB.');
+        }
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $fileData['tmp_name']);
+        finfo_close($finfo);
+
+        $allowedMimeTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ];
+
+        if (!in_array($mimeType, $allowedMimeTypes)) {
+            throw new Exception('Format file tidak diizinkan. Hanya (jpg, png, gif, webp, pdf, doc, docx).');
+        }
+
+        $baseDir = __DIR__ . '/../storage/images';
+
+        $year = date('y');
+        $month = date('m');
+        $day = date('d');
+
+        $subDir = "{$year}/{$month}/{$day}/{$grouping}";
+        $uploadDir = "{$baseDir}/{$subDir}";
+
+        if (!is_dir($uploadDir)) {
+            if (!mkdir($uploadDir, 0755, true)) {
+                throw new Exception('Gagal membuat direktori upload.');
+            }
+        }
+
+        $originalName = basename($fileData['name']);
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+        $filenameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
+
+        $safeFilename = preg_replace('/[^a-zA-Z0-9-_\.]/', '', str_replace(' ', '-', $filenameWithoutExt));
+        $shortRand = substr(md5(uniqid()), 0, 8);
+
+        $newFilename = "{$shortRand}-{$safeFilename}.{$extension}";
+        $filePath = "{$uploadDir}/{$newFilename}";
+
+        if (!move_uploaded_file($fileData['tmp_name'], $filePath)) {
+            throw new Exception('Gagal memindahkan file yang di-upload.');
+        }
+
+        $publicUrl = "/storage/images/{$subDir}/{$newFilename}";
+
+        return [
+            'success' => true,
+            'url' => $publicUrl,
+            'fileName' => $newFilename
+        ];
+    } catch (Exception $e) {
+        error_log("Upload Error: " . $e->getMessage());
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
 /**
  * Mengambil data pengguna yang sedang login dari session.
  *
