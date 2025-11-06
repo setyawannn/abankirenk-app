@@ -1,5 +1,10 @@
 <?php
 
+
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\WebpEncoder;
+
 /**
  * Menampilkan file view beserta datanya.
  *
@@ -52,12 +57,14 @@ function format_role_name(string $role_string): string
 
 function handle_file_upload(array $fileData, string $grouping): array
 {
+    $manager = new ImageManager(Driver::class);
+
     try {
         if ($fileData['error'] !== UPLOAD_ERR_OK) {
             throw new Exception('Gagal meng-upload file. Error code: ' . $fileData['error']);
         }
 
-        $maxSize = 10 * 1024 * 1024;
+        $maxSize = 10 * 1024 * 1024; // 10 MB
         if ($fileData['size'] > $maxSize) {
             throw new Exception('Ukuran file tidak boleh lebih dari 10 MB.');
         }
@@ -66,26 +73,24 @@ function handle_file_upload(array $fileData, string $grouping): array
         $mimeType = finfo_file($finfo, $fileData['tmp_name']);
         finfo_close($finfo);
 
-        $allowedMimeTypes = [
-            'image/jpeg',
-            'image/png',
-            'image/gif',
-            'image/webp',
+        $imageMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $documentMimes = [
             'application/pdf',
             'application/msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
+        $allowedMimeTypes = array_merge($imageMimes, $documentMimes);
 
         if (!in_array($mimeType, $allowedMimeTypes)) {
-            throw new Exception('Format file tidak diizinkan. Hanya (jpg, png, gif, webp, pdf, doc, docx).');
+            throw new Exception('Format file tidak diizinkan. Hanya (JPG, PNG, PDF, DOCX, XLSX).');
         }
 
         $baseDir = __DIR__ . '/../storage/images';
-
         $year = date('y');
         $month = date('m');
         $day = date('d');
-
         $subDir = "{$year}/{$month}/{$day}/{$grouping}";
         $uploadDir = "{$baseDir}/{$subDir}";
 
@@ -98,23 +103,40 @@ function handle_file_upload(array $fileData, string $grouping): array
         $originalName = basename($fileData['name']);
         $extension = pathinfo($originalName, PATHINFO_EXTENSION);
         $filenameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
-
         $safeFilename = preg_replace('/[^a-zA-Z0-9-_\.]/', '', str_replace(' ', '-', $filenameWithoutExt));
         $shortRand = substr(md5(uniqid()), 0, 8);
 
-        $newFilename = "{$shortRand}-{$safeFilename}.{$extension}";
-        $filePath = "{$uploadDir}/{$newFilename}";
+        $originalNewFilename = "{$shortRand}-{$safeFilename}.{$extension}";
+        $originalFilePath = "{$uploadDir}/{$originalNewFilename}";
 
-        if (!move_uploaded_file($fileData['tmp_name'], $filePath)) {
+        if (!move_uploaded_file($fileData['tmp_name'], $originalFilePath)) {
             throw new Exception('Gagal memindahkan file yang di-upload.');
         }
 
-        $publicUrl = "/storage/images/{$subDir}/{$newFilename}";
+        $finalFilename = $originalNewFilename;
+
+        if (in_array($mimeType, $imageMimes)) {
+            try {
+                $webpFilename = "{$shortRand}-{$safeFilename}.webp";
+                $webpFilePath = "{$uploadDir}/{$webpFilename}";
+                $image = $manager->read($originalFilePath);
+
+                $image->encode(new WebpEncoder(80))->save($webpFilePath);
+
+                unlink($originalFilePath);
+
+                $finalFilename = $webpFilename;
+            } catch (Exception $e) {
+                error_log("Konversi ke WebP gagal: " . $e->getMessage());
+            }
+        }
+
+        $publicUrl = "/storage/images/{$subDir}/{$finalFilename}";
 
         return [
             'success' => true,
             'url' => $publicUrl,
-            'fileName' => $newFilename
+            'fileName' => $finalFilename
         ];
     } catch (Exception $e) {
         error_log("Upload Error: " . $e->getMessage());

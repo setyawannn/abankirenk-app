@@ -92,6 +92,36 @@ Selamat datang di MafemWok (nama bisa Anda sesuaikan), sebuah kerangka kerja PHP
 
 ---
 
+## Server Requirements & Konfigurasi
+
+Proyek ini memiliki beberapa dependensi di sisi server agar dapat berjalan dengan baik.
+
+### 1. Ekstensi PHP: GD Library (Wajib)
+
+Proyek ini menggunakan library `intervention/image` untuk kompresi gambar otomatis saat upload. Library ini memerlukan **GD Library** dari PHP.
+
+#### ➡️ Saat Development (XAMPP):
+
+1.  Buka **XAMPP Control Panel**.
+2.  Di baris **Apache**, klik **Config** > **`PHP (php.ini)`**.
+3.  Cari (Ctrl+F) baris `;extension=gd`.
+4.  **Hapus titik koma (`;`)** di depannya sehingga menjadi `extension=gd`.
+5.  **Simpan** file `php.ini`.
+6.  **Stop** dan **Start** ulang *service* Apache agar perubahan terbaca.
+
+#### ➡️ Saat Deployment (Linux Server):
+
+Biasanya, `php-gd` sudah terinstal. Jika belum, Anda perlu menginstalnya secara manual (contoh untuk Ubuntu/Debian):
+
+```bash
+sudo apt-get update
+sudo apt-get install php-gd
+sudo systemctl restart apache2 # atau 'php-fpm' jika Anda menggunakan Nginx
+
+```
+
+---
+
 ## 📁 Struktur Folder
 
 Struktur folder yang jelas, teliti, dan sudah mengadopsi penamaan Action-Data-Template (ADT) untuk kerangka kerja PHP prosedural kita:
