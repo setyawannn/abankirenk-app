@@ -30,7 +30,7 @@ route_post('/manajer-marketing/manajemen-prospek/{id}/destroy', ['actions/manaje
 
 // Tim Marketing
 route_get('/tim-marketing/prospek-saya', ['actions/tim_marketing/prospek_action.php', 'index_action'], 'auth');
-route_get('/tim-marketing/prospek-saya/{id}/detail', ['actions/tim_marketing/prospek_action.php', 'detail_action'], 'auth');
+route_get('/tim-marketing/prospek-saya/{id}', ['actions/tim_marketing/prospek_action.php', 'edit_action'], 'auth');
 
 
 // AJAX Routes

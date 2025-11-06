@@ -15,7 +15,7 @@ Dashboard
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <ion-icon name="search-outline" class="text-gray-400"></ion-icon>
                 </div>
-                <input type="text" id="search-prospek" class="block w-[300px] pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" placeholder="Cari nama sekolah atau catatan...">
+                <input type="text" id="search-prospek" class="block w-[300px] pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" placeholder="Cari nama sekolah atau deskripsi...">
             </div>
         </div>
         <div>
@@ -42,7 +42,7 @@ Dashboard
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Sekolah</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
                         <th scope="col" class="relative px-6 py-3">
                             <span class="sr-only">Aksi</span>
                             <span class="sr-only">Hapus</span>
@@ -188,7 +188,7 @@ Dashboard
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${index + 1}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${prospek.nama_sekolah}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">${prospek.status_badge}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">${prospek.catatan || '-'}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">${prospek.deskripsi || '-'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-base font-medium">
                         <a href="${editUrl}" class="text-primary hover:text-primary-700">
                             <ion-icon name="create-outline"></ion-icon>

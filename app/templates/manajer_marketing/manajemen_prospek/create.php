@@ -126,12 +126,12 @@ Manajemen Prospek
 
 
                     <div class="col-span-2">
-                        <label for="catatan" class="label-df">
+                        <label for="deskripsi" class="label-df">
                             Deskripsi
                         </label>
                         <textarea
-                            name="catatan"
-                            id="catatan"
+                            name="deskripsi"
+                            id="deskripsi"
                             rows="4"
                             class="input-df resize-none"
                             placeholder="Contoh: Client ingin mendapatkan sosialisasi secepatnya sebelum akhir desember dan harus..."></textarea>

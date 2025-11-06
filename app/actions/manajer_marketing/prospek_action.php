@@ -57,7 +57,7 @@ function store_action()
     $no_narahubung = $_POST['no_narahubung'] ?? null;
     $id_sekolah = $_POST['id_sekolah'] ?? null;
     $id_user = $_POST['id_user'] ?? null;
-    $deskripsi = $_POST['catatan'] ?? null;
+    $deskripsi = $_POST['deskripsi'] ?? null;
 
     if (empty($narahubung) || empty($no_narahubung) || empty($id_user)) {
       throw new Exception("Narahubung, No. Narahubung, dan PIC wajib diisi.");
@@ -170,7 +170,7 @@ function update_action($params)
     $id_sekolah = $_POST['id_sekolah'] ?? null;
     $id_user = $_POST['id_user'] ?? null;
     $status_prospek = $_POST['status_prospek'] ?? null;
-    $deskripsi = $_POST['catatan'] ?? null;
+    $deskripsi = $_POST['deskripsi'] ?? null;
 
     if (empty($narahubung) || empty($no_narahubung) || empty($id_user) || empty($status_prospek)) {
       throw new Exception("Narahubung, No. Narahubung, PIC, dan Status wajib diisi.");

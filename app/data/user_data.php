@@ -12,6 +12,16 @@ function user_find_by_email(mysqli $mysqli, string $email): ?array
   return $result ? $result->fetch_assoc() : null;
 }
 
+function user_find_by_id(mysqli $mysqli, int $id): ?array
+{
+  $sql = "SELECT * FROM users WHERE id_user = ? LIMIT 1";
+  $params = [$id];
+
+  $result = db_query($mysqli, $sql, $params);
+
+  return $result ? $result->fetch_assoc() : null;
+}
+
 function user_create(mysqli $mysqli, array $data): bool
 {
   $sql = "INSERT INTO users (nama, email, password, username, role) 

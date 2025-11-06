@@ -154,7 +154,7 @@ Dashboard
             }
 
             data.forEach((prospek, index) => {
-                const detail = `{{ url('/manajer-marketing/manajemen-prospek') }}/${prospek.id_prospek}`;
+                const detail = `{{ url('/tim-marketing/prospek-saya') }}/${prospek.id_prospek}`;
 
                 let statusSelectHtml = `<select class="input-df bg-white open-status-modal" data-id="${prospek.id_prospek}" data-original-value="${prospek.status_prospek}">`;
                 allStatusOptions.forEach(function(status) {
@@ -190,7 +190,7 @@ Dashboard
                             <div>
                                 <a href="${detail}" class="bg-primary rounded-md p-2 hover:bg-primary-700 flex items-center justify-center">
 
-                                    <ion-icon name="eye-outline" class="h-5 w-5 text-white"></ion-icon>
+                                    <ion-icon name="create-outline" class="h-5 w-5 text-white"></ion-icon>
                                 </a>
                             </div>
                         </div>

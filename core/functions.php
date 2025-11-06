@@ -41,6 +41,15 @@ function flash_message(string $key, ?string $title = null, ?string $message = nu
     ];
 }
 
+function format_role_name(string $role_string): string
+{
+    $role_string = str_replace('manajer', 'Manager', $role_string);
+    $with_spaces = str_replace('_', ' ', $role_string);
+
+    $formatted_name = ucwords($with_spaces);
+    return $formatted_name;
+}
+
 /**
  * Mengambil data pengguna yang sedang login dari session.
  *
