@@ -2,7 +2,7 @@
 if (isset($_SESSION['flash_message'])) {
     $flash = $_SESSION['flash_message'];
     $key = $flash['key'];
-    $title = $flash['title'];
+    $title = $flash['title'] ?? '';
     $message = $flash['message'];
 
     
@@ -48,7 +48,9 @@ if (isset($_SESSION['flash_message'])) {
       </div>
 
       <div class="flex-1">
-        <strong class="font-medium {{ $colorClasses }}">{{ $title }}</strong>
+        @if ($title)
+          <strong class="font-medium {{ $colorClasses }}">{{ $title }}</strong>
+        @endif
         <p class="mt-0.5 text-sm text-gray-700">{{ $message }}</p>
       </div>
 

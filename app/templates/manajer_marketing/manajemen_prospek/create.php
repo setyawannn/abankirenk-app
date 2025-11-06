@@ -71,25 +71,25 @@ Manajemen Prospek
 
                     <div id="new-school-fields" class="col-span-2 grid grid-cols-2 gap-2 px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" style="display: none;">
                         <div>
-                            <label for="narahubung" class="label-df">
+                            <label for="nama_sekolah" class="label-df">
                                 Nama Sekolah <span class="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
-                                name="narahubung"
-                                id="narahubung"
+                                name="nama_sekolah"
+                                id="nama_sekolah"
                                 class="input-df"
                                 placeholder="Contoh: SMAK Kedung Badak Malang"
                                 required>
                         </div>
                         <div>
-                            <label for="no_narahubung" class="label-df">
+                            <label for="kontak_sekolah" class="label-df">
                                 Nomor Sekolah <span class="text-red-500">*</span>
                             </label>
                             <input
                                 type="tel"
-                                name="no_narahubung"
-                                id="no_narahubung"
+                                name="kontak_sekolah"
+                                id="kontak_sekolah"
                                 class="input-df"
                                 placeholder="Contoh: 081333717212"
                                 pattern="[0-9]+"
@@ -97,12 +97,12 @@ Manajemen Prospek
                             <p class="desc-df">Format: nomor telepon tanpa spasi atau tanda hubung</p>
                         </div>
                         <div class="col-span-2">
-                            <label for="catatan" class="label-df">
-                                Alamat Sekolah <span class="text-red-500">*</span>
+                            <label for="lokasi_sekolah" class="label-df">
+                                Lokasi Sekolah <span class="text-red-500">*</span>
                             </label>
                             <textarea
-                                name="catatan"
-                                id="catatan"
+                                name="lokasi_sekolah"
+                                id="lokasi_sekolah"
                                 rows="4"
                                 class="input-df resize-none"
                                 placeholder="Contoh: Jalan danau poso 1 G2E No 16, Sawojajar, Kedungkandang, Malang"></textarea>
@@ -169,7 +169,8 @@ Manajemen Prospek
         const modal = $('#modal-add-sekolah');
         const loadingOverlay = $('#loading-overlay');
         const checkboxAddNewSchool = $('#add-new-school-checkbox');
-        const newSchoolFields = $('#new-school-fields'); // Kita tambahkan ini untuk efisiensi
+        const newSchoolFields = $('#new-school-fields');
+        const newSchoolInputs = newSchoolFields.find('input, textarea');
 
         const tomSelectInstance = new TomSelect('#id_sekolah', {
             valueField: 'id_sekolah',
@@ -205,18 +206,23 @@ Manajemen Prospek
             }
         });
 
+        newSchoolInputs.prop('disabled', true);
+
         checkboxAddNewSchool.change(function() {
             if (this.checked) {
                 newSchoolFields.show();
+                newSchoolInputs.prop('disabled', false);
 
                 tomSelectInstance.clear();
                 tomSelectInstance.disable();
             } else {
                 newSchoolFields.hide();
+                newSchoolInputs.prop('disabled', true);
 
                 tomSelectInstance.enable();
             }
         });
+
         $('#no_narahubung, #kontak_sekolah').on('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
         });

@@ -20,13 +20,21 @@ function index_action()
 function create_action()
 {
   $db = db_connect();
-  $sekolah = sekolah_get_all($db);
+  if (!$db) {
+    flash_message('error', 'Database Error', 'Gagal terhubung ke database.');
+    view('manajer_marketing.manajemen_prospek.create', [
+      'page_title' => 'Tambah Prospek',
+      'active_menu' => 'prospek_mm',
+      'staff' => [],
+    ]);
+    return;
+  }
+
   $staff = user_get_all_by_role($db, 'tim_marketing');
 
   $data = [
-    'page_title' => 'Manajemen Prospek',
+    'page_title' => 'Tambah Prospek Baru',
     'active_menu' => 'prospek_mm',
-    'sekolah' => $sekolah,
     'staff' => $staff,
   ];
 
@@ -36,43 +44,225 @@ function create_action()
 function store_action()
 {
   $db = db_connect();
-  $narahubung = $_POST['narahubung'];
-  $no_narahubung = $_POST['no_narahubung'];
-  $id_sekolah = $_POST['id_sekolah'];
-  $id_user = $_POST['id_user'];
-  $catatan = $_POST['catatan'];
-
-
-  $nama_sekolah = $_POST['nama_sekolah'] ?? '';
-  $lokasi_sekolah = $_POST['lokasi_sekolah'] ?? '';
-  $kontak_sekolah = $_POST['kontak_sekolah'] ?? '';
-
-  if (!$id_sekolah) {
-    $new_id_sekolah = sekolah_insert($db, $nama_sekolah, $lokasi_sekolah, $kontak_sekolah);
+  if (!$db) {
+    flash_message('error', 'Database Error', 'Gagal terhubung ke database.');
+    return redirect('/manajer-marketing/manajemen-prospek/create');
   }
 
-  prospek_create($db, [
-    'narahubung' => $narahubung,
-    'no_narahubung' => $no_narahubung,
-    'id_sekolah' => $id_sekolah ?? $new_id_sekolah,
-    'id_user' => $id_user,
-    'catatan' => $catatan,
-    'status' => 'baru'
-  ]);
+  $success = false;
+  db_begin_transaction($db);
 
-  flash_message('success', 'Prospek baru berhasil ditambahkan.');
+  try {
+    $narahubung = $_POST['narahubung'] ?? null;
+    $no_narahubung = $_POST['no_narahubung'] ?? null;
+    $id_sekolah = $_POST['id_sekolah'] ?? null;
+    $id_user = $_POST['id_user'] ?? null;
+    $deskripsi = $_POST['catatan'] ?? null;
+
+    if (empty($narahubung) || empty($no_narahubung) || empty($id_user)) {
+      throw new Exception("Narahubung, No. Narahubung, dan PIC wajib diisi.");
+    }
+
+    $final_id_sekolah = $id_sekolah;
+
+    if (empty($final_id_sekolah)) {
+      $nama_sekolah = $_POST['nama_sekolah'] ?? null;
+      $lokasi_sekolah = $_POST['lokasi_sekolah'] ?? null;
+      $kontak_sekolah = $_POST['kontak_sekolah'] ?? null;
+
+      if (empty($nama_sekolah) || empty($lokasi_sekolah)) {
+        throw new Exception("Jika menambah sekolah baru, nama dan alamat sekolah wajib diisi.");
+      }
+
+      $final_id_sekolah = sekolah_insert($db, $nama_sekolah, $lokasi_sekolah, $kontak_sekolah);
+      if (!$final_id_sekolah) {
+        throw new Exception("Gagal menyimpan data sekolah baru.");
+      }
+    }
+
+    $prospek_data = [
+      'id_sekolah' => $final_id_sekolah,
+      'id_user' => $id_user,
+      'narahubung' => $narahubung,
+      'no_narahubung' => $no_narahubung,
+      'status' => 'baru',
+      'deskripsi' => $deskripsi,
+      'catatan' => $deskripsi
+    ];
+
+    if (!prospek_create($db, $prospek_data)) {
+      throw new Exception("Gagal menyimpan data prospek.");
+    }
+
+    db_commit($db);
+    flash_message('success', 'Tambah Prospek', 'Prospek baru berhasil ditambahkan.');
+    $success = true;
+  } catch (Exception $e) {
+    db_rollback($db);
+    error_log('Error in store_action: ' . $e->getMessage());
+    flash_message('error', 'Tambah Prospek Gagal', 'Terjadi kesalahan: ' . $e->getMessage());
+  }
+
+  if ($success) {
+    return redirect('/manajer-marketing/manajemen-prospek');
+  } else {
+    return redirect('/manajer-marketing/manajemen-prospek/create');
+  }
+}
+
+function edit_action($params)
+{
+  $db = db_connect();
+  if (!$db) {
+    flash_message('error', 'Database Error', 'Gagal terhubung ke database.');
+    return redirect('/manajer-marketing/manajemen-prospek');
+  }
+
+  $id = (int) ($params['id'] ?? 0);
+  if ($id <= 0) {
+    flash_message('error', 'Error', 'ID Prospek tidak valid.');
+    return redirect('/manajer-marketing/manajemen-prospek');
+  }
+
+  $prospek = prospek_get_by_id($db, $id);
+
+  if (!$prospek) {
+    flash_message('error', 'Data Prospek', 'Prospek tidak ditemukan.');
+    return redirect('/manajer-marketing/manajemen-prospek');
+  }
+
+  $sekolah = sekolah_get_by_id($db, $prospek['id_sekolah']);
+  $staff = user_get_all_by_role($db, 'tim_marketing');
+
+  $data = [
+    'page_title' => 'Edit Prospek',
+    'active_menu' => 'prospek_mm',
+    'prospek' => $prospek,
+    'sekolah' => $sekolah,
+    'staff' => $staff,
+    'status_options' => ['baru', 'berhasil', 'gagal', 'batal', 'dalam proses']
+  ];
+
+  view('manajer_marketing.manajemen_prospek.edit', $data);
+}
+
+function update_action($params)
+{
+  $db = db_connect();
+  $id = (int) ($params['id'] ?? 0);
+
+  if (!$db) {
+    flash_message('error', 'Database Error', 'Gagal terhubung ke database.');
+    return redirect('/manajer-marketing/manajemen-prospek/edit/' . $id);
+  }
+
+  if ($id <= 0) {
+    flash_message('error', 'Error', 'ID Prospek tidak valid.');
+    return redirect('/manajer-marketing/manajemen-prospek');
+  }
+
+  $success = false;
+  db_begin_transaction($db);
+
+  try {
+    $narahubung = $_POST['narahubung'] ?? null;
+    $no_narahubung = $_POST['no_narahubung'] ?? null;
+    $id_sekolah = $_POST['id_sekolah'] ?? null;
+    $id_user = $_POST['id_user'] ?? null;
+    $status_prospek = $_POST['status_prospek'] ?? null;
+    $deskripsi = $_POST['catatan'] ?? null;
+
+    if (empty($narahubung) || empty($no_narahubung) || empty($id_user) || empty($status_prospek)) {
+      throw new Exception("Narahubung, No. Narahubung, PIC, dan Status wajib diisi.");
+    }
+
+    $final_id_sekolah = $id_sekolah;
+
+    if (empty($final_id_sekolah)) {
+      $nama_sekolah = $_POST['nama_sekolah'] ?? null;
+      $lokasi_sekolah = $_POST['lokasi_sekolah'] ?? null;
+      $kontak_sekolah = $_POST['kontak_sekolah'] ?? null;
+
+      if (empty($nama_sekolah) || empty($lokasi_sekolah)) {
+        throw new Exception("Jika menambah sekolah baru, nama dan alamat sekolah wajib diisi.");
+      }
+
+      $final_id_sekolah = sekolah_insert($db, $nama_sekolah, $lokasi_sekolah, $kontak_sekolah);
+      if (!$final_id_sekolah) {
+        throw new Exception("Gagal menyimpan data sekolah baru.");
+      }
+    }
+
+    $prospek_data = [
+      'id_sekolah' => $final_id_sekolah,
+      'id_user' => $id_user,
+      'narahubung' => $narahubung,
+      'no_narahubung' => $no_narahubung,
+      'status_prospek' => $status_prospek,
+      'deskripsi' => $deskripsi,
+      'catatan' => $deskripsi
+    ];
+
+    if (prospek_update($db, $id, $prospek_data) === false) {
+      throw new Exception("Gagal memperbarui data prospek.");
+    }
+
+    db_commit($db);
+    flash_message('success', 'Update Berhasil', 'Prospek berhasil diperbarui.');
+    $success = true;
+  } catch (Exception $e) {
+    db_rollback($db);
+    error_log('Error in update_action: ' . $e->getMessage());
+    flash_message('error', 'Update Gagal', 'Terjadi kesalahan: ' . $e->getMessage());
+  }
+
+  if ($success) {
+    return redirect('/manajer-marketing/manajemen-prospek');
+  } else {
+    return redirect('/manajer-marketing/manajemen-prospek/edit/' . $id);
+  }
+}
+
+function delete_action($params)
+{
+  $db = db_connect();
+  $id = (int) ($params['id'] ?? 0);
+
+  if (!$db) {
+    flash_message('error', 'Database Error', 'Gagal terhubung ke database.');
+    return redirect('/manajer-marketing/manajemen-prospek');
+  }
+
+  if ($id <= 0) {
+    flash_message('error', 'Error', 'ID Prospek tidak valid.');
+    return redirect('/manajer-marketing/manajemen-prospek');
+  }
+
+  db_begin_transaction($db);
+  try {
+    if (!prospek_delete($db, $id)) {
+      throw new Exception("Gagal menghapus data prospek.");
+    }
+
+    db_commit($db);
+    flash_message('success', 'Hapus Berhasil', 'Prospek berhasil dihapus.');
+  } catch (Exception $e) {
+    db_rollback($db);
+    error_log('Error in delete_action: ' . $e->getMessage());
+    flash_message('error', 'Hapus Gagal', 'Terjadi kesalahan: ' . $e->getMessage());
+  }
+
   return redirect('/manajer-marketing/manajemen-prospek');
 }
 
 
 function ajax_list_action()
 {
-
   $db = db_connect();
   if (!$db) {
     header('Content-Type: application/json');
     http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed']);
+    echo json_encode(['error' => 'Database connection failed', 'data' => []]);
     exit();
   }
 
@@ -91,12 +281,12 @@ function ajax_list_action()
   $result = prospek_get_all($db, $options);
 
   $dataWithBadges = array_map(function ($row) {
-    $row['status_badge'] = generate_status_badge($row['status_prospek']);
+    $status = $row['status_prospek'] ?? 'undefined';
+    $row['status_badge'] = generate_status_badge($status);
     return $row;
   }, $result['data']);
 
-
-  $totalPages = ceil($result['total'] / $limit);
+  $totalPages = ($result['total'] > 0 && $limit > 0) ? ceil($result['total'] / $limit) : 1;
 
   $response = [
     'data' => $dataWithBadges,
@@ -117,16 +307,14 @@ function generate_status_badge($status)
 {
   $baseClass = "px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full";
   switch ($status) {
-    case 'baru':
-      return "<span class='{$baseClass} bg-yellow-100 text-yellow-800'>Baru</span>";
+    case 'dalam proses':
+      return "<span class='{$baseClass} bg-blue-100 text-blue-800'>Dalam Proses</span>";
     case 'berhasil':
       return "<span class='{$baseClass} bg-green-100 text-green-800'>Berhasil</span>";
     case 'gagal':
       return "<span class='{$baseClass} bg-red-100 text-red-800'>Gagal</span>";
     case 'batal':
       return "<span class='{$baseClass} bg-gray-100 text-gray-800'>Batal</span>";
-    case 'dalam proses':
-      return "<span class='{$baseClass} bg-blue-100 text-blue-800'>Dalam Proses</span>";
     default:
       return "<span class='{$baseClass} bg-yellow-100 text-yellow-800'>{$status}</span>";
   }

@@ -1,3 +1,4 @@
+<!-- template/manejer_marketing/manajemen_prospek/index.php -->
 @extends('layouts.admin')
 
 @section('title')
@@ -38,7 +39,7 @@ Dashboard
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Sekolah</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
@@ -88,15 +89,13 @@ Dashboard
         let currentPage = 1;
         let currentSearch = '';
         let currentStatus = '';
-        const limit = 10; // Jumlah item per halaman
+        const limit = 10;
 
-        // Fungsi utama untuk mengambil dan merender data
         function fetchData(page = 1) {
             currentPage = page;
             currentSearch = $('#search-prospek').val();
             currentStatus = $('#status-filter').val();
 
-            // Tampilkan loading
             $('#prospek-table-body').html('<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Memuat data...</td></tr>');
             $('#pagination-controls').empty();
             $('#prev-mobile, #next-mobile').prop('disabled', true);
@@ -124,17 +123,17 @@ Dashboard
 
         function renderTable(data) {
             const tableBody = $('#prospek-table-body');
-            tableBody.empty(); // Kosongkan tabel
+            tableBody.empty();
 
             if (data.length === 0) {
                 tableBody.html('<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data prospek ditemukan.</td></tr>');
                 return;
             }
 
-            data.forEach(prospek => {
+            data.forEach((prospek, index) => {
                 const row = `
                 <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${prospek.id_prospek}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${index + 1}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${prospek.nama_sekolah}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">${prospek.status_badge}</td>
                     <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">${prospek.catatan || '-'}</td>
@@ -147,7 +146,6 @@ Dashboard
             });
         }
 
-        // Fungsi untuk merender kontrol pagination
         function renderPagination(pagination) {
             const {
                 total,
@@ -167,7 +165,6 @@ Dashboard
                 $('#pagination-info').text('Tidak ada data');
             }
 
-            // Tombol Previous (Desktop & Mobile)
             const prevDisabled = current_page <= 1;
             paginationControls.append(`
             <button data-page="${current_page - 1}" ${prevDisabled ? 'disabled' : ''} class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -178,7 +175,6 @@ Dashboard
             $('#prev-mobile').prop('disabled', prevDisabled).data('page', current_page - 1);
 
 
-            // Tombol Halaman (Maksimal 5 tombol untuk sederhana)
             let startPage = Math.max(1, current_page - 2);
             let endPage = Math.min(last_page, current_page + 2);
 
@@ -206,7 +202,6 @@ Dashboard
             }
 
 
-            // Tombol Next (Desktop & Mobile)
             const nextDisabled = current_page >= last_page;
             paginationControls.append(`
             <button data-page="${current_page + 1}" ${nextDisabled ? 'disabled' : ''} class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -219,17 +214,14 @@ Dashboard
 
 
 
-        // Listener untuk search input (dengan debounce)
         $('#search-prospek').on('keyup', debounce(function() {
-            fetchData(1); // Kembali ke halaman 1 setiap kali search
-        }, 500)); // Tunggu 500ms setelah user berhenti mengetik
+            fetchData(1);
+        }, 500));
 
-        // Listener untuk filter status
         $('#status-filter').on('change', function() {
-            fetchData(1); // Kembali ke halaman 1 setiap kali filter berubah
+            fetchData(1);
         });
 
-        // Listener untuk klik tombol pagination (desktop & mobile)
         $('#pagination-controls, #prev-mobile, #next-mobile').on('click', 'button[data-page]', function() {
             if (!$(this).prop('disabled')) {
                 const page = $(this).data('page');
@@ -237,8 +229,7 @@ Dashboard
             }
         });
 
-        // --- Inisialisasi ---
-        fetchData(); // Panggil pertama kali saat halaman dimuat
+        fetchData();
     });
 </script>
 @endpush

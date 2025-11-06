@@ -168,7 +168,7 @@ CREATE TABLE `prospek` (
   `status_prospek` enum('berhasil','gagal','batal','dalam proses') DEFAULT NULL,
   `deskripsi` text DEFAULT NULL,
   `catatan` text DEFAULT NULL,
-  `narahbung` varchar(100) DEFAULT NULL,
+  `narahubung` varchar(100) DEFAULT NULL,
   `no_narahubung` varchar(40) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -176,7 +176,7 @@ CREATE TABLE `prospek` (
 -- Dumping data for table `prospek`
 --
 
-INSERT INTO `prospek` (`id_prospek`, `id_user`, `id_sekolah`, `status_prospek`, `deskripsi`, `catatan`, `narahbung`, `no_narahubung`) VALUES
+INSERT INTO `prospek` (`id_prospek`, `id_user`, `id_sekolah`, `status_prospek`, `deskripsi`, `catatan`, `narahubung`, `no_narahubung`) VALUES
 (1, 2, 1, 'berhasil', 'Prospek awal untuk SMAN 1 Contoh Kota, tahun ajaran 2025/2026.', 'Deal tercapai setelah presentasi.', 'Ibu Rina', '081234567890');
 
 -- --------------------------------------------------------

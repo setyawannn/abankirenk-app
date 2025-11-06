@@ -14,7 +14,7 @@ function prospek_get_all(mysqli $mysqli, array $options = []): array
   $params = [];
 
   if (!empty($search)) {
-    $whereClauses[] = "(s.nama LIKE ? OR p.narahbung LIKE ? OR p.deskripsi LIKE ?)";
+    $whereClauses[] = "(s.nama LIKE ? OR p.narahubung LIKE ? OR p.deskripsi LIKE ?)";
     $searchTerm = "%{$search}%";
     $params[] = $searchTerm;
     $params[] = $searchTerm;
@@ -53,7 +53,7 @@ function prospek_get_all(mysqli $mysqli, array $options = []): array
 
 function prospek_create(mysqli $mysqli, array $data): int
 {
-  $sql = "INSERT INTO prospek (id_sekolah, id_user, narahbung, no_narahubung, status_prospek, deskripsi, catatan) 
+  $sql = "INSERT INTO prospek (id_sekolah, id_user, narahubung, no_narahubung, status_prospek, deskripsi, catatan) 
             VALUES (?, ?, ?, ?, ?, ?, ?)";
 
   $params = [
@@ -89,7 +89,7 @@ function prospek_update(mysqli $mysqli, int $id, array $data): int
   $sql = "UPDATE prospek SET 
                 id_sekolah = ?, 
                 id_user = ?, 
-                narahbung = ?, 
+                narahubung = ?, 
                 no_narahubung = ?, 
                 status_prospek = ?, 
                 deskripsi = ?,
@@ -106,6 +106,16 @@ function prospek_update(mysqli $mysqli, int $id, array $data): int
     $data['catatan'],
     $id
   ];
+
+  $affectedRows = db_query($mysqli, $sql, $params);
+
+  return (int) $affectedRows;
+}
+
+function prospek_delete(mysqli $mysqli, int $id): int
+{
+  $sql = "DELETE FROM prospek WHERE id_prospek = ?";
+  $params = [$id];
 
   $affectedRows = db_query($mysqli, $sql, $params);
 
