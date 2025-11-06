@@ -34,7 +34,7 @@ return [
       'id' => 'prospek_tm',
       'nama' => 'Prospek Saya',
       'icon' => 'list-outline',
-      'redirect_url' => '/prospek/saya'
+      'redirect_url' => '/tim-marketing/prospek-saya'
     ],
     [
       'id' => 'mou_tm',

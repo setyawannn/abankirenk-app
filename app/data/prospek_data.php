@@ -26,6 +26,14 @@ function prospek_get_all(mysqli $mysqli, array $options = []): array
     $params[] = $status;
   }
 
+  $userRole = $_SESSION['user']['role'] ?? '';
+
+  if ($userRole === 'tim_marketing') {
+    $user = auth();
+    $whereClauses[] = "p.id_user = ?";
+    $params[] = $user['id'];
+  }
+
   $whereSql = "";
   if (!empty($whereClauses)) {
     $whereSql = " WHERE " . implode(" AND ", $whereClauses);
@@ -36,7 +44,12 @@ function prospek_get_all(mysqli $mysqli, array $options = []): array
   $totalResult = db_query($mysqli, $totalQuery, $params);
   $totalRows = $totalResult ? $totalResult->fetch_assoc()['total'] : 0;
 
-  $dataQuery = "SELECT p.*, s.nama AS nama_sekolah " . $baseQuery . $whereSql . " ORDER BY p.id_prospek DESC LIMIT ? OFFSET ?";
+  $dataQuery = "SELECT p.*, s.nama AS nama_sekolah, 
+                         DATE_FORMAT(p.created_at, '%d/%m/%y %H:%i') AS formatted_created_at,
+                         DATE_FORMAT(p.updated_at, '%d/%m/%y %H:%i') AS formatted_updated_at
+                  " . $baseQuery . $whereSql . " 
+                  ORDER BY p.updated_at DESC 
+                  LIMIT ? OFFSET ?";
 
   $dataParams = $params;
   $dataParams[] = $limit;
@@ -116,6 +129,16 @@ function prospek_delete(mysqli $mysqli, int $id): int
 {
   $sql = "DELETE FROM prospek WHERE id_prospek = ?";
   $params = [$id];
+
+  $affectedRows = db_query($mysqli, $sql, $params);
+
+  return (int) $affectedRows;
+}
+
+function prospek_update_status(mysqli $mysqli, int $id, string $status): int
+{
+  $sql = "UPDATE prospek SET status_prospek = ? WHERE id_prospek = ?";
+  $params = [$status, $id];
 
   $affectedRows = db_query($mysqli, $sql, $params);
 

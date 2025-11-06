@@ -27,7 +27,14 @@ route_get('/manajer-marketing/manajemen-prospek/{id}/edit', ['actions/manajer_ma
 route_post('/manajer-marketing/manajemen-prospek/{id}/update', ['actions/manajer_marketing/prospek_action.php', 'update_action'], 'auth');
 route_post('/manajer-marketing/manajemen-prospek/{id}/destroy', ['actions/manajer_marketing/prospek_action.php', 'delete_action'], 'auth');
 
+
+// Tim Marketing
+route_get('/tim-marketing/prospek-saya', ['actions/tim_marketing/prospek_action.php', 'index_action'], 'auth');
+route_get('/tim-marketing/prospek-saya/{id}/detail', ['actions/tim_marketing/prospek_action.php', 'detail_action'], 'auth');
+
+
 // AJAX Routes
 route_get('/ajax/prospek', ['actions/manajer_marketing/prospek_action.php', 'ajax_list_action'], 'auth');
+route_post('/ajax/prospek/update-status', ['actions/manajer_marketing/prospek_action.php', 'ajax_update_status_action'], 'auth');
 route_get('/ajax/sekolah', ['actions/sekolah_action.php', 'sekolah_search_action'], 'auth');
 route_post('/ajax/sekolah/store', ['actions/sekolah_action.php', 'sekolah_store_action'], 'auth');

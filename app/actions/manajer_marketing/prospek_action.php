@@ -87,7 +87,7 @@ function store_action()
       'no_narahubung' => $no_narahubung,
       'status' => 'baru',
       'deskripsi' => $deskripsi,
-      'catatan' => $deskripsi
+      'catatan' => ''
     ];
 
     if (!prospek_create($db, $prospek_data)) {
@@ -200,7 +200,7 @@ function update_action($params)
       'no_narahubung' => $no_narahubung,
       'status_prospek' => $status_prospek,
       'deskripsi' => $deskripsi,
-      'catatan' => $deskripsi
+      'catatan' => ''
     ];
 
     if (prospek_update($db, $id, $prospek_data) === false) {
@@ -303,10 +303,71 @@ function ajax_list_action()
   exit();
 }
 
+function ajax_update_status_action()
+{
+  header('Content-Type: application/json');
+
+  $db = db_connect();
+  if (!$db) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Database connection failed.']);
+    exit();
+  }
+
+  try {
+    $id = (int) ($_POST['id_prospek'] ?? 0);
+    $status = (string) ($_POST['status'] ?? '');
+
+    if ($id <= 0 || empty($status)) {
+      http_response_code(400);
+      throw new Exception('ID Prospek atau Status tidak valid.');
+    }
+
+    $allowed_statuses = ['baru', 'berhasil', 'gagal', 'batal', 'dalam proses'];
+    if (!in_array($status, $allowed_statuses)) {
+      http_response_code(400);
+      throw new Exception("Nilai status '{$status}' tidak diizinkan.");
+    }
+
+    db_begin_transaction($db);
+
+    $affectedRows = prospek_update_status($db, $id, $status);
+
+    if ($affectedRows > 0) {
+      db_commit($db);
+      echo json_encode([
+        'success' => true,
+        'message' => 'Status prospek berhasil diperbarui.'
+      ]);
+    } else {
+      db_rollback($db);
+      throw new Exception('Gagal memperbarui status (mungkin data sama atau ID tidak ditemukan).');
+    }
+  } catch (Exception $e) {
+    if (isset($db)) db_rollback($db);
+
+    error_log('AJAX Update Status Error: ' . $e->getMessage());
+
+    if (http_response_code() == 200) {
+      http_response_code(500);
+    }
+
+    echo json_encode([
+      'success' => false,
+      'message' => $e->getMessage()
+    ]);
+  }
+
+  exit();
+}
+
+
 function generate_status_badge($status)
 {
   $baseClass = "px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full";
   switch ($status) {
+    case 'baru':
+      return "<span class='{$baseClass} bg-yellow-100 text-yellow-800'>Baru</span>";
     case 'dalam proses':
       return "<span class='{$baseClass} bg-blue-100 text-blue-800'>Dalam Proses</span>";
     case 'berhasil':
@@ -316,6 +377,6 @@ function generate_status_badge($status)
     case 'batal':
       return "<span class='{$baseClass} bg-gray-100 text-gray-800'>Batal</span>";
     default:
-      return "<span class='{$baseClass} bg-yellow-100 text-yellow-800'>{$status}</span>";
+      return "<span class='{$baseClass} bg-gray-100 text-gray-800'>{$status}</span>";
   }
 }
