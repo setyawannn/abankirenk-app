@@ -167,11 +167,11 @@ Dashboard
                 const cardHtml = `
                     <div class="flex flex-col md:flex-row items-start gap-4 p-4 w-full">
                         
-                        <div class="w-full md:w-1/5">
+                        <div class="w-full md:w-2/12">
                             ${statusSelectHtml}
                         </div>
 
-                        <div class="flex flex-col gap-1 w-full md:w-3/5">
+                        <div class="flex flex-col gap-1 w-full md:w-6/12">
                             <h4 class="text-lg font-medium text-gray-600">${prospek.nama_sekolah}</h4>
                             <div class="flex items-center gap-2 text-sm font-normal text-gray-500">
                                 <ion-icon name="id-card-outline" class="h-5 w-5 text-primary"></ion-icon>
@@ -182,10 +182,10 @@ Dashboard
                             </p>
                         </div>
 
-                        <div class="w-1/5 flex flex-col items-end gap-2">
+                        <div class="w-4/12 flex flex-col items-end gap-2">
                             <div class="text-sm text-gray-500 text-end">
                                 <p>Terakhir diperbarui</p>
-                                <p class="text-primary">${prospek.formatted_created_at}</p>
+                                <p class="text-primary">${prospek.formatted_updated_at}</p>
                             </div>
                             <div>
                                 <a href="${detail}" class="bg-primary rounded-md p-2 hover:bg-primary-700 flex items-center justify-center">

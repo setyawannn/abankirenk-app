@@ -35,9 +35,6 @@ function edit_action($params)
   $staff = user_find_by_id($db, $prospek['id_user']);
   $isMyJob = isset($_SESSION['user']) && $_SESSION['user']['id'] === $prospek['id_user'];
 
-  $prospek['status_badge'] = generate_status_badge($prospek['status_prospek']);
-  $staff['role'] = format_role_name($staff['role']);
-
   if (!$prospek) {
     flash_message('error', 'Data Prospek', 'Prospek tidak ditemukan.');
     return redirect('/manajer-marketing/manajemen-prospek');

@@ -23,54 +23,52 @@ Manajemen Prospek
             <div class="p-6 space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="txt-title-df">
-                            Narahubung
-                        </label>
-                        <p class="txt-desc-df">{{ $prospek['narahubung']  }} ( {{ $prospek['no_narahubung'] }})</p>
+                        <label class="txt-title-df">Narahubung</label>
+                        <p class="txt-desc-df">{{ $prospek['narahbung'] ?? $prospek['narahubung'] }} ( {{ $prospek['no_narahubung'] }})</p>
                     </div>
                     <div>
-                        <label class="txt-title-df">
-                            Nama Sekolah
-                        </label>
+                        <label class="txt-title-df">Nama Sekolah</label>
                         <p class="txt-desc-df">{{ $sekolah['nama'] }}</p>
                     </div>
                     <div>
-                        <label class="txt-title-df">
-                            Staff Penanggung Jawab
-                        </label>
-                        <p class="txt-desc-df">{{ $staff['nama'] }} <span class="text-primary text-sm">({{ $is_my_job ? 'Saya' : $staff['role'] }})</span></p>
+                        <label class="txt-title-df">Staff Penanggung Jawab</label>
+                        <p class="txt-desc-df">{{ $staff['nama'] }} <span class="text-primary text-sm">({{ $is_my_job ? 'Saya' : format_role_name($staff['role']) }})</span></p>
                     </div>
                     <div>
-                        <label class="txt-title-df">
-                            Status Prospek
-                        </label>
-                        <p class="txt-desc-df">{!! $prospek['status_badge'] !!} </p>
+                        <label class="txt-title-df">Status Prospek</label>
+                        <p class="txt-desc-df">{!! generate_status_badge($prospek['status_prospek']) !!} </p>
                     </div>
                     <div class="col-span-2">
-                        <label class="txt-title-df">
-                            Deskripsi
-                        </label>
-                        <p 
-                        style="font-size: 1rem"
-                        class="txt-desc-df">{{ $prospek['deskripsi'] ?? '' }}</p>
+                        <label class="txt-title-df">Deskripsi</label>
+                        <p style="font-size: 1rem" class="txt-desc-df">{{ $prospek['deskripsi'] ?? '' }}</p>
                     </div>
-                    
                 </div>
             </div>
         </div>
+        
         <div class="card-df">
             <form action="{{ url('/tim-marketing/prospek-saya/' . $prospek['id_prospek'] . '/update') }}" method="POST">
                 <div class="p-6 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="col-span-2">
+                    <div class="grid grid-cols-1 md:grid-cols-1 gap-6"> 
+                        <div class="col-span-1"> 
                             <label for="catatan" class="block mb-2 text-lg font-medium text-gray-800">
                                 Catatan
                             </label>
+
+                            <div id="ckeditor-skeleton" class="border border-gray-300 rounded-md shadow-sm">
+                                <div class="animate-pulse h-12 bg-gray-200 border-b border-gray-300 rounded-t-md"></div>
+                                <div class="animate-pulse p-4 space-y-3" style="min-height: 250px;">
+                                    <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                                    <div class="h-4 bg-gray-200 rounded"></div>
+                                    <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                                </div>
+                            </div>
+
                             <textarea
                                 name="catatan"
                                 id="catatan"
                                 rows="4"
-                                class="input-df resize-none"
+                                class="input-df resize-none hidden" 
                                 placeholder="Tulis catatan tindak lanjut di sini...">{{ $prospek['catatan'] ?? '' }}</textarea>
                         </div>
                     </div>
@@ -100,6 +98,9 @@ Manajemen Prospek
 
 <script>
     $(document).ready(function() {
+        const $skeleton = $('#ckeditor-skeleton');
+        const $textarea = $('#catatan');
+
         CKEDITOR.ClassicEditor.create(document.querySelector('#catatan'), {
             toolbar: {
                 items: [
@@ -126,34 +127,22 @@ Manajemen Prospek
             },
             placeholder: 'Tulis catatan tindak lanjut di sini...',
             removePlugins: [
-                'Comments',
-                'TrackChanges',
-                'TrackChangesData',
-                'TrackChangesEditing',
-                'RealTimeCollaborativeComments',
-                'RealTimeCollaborativeTrackChanges',
-                'RealTimeCollaborativeEditing',
-                'RealTimeCollaborativeRevisionHistory',
-                'RevisionHistory',
-                'PresenceList',
-                'UsersInit',
-                'CKFinder', 
-                'WProofreader',
-                'DocumentOutline',
-                'TableOfContents',
-                'AIAssistant',
-                'MultiLevelList',
-                'Pagination',
-                'FormatPainter',
-                'Template',
-                'SlashCommand',
-                'PasteFromOfficeEnhanced',
-                'CaseChange'
+                'Comments','TrackChanges','TrackChangesData','TrackChangesEditing',
+                'RealTimeCollaborativeComments','RealTimeCollaborativeTrackChanges',
+                'RealTimeCollaborativeEditing','RealTimeCollaborativeRevisionHistory',
+                'RevisionHistory','PresenceList','UsersInit','CKFinder','WProofreader',
+                'DocumentOutline','TableOfContents','AIAssistant','MultiLevelList',
+                'Pagination','FormatPainter','Template','SlashCommand',
+                'PasteFromOfficeEnhanced','CaseChange'
             ]
-            
+        })
+        .then(editor => {
+            $skeleton.hide();
         })
         .catch(error => {
             console.error('Gagal memuat CKEditor 5:', error);
+            $skeleton.hide();
+            $textarea.removeClass('hidden');
         });
     });
 </script>
