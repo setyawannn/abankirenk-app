@@ -20,7 +20,7 @@ Dashboard
         </div>
         <div>
             <label for="status-filter" class="sr-only">Filter Status</label>
-            <select id="status-filter" class="input-df">
+            <select id="status-filter" class="input-df bg-white">
                 <option value="">Semua Status</option>
                 @foreach ($status_options as $status)
                 <option value="{{ $status }}">{{ ucfirst(str_replace('_', ' ', $status)) }}</option>
@@ -44,7 +44,8 @@ Dashboard
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
                         <th scope="col" class="relative px-6 py-3">
-                            <span class="sr-only">Edit</span>
+                            <span class="sr-only">Aksi</span>
+                            <span class="sr-only">Hapus</span>
                         </th>
                     </tr>
                 </thead>
@@ -77,10 +78,55 @@ Dashboard
             </div>
         </div>
     </div>
-
-
 </div>
 @endsection
+
+@push('modals')
+<div
+    id="modal-konfirmasi-hapus"
+    class="modal-container fixed inset-0 z-40 p-4
+           flex items-center justify-center 
+           invisible">
+    <div class="modal-overlay fixed inset-0 bg-gray-900/50 backdrop-blur-sm
+                opacity-0 transition-opacity duration-300 ease-out">
+    </div>
+
+    <div class="modal-box relative z-50 w-full max-w-md rounded-lg bg-white p-6 shadow-xl 
+                opacity-0 scale-95 transition-all duration-300 ease-out">
+        <form id="form-delete-modal" action="" method="POST">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-semibold text-gray-900">
+                    Konfirmasi Hapus
+                </h3>
+                <button
+                    type="button"
+                    data-modal-dismiss="#modal-konfirmasi-hapus"
+                    class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+                    <ion-icon name="close" class="h-6 w-6"></ion-icon>
+                </button>
+            </div>
+            <div class="mt-4">
+                <p class="text-gray-600">
+                    Apakah Anda yakin ingin menghapus prospek ini? Tindakan ini tidak dapat dibatalkan.
+                </p>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <button
+                    type="button"
+                    data-modal-dismiss="#modal-konfirmasi-hapus"
+                    class="btn-outline-df">
+                    Batal
+                </button>
+                <button
+                    type="submit"
+                    class="btn-danger-df">
+                    Ya, Hapus
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endpush
 
 @push('scripts')
 <script src="{{ url('/js/helper.js') }}"></script>
@@ -90,6 +136,8 @@ Dashboard
         let currentSearch = '';
         let currentStatus = '';
         const limit = 10;
+
+        let prospekIdToDelete = null;
 
         function fetchData(page = 1) {
             currentPage = page;
@@ -131,20 +179,39 @@ Dashboard
             }
 
             data.forEach((prospek, index) => {
+
+                const editUrl = `{{ url('/manajer-marketing/manajemen-prospek') }}/${prospek.id_prospek}/edit`;
+                const deleteUrl = `{{ url('/manajer-marketing/manajemen-prospek') }}/${prospek.id_prospek}/destroy`;
+
                 const row = `
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${index + 1}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${prospek.nama_sekolah}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">${prospek.status_badge}</td>
                     <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">${prospek.catatan || '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="#" class="text-primary hover:text-primary-700">Edit</a>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-base font-medium">
+                        <a href="${editUrl}" class="text-primary hover:text-primary-700">
+                            <ion-icon name="create-outline"></ion-icon>
+                        </a>
+                        <button
+                            type="button"
+                            data-modal-target="#modal-konfirmasi-hapus"
+                            data-url="${deleteUrl}"
+                            class="btn-hapus-prospek text-red-600 hover:text-red-800 ml-4 cursor-pointer open-delete-modal"
+                            >
+                                <ion-icon name="trash-outline"></ion-icon>
+                        </button>
                     </td>
                 </tr>
             `;
                 tableBody.append(row);
             });
         }
+
+        $(document).on('click', '.open-delete-modal', function() {
+            const deleteUrl = $(this).data('url');
+            $('#form-delete-modal').attr('action', deleteUrl);
+        });
 
         function renderPagination(pagination) {
             const {

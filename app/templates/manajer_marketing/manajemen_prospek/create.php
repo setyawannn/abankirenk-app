@@ -91,10 +91,8 @@ Manajemen Prospek
                                 name="kontak_sekolah"
                                 id="kontak_sekolah"
                                 class="input-df"
-                                placeholder="Contoh: 081333717212"
-                                pattern="[0-9]+"
+                                placeholder="Contoh: (0341) 712345, 021-555-1234 atau 081234567890"
                                 required>
-                            <p class="desc-df">Format: nomor telepon tanpa spasi atau tanda hubung</p>
                         </div>
                         <div class="col-span-2">
                             <label for="lokasi_sekolah" class="label-df">
@@ -136,7 +134,7 @@ Manajemen Prospek
                             id="catatan"
                             rows="4"
                             class="input-df resize-none"
-                            placeholder="Contoh: Client meminta guru matematika untuk SMA, preferensi lulusan S1 Pendidikan Matematika dengan pengalaman minimal 2 tahun..."></textarea>
+                            placeholder="Contoh: Client ingin mendapatkan sosialisasi secepatnya sebelum akhir desember dan harus..."></textarea>
                         <p class="desc-df">Tambahkan informasi detail tentang kebutuhan client atau karakteristik khusus</p>
                     </div>
                 </div>
@@ -223,8 +221,12 @@ Manajemen Prospek
             }
         });
 
-        $('#no_narahubung, #kontak_sekolah').on('input', function() {
+        $('#no_narahubung').on('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        $('#kontak_sekolah').on('input', function() {
+            this.value = this.value.replace(/[^0-9+()-]/g, '');
         });
     });
 </script>

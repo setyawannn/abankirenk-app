@@ -1,5 +1,7 @@
 <?php
 
+// routes/web.php
+
 // Daftarkan semua rute aplikasi di sini.
 // Format: route_get('url', ['path/ke/controller.php', 'nama_fungsi']);
 
@@ -23,6 +25,7 @@ route_get('/manajer-marketing/manajemen-prospek/create', ['actions/manajer_marke
 route_post('/manajer-marketing/manajemen-prospek/store', ['actions/manajer_marketing/prospek_action.php', 'store_action'], 'auth');
 route_get('/manajer-marketing/manajemen-prospek/{id}/edit', ['actions/manajer_marketing/prospek_action.php', 'edit_action'], 'auth');
 route_post('/manajer-marketing/manajemen-prospek/{id}/update', ['actions/manajer_marketing/prospek_action.php', 'update_action'], 'auth');
+route_post('/manajer-marketing/manajemen-prospek/{id}/destroy', ['actions/manajer_marketing/prospek_action.php', 'delete_action'], 'auth');
 
 // AJAX Routes
 route_get('/ajax/prospek', ['actions/manajer_marketing/prospek_action.php', 'ajax_list_action'], 'auth');
