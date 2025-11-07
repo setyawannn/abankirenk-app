@@ -37,7 +37,7 @@ Template MoU
           </div>
 
           <div class="md:col-span-1">
-            <div class="flex justify-between items-center mb-2">
+            <div class="flex justify-between items-center">
               <label for="file_mou" class="label-df">
                 Upload File Baru
               </label>

@@ -213,7 +213,9 @@ function delete_action($params)
   }
 
   $template = template_mou_get_by_id($db, $id);
-  unlink(__DIR__ . '/../../../public' . $template['mou']);
+  if ($template['mou']) {
+    unlink(__DIR__ . '/../../../public' . $template['mou']);
+  }
 
   if (template_mou_delete($db, $id)) {
     flash_message('success', 'Berhasil', 'Template MoU berhasil dihapus.');

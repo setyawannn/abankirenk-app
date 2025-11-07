@@ -55,11 +55,16 @@ function format_role_name(string $role_string): string
     return $formatted_name;
 }
 
-function handle_file_upload(array $fileData, string $grouping): array
+function handle_file_upload(array $fileData, string $grouping, string $storageType = 'images'): array
 {
     $manager = new ImageManager(Driver::class);
 
     try {
+
+        if (!in_array($storageType, ['images', 'documents'])) {
+            throw new Exception("Tipe storage tidak valid. Hanya 'images' atau 'documents'.");
+        }
+
         if ($fileData['error'] !== UPLOAD_ERR_OK) {
             throw new Exception('Gagal meng-upload file. Error code: ' . $fileData['error']);
         }
@@ -87,7 +92,7 @@ function handle_file_upload(array $fileData, string $grouping): array
             throw new Exception('Format file tidak diizinkan. Hanya (JPG, PNG, PDF, DOCX, XLSX).');
         }
 
-        $baseDir = __DIR__ . '/../storage/images';
+        $baseDir = __DIR__ . "/../storage/{$storageType}";
         $year = date('y');
         $month = date('m');
         $day = date('d');
@@ -144,6 +149,33 @@ function handle_file_upload(array $fileData, string $grouping): array
             'success' => false,
             'message' => $e->getMessage()
         ];
+    }
+}
+
+function delete_storage_file(string $publicUrl): bool
+{
+    try {
+        $projectRoot = __DIR__ . '/../';
+
+        $relativePath = ltrim($publicUrl, '/'); // -> "storage/images/..."
+
+        $serverPath = $projectRoot . $relativePath;
+
+        $serverPath = str_replace('/', DIRECTORY_SEPARATOR, $serverPath);
+
+        if (file_exists($serverPath)) {
+            if (unlink($serverPath)) {
+                return true;
+            } else {
+                error_log("Gagal menghapus file (permission issue?): " . $serverPath);
+                return false; // Gagal (masalah izin?)
+            }
+        } else {
+            return true;
+        }
+    } catch (Exception $e) {
+        error_log("Error saat delete_storage_file: " . $e->getMessage());
+        return false;
     }
 }
 

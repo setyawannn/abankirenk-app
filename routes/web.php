@@ -34,12 +34,12 @@ route_get('/tim-marketing/prospek-saya/{id}', ['actions/tim_marketing/prospek_ac
 route_post('/tim-marketing/prospek-saya/{id}/update', ['actions/tim_marketing/prospek_action.php', 'update_action'], 'auth');
 
 // Project Officer
-route_get('/project-officer/template-mou', ['actions/project_officer/template_mou_action.php', 'index_action'], 'auth');
-route_get('/project-officer/template-mou/create', ['actions/project_officer/template_mou_action.php', 'create_action'], 'auth');
-route_post('/project-officer/template-mou/store', ['actions/project_officer/template_mou_action.php', 'store_action'], 'auth');
-route_get('/project-officer/template-mou/{id}/edit', ['actions/project_officer/template_mou_action.php', 'edit_action'], 'auth');
-route_post('/project-officer/template-mou/{id}/update', ['actions/project_officer/template_mou_action.php', 'update_action'], 'auth');
-route_post('/project-officer/template-mou/{id}/destroy', ['actions/project_officer/template_mou_action.php', 'delete_action'], 'auth');
+route_get('/project-officer/template-mou', ['actions/project_officer/template_mou_action.php', 'index_action'], 'project_officer');
+route_get('/project-officer/template-mou/create', ['actions/project_officer/template_mou_action.php', 'create_action'], 'project_officer');
+route_post('/project-officer/template-mou/store', ['actions/project_officer/template_mou_action.php', 'store_action'], 'project_officer');
+route_get('/project-officer/template-mou/{id}/edit', ['actions/project_officer/template_mou_action.php', 'edit_action'], 'project_officer');
+route_post('/project-officer/template-mou/{id}/update', ['actions/project_officer/template_mou_action.php', 'update_action'], 'project_officer');
+route_post('/project-officer/template-mou/{id}/destroy', ['actions/project_officer/template_mou_action.php', 'delete_action'], 'project_officer');
 
 
 // AJAX Routes
