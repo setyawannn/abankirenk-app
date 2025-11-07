@@ -36,12 +36,7 @@ return [
       'icon' => 'list-outline',
       'redirect_url' => '/tim-marketing/prospek-saya'
     ],
-    [
-      'id' => 'mou_tm',
-      'nama' => 'Manajemen MoU',
-      'icon' => 'document-text-outline',
-      'redirect_url' => '/mou'
-    ]
+
   ],
   'project_officer' => [
     [
@@ -49,6 +44,12 @@ return [
       'nama' => 'Dashboard Proyek',
       'icon' => 'home-outline',
       'redirect_url' => '/dashboard/project'
+    ],
+    [
+      'id' => 'template_mou_po',
+      'nama' => 'Template MoU',
+      'icon' => 'document-text-outline',
+      'redirect_url' => '/project-officer/template-mou'
     ],
     [
       'id' => 'order_po',

@@ -18,9 +18,16 @@
     }
   },
   "scripts": {
+    "post-install-cmd": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
     "template:clear": "php scripts/clear-template-cache.php",
     "storage:link": [
       "php scripts/create_storage_link.php"
+    ],
+    "dev": [
+      "npm run dev",
+      "php -S localhost:9000 -t public"
     ]
   }
 }

@@ -33,6 +33,14 @@ route_get('/tim-marketing/prospek-saya', ['actions/tim_marketing/prospek_action.
 route_get('/tim-marketing/prospek-saya/{id}', ['actions/tim_marketing/prospek_action.php', 'edit_action'], 'auth');
 route_post('/tim-marketing/prospek-saya/{id}/update', ['actions/tim_marketing/prospek_action.php', 'update_action'], 'auth');
 
+// Project Officer
+route_get('/project-officer/template-mou', ['actions/project_officer/template_mou_action.php', 'index_action'], 'auth');
+route_get('/project-officer/template-mou/create', ['actions/project_officer/template_mou_action.php', 'create_action'], 'auth');
+route_post('/project-officer/template-mou/store', ['actions/project_officer/template_mou_action.php', 'store_action'], 'auth');
+route_get('/project-officer/template-mou/{id}/edit', ['actions/project_officer/template_mou_action.php', 'edit_action'], 'auth');
+route_post('/project-officer/template-mou/{id}/update', ['actions/project_officer/template_mou_action.php', 'update_action'], 'auth');
+route_post('/project-officer/template-mou/{id}/destroy', ['actions/project_officer/template_mou_action.php', 'delete_action'], 'auth');
+
 
 // AJAX Routes
 route_get('/ajax/prospek', ['actions/manajer_marketing/prospek_action.php', 'ajax_list_action'], 'auth');
@@ -40,3 +48,4 @@ route_post('/ajax/prospek/update-status', ['actions/manajer_marketing/prospek_ac
 route_get('/ajax/sekolah', ['actions/sekolah_action.php', 'sekolah_search_action'], 'auth');
 route_post('/ajax/sekolah/store', ['actions/sekolah_action.php', 'sekolah_store_action'], 'auth');
 route_post('/ajax/upload/wysiwyg', ['actions/upload_action.php', 'wysiwyg_upload_action'], null);
+route_get('/ajax/template-mou', ['actions/project_officer/template_mou_action.php', 'ajax_list_action'], 'auth');
