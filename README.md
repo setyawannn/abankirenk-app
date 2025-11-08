@@ -71,7 +71,7 @@ Selamat datang di MafemWok (nama bisa Anda sesuaikan), sebuah kerangka kerja PHP
 
 7.  **Jalankan Kompilasi Aset (Development):** Buka terminal baru dan jalankan:
     ```bash
-    npm run dev
+    composer run dev
     ```
     Biarkan proses ini berjalan selama development untuk kompilasi otomatis Tailwind CSS.
 

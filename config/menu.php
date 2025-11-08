@@ -103,10 +103,10 @@ return [
       'redirect_url' => '/dashboard/desain'
     ],
     [
-      'id' => 'template_ds',
+      'id' => 'template_desain_ds',
       'nama' => 'Template Desain',
       'icon' => 'layers-outline',
-      'redirect_url' => '/template/desain'
+      'redirect_url' => '/desainer/template-desain'
     ]
   ],
   'manajer_produksi' => [

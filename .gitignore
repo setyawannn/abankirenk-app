@@ -40,6 +40,7 @@ yarn-error.log*
 /storage/templates/
 /storage/logs/
 /storage/images/
+/storage/documents/
 
 # File cache yang dihasilkan oleh aplikasi atau framework.
 /storage/framework/

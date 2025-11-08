@@ -136,7 +136,7 @@ function handle_file_upload(array $fileData, string $grouping, string $storageTy
             }
         }
 
-        $publicUrl = "/storage/images/{$subDir}/{$finalFilename}";
+        $publicUrl = "/storage/{$storageType}/{$subDir}/{$finalFilename}";
 
         return [
             'success' => true,
