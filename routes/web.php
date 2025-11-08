@@ -50,6 +50,16 @@ route_get('/desainer/template-desain/{id}/edit', ['actions/desainer/template_des
 route_post('/desainer/template-desain/{id}/update', ['actions/desainer/template_desain_action.php', 'update_action'], 'desainer');
 route_post('/desainer/template-desain/{id}/destroy', ['actions/desainer/template_desain_action.php', 'delete_action'], 'desainer');
 
+
+// Klien
+route_get('/klien/pengajuan-order', ['actions/klien/pengajuan_order_action.php', 'index_action'], 'klien');
+route_get('/klien/pengajuan-order/create', ['actions/klien/pengajuan_order_action.php', 'create_action'], 'klien');
+route_post('/klien/pengajuan-order/store', ['actions/klien/pengajuan_order_action.php', 'store_action'], 'klien');
+// route_get('/klien/pengajuan-order/{id}', ['actions/klien/pengajuan_order_action.php', 'show_action'], 'klien');
+
+
+
+
 // AJAX Routes
 route_get('/ajax/prospek', ['actions/manajer_marketing/prospek_action.php', 'ajax_list_action'], 'auth');
 route_post('/ajax/prospek/update-status', ['actions/manajer_marketing/prospek_action.php', 'ajax_update_status_action'], 'auth');
@@ -58,3 +68,4 @@ route_post('/ajax/sekolah/store', ['actions/sekolah_action.php', 'sekolah_store_
 route_post('/ajax/upload/wysiwyg', ['actions/upload_action.php', 'wysiwyg_upload_action'], null);
 route_get('/ajax/template-mou', ['actions/project_officer/template_mou_action.php', 'ajax_list_action'], 'auth');
 route_get('/ajax/template-desain', ['actions/desainer/template_desain_action.php', 'ajax_list_action'], 'auth');
+route_get('/klien/pengajuan-order/ajax-list', ['actions/klien/pengajuan_order_action.php', 'ajax_list_action'], 'klien');

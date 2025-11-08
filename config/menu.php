@@ -145,6 +145,12 @@ return [
       'redirect_url' => '/dashboard'
     ],
     [
+      'id' => 'pengajuan_order_klien',
+      'nama' => 'Pengajuan Order',
+      'icon' => 'documents-outline',
+      'redirect_url' => '/klien/pengajuan-order'
+    ],
+    [
       'id' => 'order_klien',
       'nama' => 'List Order',
       'icon' => 'briefcase-outline',
