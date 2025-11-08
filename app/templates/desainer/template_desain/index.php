@@ -1,3 +1,4 @@
+{{-- templates/desainer/template_desain/index.php --}}
 @extends('layouts.admin')
 
 @section('title')
@@ -5,7 +6,6 @@ Manajemen Template Desain
 @endsection
 
 @section('breadcrumbs')
-{{-- Tidak ada breadcrumbs tambahan untuk halaman index --}}
 @endsection
 
 @section('content')
@@ -149,18 +149,28 @@ Manajemen Template Desain
         const editUrl = `{{ url('/desainer/template-desain') }}/${template.id_template_desain}/edit`;
         const deleteUrl = `{{ url('/desainer/template-desain') }}/${template.id_template_desain}/destroy`;
 
-        const fileUrl = '{{ url('') }}' + escapeHTML(template.template_desain);
-        const fileName = escapeHTML(template.template_desain.split('/').pop());
+        let filePreviewHtml = '';
+
+        if (template.template_desain && typeof template.template_desain === 'string') {
+            const fileUrl = '{{ url('') }}' + escapeHTML(template.template_desain);
+            const fileName = escapeHTML(template.template_desain.split('/').pop());
+            
+            filePreviewHtml = `
+                <a href="${fileUrl}" 
+                   target="_blank" 
+                   class="text-primary hover:underline flex items-center gap-2">
+                   <ion-icon name="document-text-outline" class="text-red-500"></ion-icon>
+                   ${fileName}
+                </a>`;
+        } else {
+            filePreviewHtml = `<span class="text-gray-400 italic">Tidak ada file</span>`;
+        }
+
         const row = `
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${escapeHTML(template.judul)}</td>
             <td class="px-6 py-4">
-                <a href="${fileUrl}" 
-                    target="_blank" 
-                    class="text-primary hover:underline flex items-center gap-2">
-                    <ion-icon name="document-text-outline" class="text-red-500"></ion-icon>
-                    ${fileName}
-                </a>
+                ${filePreviewHtml}
             </td>
             <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">${escapeHTML(template.deskripsi || '-')}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${template.formatted_updated_at}</td>
@@ -182,13 +192,11 @@ Manajemen Template Desain
       });
     }
 
-    // "Glue" untuk Modal Hapus (Tidak Berubah)
     $(document).on('click', '.open-delete-modal', function() {
       const deleteUrl = $(this).data('url');
       $('#form-delete-modal').attr('action', deleteUrl);
     });
 
-    // Fungsi Paginasi (Tidak Berubah)
     function renderPagination(pagination) {
       const {
         total,
@@ -235,8 +243,8 @@ Manajemen Template Desain
         const activeClass = i === current_page ? 'z-10 bg-primary-50 border-primary text-primary' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50';
         paginationControls.append(
           `<button data-page="${i}" class="relative inline-flex items-center px-4 py-2 border text-sm font-medium ${activeClass}">
-                ${i}
-              </button>`
+                  ${i}
+                </button>`
         );
       }
 
@@ -250,13 +258,12 @@ Manajemen Template Desain
       const nextDisabled = current_page >= last_page;
       paginationControls.append(
         `<button data-page="${current_page + 1}" ${nextDisabled ? 'disabled' : ''} class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-              <span class="sr-only">Next</span>
-              <ion-icon name="chevron-forward-outline" class="h-5 w-5"></ion-icon>
-            </button>`
+                  <span class="sr-only">Next</span>
+                  <ion-icon name="chevron-forward-outline" class="h-5 w-5"></ion-icon>
+                </button>`
       );
     }
 
-    // Event Listeners (Tidak Berubah)
     $('#search-template').on('keyup', debounce(function() {
       fetchData(1);
     }, 500));

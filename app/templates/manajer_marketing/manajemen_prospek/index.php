@@ -129,7 +129,6 @@ Dashboard
 @endpush
 
 @push('scripts')
-<script src="{{ url('/js/helper.js') }}"></script>
 <script>
     $(document).ready(function() {
         let currentPage = 1;

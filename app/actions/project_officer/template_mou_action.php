@@ -55,32 +55,26 @@ function store_action()
     $judul = $_POST['judul'] ?? null;
     $deskripsi = $_POST['deskripsi'] ?? null;
 
-    // 1. Validasi Input Dasar
     if (empty($judul)) {
       throw new Exception("Judul template wajib diisi.");
     }
 
-    // 2. Validasi File Upload
     if (!isset($_FILES['file_mou']) || $_FILES['file_mou']['error'] !== UPLOAD_ERR_OK) {
       throw new Exception("File template (Word/PDF) wajib di-upload.");
     }
 
-    // 3. Panggil Helper Upload (yang sudah divalidasi MIME type-nya)
-    // Kita kelompokkan file dalam folder 'mou'
     $uploadResult = handle_file_upload($_FILES['file_mou'], 'mou');
 
     if (!$uploadResult['success']) {
       throw new Exception("Upload Gagal: " . $uploadResult['message']);
     }
 
-    // 4. Siapkan data untuk database
     $data = [
       'judul' => $judul,
       'deskripsi' => $deskripsi,
-      'file_url' => $uploadResult['url'] // URL publik dari helper
+      'file_url' => $uploadResult['url']
     ];
 
-    // 5. Simpan ke database
     if (!template_mou_create($db, $data)) {
       throw new Exception("Gagal menyimpan data template ke database.");
     }
@@ -101,9 +95,6 @@ function store_action()
   }
 }
 
-/**
- * Menampilkan form untuk mengedit template.
- */
 function edit_action($params)
 {
   $db = db_connect();
@@ -128,9 +119,6 @@ function edit_action($params)
   view('project_officer.template_mou.edit', $data);
 }
 
-/**
- * Memperbarui template yang ada.
- */
 function update_action($params)
 {
   $db = db_connect();
@@ -152,25 +140,20 @@ function update_action($params)
       throw new Exception("Judul template wajib diisi.");
     }
 
-    // Ambil data lama (penting untuk path file)
     $oldTemplate = template_mou_get_by_id($db, $id);
     if (!$oldTemplate) {
       throw new Exception("Template lama tidak ditemukan.");
     }
 
-    $newFileUrl = $oldTemplate['mou']; // Default: gunakan file lama
+    $newFileUrl = $oldTemplate['mou'];
 
-    // Cek jika ada file BARU yang di-upload
     if (isset($_FILES['file_mou']) && $_FILES['file_mou']['error'] === UPLOAD_ERR_OK) {
-      // Panggil Helper Upload
-      $uploadResult = handle_file_upload($_FILES['file_mou'], 'mou');
+      $uploadResult = handle_file_upload($_FILES['file_mou'], 'mou', 'documents', $oldTemplate['mou']);
 
       if (!$uploadResult['success']) {
         throw new Exception("Upload Gagal: " . $uploadResult['message']);
       }
       $newFileUrl = $uploadResult['url'];
-
-      unlink(__DIR__ . '/../../../public' . $oldTemplate['mou']);
     }
 
     $data = [
@@ -213,8 +196,8 @@ function delete_action($params)
   }
 
   $template = template_mou_get_by_id($db, $id);
-  if ($template['mou']) {
-    unlink(__DIR__ . '/../../../public' . $template['mou']);
+  if (!empty($template['mou'])) {
+    delete_storage_file($template['mou']);
   }
 
   if (template_mou_delete($db, $id)) {

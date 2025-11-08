@@ -122,7 +122,7 @@ function update_action($params)
     $newFileUrl = $oldTemplate['template_desain'];
 
     if (isset($_FILES['file_desain']) && $_FILES['file_desain']['error'] === UPLOAD_ERR_OK) {
-      $uploadResult = handle_file_upload($_FILES['file_desain'], 'desain', 'documents');
+      $uploadResult = handle_file_upload($_FILES['file_desain'], 'desain', 'documents', $oldTemplate['template_desain']);
 
       if (!$uploadResult['success']) {
         throw new Exception("Upload Gagal: " . $uploadResult['message']);

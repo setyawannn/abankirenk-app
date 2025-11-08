@@ -55,8 +55,12 @@ function format_role_name(string $role_string): string
     return $formatted_name;
 }
 
-function handle_file_upload(array $fileData, string $grouping, string $storageType = 'images'): array
-{
+function handle_file_upload(
+    array $fileData,
+    string $grouping,
+    string $storageType = 'images',
+    ?string $old_file_url = null
+): array {
     $manager = new ImageManager(Driver::class);
 
     try {
@@ -138,6 +142,10 @@ function handle_file_upload(array $fileData, string $grouping, string $storageTy
 
         $publicUrl = "/storage/{$storageType}/{$subDir}/{$finalFilename}";
 
+        if (!empty($old_file_url)) {
+            delete_storage_file($old_file_url);
+        }
+
         return [
             'success' => true,
             'url' => $publicUrl,
@@ -152,15 +160,15 @@ function handle_file_upload(array $fileData, string $grouping, string $storageTy
     }
 }
 
+
 function delete_storage_file(string $publicUrl): bool
 {
     try {
         $projectRoot = __DIR__ . '/../';
 
-        $relativePath = ltrim($publicUrl, '/'); // -> "storage/images/..."
+        $relativePath = ltrim($publicUrl, '/');
 
         $serverPath = $projectRoot . $relativePath;
-
         $serverPath = str_replace('/', DIRECTORY_SEPARATOR, $serverPath);
 
         if (file_exists($serverPath)) {
@@ -168,7 +176,7 @@ function delete_storage_file(string $publicUrl): bool
                 return true;
             } else {
                 error_log("Gagal menghapus file (permission issue?): " . $serverPath);
-                return false; // Gagal (masalah izin?)
+                return false;
             }
         } else {
             return true;
