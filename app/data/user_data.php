@@ -22,22 +22,21 @@ function user_find_by_id(mysqli $mysqli, int $id): ?array
   return $result ? $result->fetch_assoc() : null;
 }
 
-function user_create(mysqli $mysqli, array $data): bool
+function user_create(mysqli $mysqli, array $data): int
 {
-  $sql = "INSERT INTO users (nama, email, password, username, role) 
+  $sql = "INSERT INTO users (nama, email, username, password, role) 
             VALUES (?, ?, ?, ?, ?)";
 
   $params = [
     $data['nama'],
     $data['email'],
-    $data['password'],
     $data['username'],
+    $data['password'],
     $data['role']
   ];
 
-  $result = db_query($mysqli, $sql, $params);
-
-  return (bool) $result;
+  $newId = db_query($mysqli, $sql, $params);
+  return (int) $newId;
 }
 
 

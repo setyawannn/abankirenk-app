@@ -48,6 +48,12 @@ route_get('/project-officer/pengajuan-order/{id}', ['actions/project_officer/pen
 route_get('/project-officer/pengajuan-order/{id}/edit', ['actions/project_officer/pengajuan_order_action.php', 'edit_action'], 'auth');
 route_post('/project-officer/pengajuan-order/{id}/update', ['actions/project_officer/pengajuan_order_action.php', 'update_action'], 'auth');
 
+// Order
+route_get('/project-officer/order', ['actions/project_officer/order_action.php', 'index_action'], 'auth');
+// (Tambahkan rute edit/update untuk nanti)
+// route_get('/project-officer/order/{id}/edit', ['actions/project_officer/order_action.php', 'edit_action'], 'auth');
+// route_post('/project-officer/order/{id}/update', ['actions/project_officer/order_action.php', 'update_action'], 'auth');
+
 // Desainer
 route_get('/desainer/template-desain', ['actions/desainer/template_desain_action.php', 'index_action'], 'desainer');
 route_get('/desainer/template-desain/create', ['actions/desainer/template_desain_action.php', 'create_action'], 'desainer');
@@ -74,3 +80,6 @@ route_get('/ajax/template-mou', ['actions/project_officer/template_mou_action.ph
 route_get('/ajax/template-desain', ['actions/desainer/template_desain_action.php', 'ajax_list_action'], 'auth');
 route_get('/ajax/klien/pengajuan-order', ['actions/klien/pengajuan_order_action.php', 'ajax_list_action'], 'auth');
 route_get('/ajax/po/pengajuan-order', ['actions/project_officer/pengajuan_order_action.php', 'ajax_list_action'], 'auth');
+route_get('/ajax/po/order-list', ['actions/project_officer/order_action.php', 'ajax_list_action'], 'auth');
+route_get('/ajax/po/order-list', ['actions/project_officer/order_action.php', 'ajax_list_action'], 'auth');
+route_get('/ajax/po/get-source-details', ['actions/project_officer/order_action.php', 'ajax_get_source_details_action'], 'auth');

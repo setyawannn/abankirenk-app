@@ -59,9 +59,9 @@ return [
     ],
     [
       'id' => 'order_po',
-      'nama' => 'Semua Order',
+      'nama' => 'Order',
       'icon' => 'briefcase-outline',
-      'redirect_url' => '/order'
+      'redirect_url' => '/project-officer/order'
     ],
     [
       'id' => 'purna_jual_po',
