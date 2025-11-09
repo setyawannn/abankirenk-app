@@ -8,11 +8,23 @@
   --color-primary-200: #99d0ff;
   --color-primary-300: #66b8ff;
   --color-primary-400: #33a0ff;
-  --color-primary-500: #0088ff;
+  --color-primary-500: #4d94df;
   --color-primary-600: #0072e6;
   --color-primary-700: #005cbf;
   --color-primary-800: #004699;
   --color-primary-900: #003073;
+
+  --color-secondary: #df984d;
+  --color-secondary-50: #fcf5ed;
+  --color-secondary-100: #f9eadb;
+  --color-secondary-200: #f2d6b8;
+  --color-secondary-300: #ecc194;
+  --color-secondary-400: #e5ad71;
+  --color-secondary-500: #df984d;
+  --color-secondary-600: #b37a3e;
+  --color-secondary-700: #875c2f;
+  --color-secondary-800: #5c3e1f;
+  --color-secondary-900: #302010;
 }
 
 * {
@@ -61,4 +73,8 @@
 
 .txt-desc-df {
   @apply text-lg text-gray-500 font-normal;
+}
+
+.txt-editor-df {
+  @apply max-w-none text-gray-700 mt-2 p-4 border border-gray-200 rounded-md bg-gray-50 min-h-[150px];
 }

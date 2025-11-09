@@ -1,26 +1,21 @@
 @extends('layouts.admin')
 
 @section('title')
-Riwayat Pengajuan Order
+Manajemen Pengajuan Order
 @endsection
 
 @section('content')
 <div class="space-y-6">
-  <div class="rounded-lg flex flex-col md:flex-row justify-between items-center gap-4">
+  <div class="rounded-lg flex items-center space-x-4">
     <div class="flex-grow">
       <label for="search-input" class="sr-only">Cari Pengajuan</label>
       <div class="relative">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <ion-icon name="search-outline" class="text-gray-400"></ion-icon>
         </div>
-        <input type="text" id="search-input" class="block w-full md:w-[300px] pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" placeholder="Cari no. pengajuan, sekolah...">
+        <input type="text" id="search-input" class="block w-[300px] pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" placeholder="Cari no. pengajuan, sekolah, klien...">
       </div>
     </div>
-
-    <a href="{{ url('/klien/pengajuan-order/create') }}" class="btn-df w-fit md:w-fit">
-      <ion-icon name="add-outline" class="-ml-1 mr-2"></ion-icon>
-      Buat Pengajuan Baru
-    </a>
   </div>
 
   <div class="bg-white shadow overflow-hidden sm:rounded-lg">
@@ -29,7 +24,7 @@ Riwayat Pengajuan Order
         <thead class="bg-gray-50">
           <tr>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Pengajuan</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sekolah</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Klien (Sekolah)</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Narahubung</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tgl Dibuat</th>
@@ -38,7 +33,7 @@ Riwayat Pengajuan Order
         </thead>
         <tbody id="pengajuan-table-body" class="bg-white divide-y divide-gray-200">
           <tr>
-            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Memuat data...</td>
+            <td colspan="7" class="px-6 py-4 text-center text-gray-500">Memuat data...</td>
           </tr>
         </tbody>
       </table>
@@ -58,9 +53,6 @@ Riwayat Pengajuan Order
 </div>
 @endsection
 
-@push('modals')
-@endpush
-
 @push('scripts')
 <script>
   $(document).ready(function() {
@@ -72,11 +64,11 @@ Riwayat Pengajuan Order
       currentPage = page;
       currentSearch = $('#search-input').val();
 
-      $('#pengajuan-table-body').html('<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Memuat data...</td></tr>');
+      $('#pengajuan-table-body').html('<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Memuat data...</td></tr>');
       $('#pagination-controls').empty();
 
       $.ajax({
-        url: "{{ url('/ajax/klien/pengajuan-order') }}",
+        url: "{{ url('/ajax/po/pengajuan-order') }}",
         type: 'GET',
         data: {
           page: currentPage,
@@ -88,12 +80,8 @@ Riwayat Pengajuan Order
           renderTable(response.data);
           renderPagination(response.pagination);
         },
-        error: function(xhr) {
-          let errorMsg = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Gagal memuat data. Silakan coba lagi.</td></tr>';
-          if (xhr.status === 403) {
-            errorMsg = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Otentikasi gagal. Silakan muat ulang halaman.</td></tr>';
-          }
-          $('#pengajuan-table-body').html(errorMsg);
+        error: function() {
+          $('#pengajuan-table-body').html('<tr><td colspan="7" class="px-6 py-4 text-center text-red-500">Gagal memuat data.</td></tr>');
           $('#pagination-info').text('Tidak ada data');
         }
       });
@@ -104,27 +92,35 @@ Riwayat Pengajuan Order
       tableBody.empty();
 
       if (data.length === 0) {
-        tableBody.html('<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Anda belum memiliki riwayat pengajuan.</td></tr>');
+        tableBody.html('<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Tidak ada pengajuan order ditemukan.</td></tr>');
         return;
       }
 
       data.forEach((pengajuan) => {
-        const detailUrl = `{{ url('/klien/pengajuan-order') }}/${pengajuan.id_pengajuan}`;
+        const editUrl = `{{ url('/project-officer/pengajuan-order') }}/${pengajuan.id_pengajuan}/edit`;
+        const detailUrl = `{{ url('/project-officer/pengajuan-order') }}/${pengajuan.id_pengajuan}`;
+
+        const rowClass = pengajuan.status_pengajuan === 'dalam proses' ? 'bg-secondary-50 hover:bg-secondary-100' : 'hover:bg-gray-50';
 
         const row = `
-                <tr class="hover:bg-gray-50">
+                <tr class="${rowClass}">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${escapeHTML(pengajuan.nomor_pengajuan || '-')}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${escapeHTML(pengajuan.nama_sekolah)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div class="font-medium text-gray-900">${escapeHTML(pengajuan.nama_klien)}</div>
+                        <div class="text-xs text-gray-500">${escapeHTML(pengajuan.nama_sekolah)}</div>
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div>${escapeHTML(pengajuan.narahubung)}</div>
                         <div class="text-xs text-gray-400">${escapeHTML(pengajuan.no_narahubung)}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">${pengajuan.status_badge}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${pengajuan.formatted_created_at}</td>
-                    {{-- Tambah Kolom Aksi dengan Ikon "Eye" --}}
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-base font-medium">
-                        <a href="${detailUrl}" class="text-green-600 hover:text-green-700">
-                            <ion-icon name="eye-outline"></ion-icon>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-base font-medium space-x-2">
+                        <a href="${editUrl}" class="text-primary text-base hover:text-primary-700">
+                          <ion-icon name="create-outline"></ion-icon>
+                        </a>
+                        <a href="${detailUrl}" class="text-green-600 text-base hover:text-green-700">
+                          <ion-icon name="eye-outline"></ion-icon>
                         </a>
                     </td>
                 </tr>

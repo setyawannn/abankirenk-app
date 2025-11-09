@@ -6,6 +6,9 @@ Buat Pengajuan Order
 
 @section('breadcrumbs')
 <div class="flex gap-2 items-center">
+  <span class="text-primary font-medium">
+    Pengajuan Order
+  </span>
   <span>
     /
   </span>

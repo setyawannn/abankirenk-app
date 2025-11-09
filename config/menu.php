@@ -52,6 +52,12 @@ return [
       'redirect_url' => '/project-officer/template-mou'
     ],
     [
+      'id' => 'pengajuan_order_po',
+      'nama' => 'Pengajuan Order',
+      'icon' => 'documents-outline',
+      'redirect_url' => '/project-officer/pengajuan-order'
+    ],
+    [
       'id' => 'order_po',
       'nama' => 'Semua Order',
       'icon' => 'briefcase-outline',

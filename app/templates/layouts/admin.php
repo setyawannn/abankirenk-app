@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ config('app.name') }} - @yield('title')</title>
 
-  <link rel="stylesheet" href="{{ url('css/style.css') }}">
+  <link rel="stylesheet" href="{{ url('css/style.css') }}?{{ time() }}">
   <script src="{{ url('js/jquery.js') }}"></script>
 
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -30,9 +30,9 @@
           {{ $page_title ?? 'Dashboard' }}
         </h1>
         <div class="flex gap-4 items-center mt-1 mb-6 text-base text-gray-600">
-          <span class="text-primary font-medium">
+          <!-- <span class="text-primary font-medium">
             {{ $page_title ?? 'Dashboard' }}
-          </span>
+          </span> -->
           @yield('breadcrumbs')
         </div>
         @yield('content')

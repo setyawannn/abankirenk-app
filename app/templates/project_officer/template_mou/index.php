@@ -18,14 +18,12 @@ Template MoU
       </div>
     </div>
 
-    {{-- Tombol Tambah Baru --}}
     <a href="{{ url('/project-officer/template-mou/create') }}" class="btn-df">
       <ion-icon name="add-outline" class="-ml-1 mr-2"></ion-icon>
       Tambah Template
     </a>
   </div>
 
-  {{-- Tabel Template --}}
   <div class="bg-white shadow overflow-hidden sm:rounded-lg">
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
@@ -41,7 +39,6 @@ Template MoU
           </tr>
         </thead>
         <tbody id="template-table-body" class="bg-white divide-y divide-gray-200">
-          {{-- Baris akan diisi oleh AJAX --}}
           <tr>
             <td colspan="5" class="px-6 py-4 text-center text-gray-500">Memuat data...</td>
           </tr>
@@ -49,7 +46,6 @@ Template MoU
       </table>
     </div>
 
-    {{-- Pagination --}}
     <div class="px-4 py-3 flex items-center justify-between sm:px-6 rounded-b-lg border-t border-gray-200">
       <div class="flex-1 flex justify-between sm:hidden">
         <button id="prev-mobile" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50" disabled> Previous </button>
@@ -63,7 +59,6 @@ Template MoU
         </div>
         <div>
           <nav id="pagination-controls" class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-            {{-- Tombol pagination akan diisi oleh AJAX --}}
           </nav>
         </div>
       </div>

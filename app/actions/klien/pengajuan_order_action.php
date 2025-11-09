@@ -16,10 +16,39 @@ function index_action()
   view('klien.pengajuan_order.index', $data);
 }
 
+function detail_action($params)
+{
+  $db = db_connect();
+  $user = auth();
+  $id = (int) ($params['id'] ?? 0);
+
+  if (!$db || $id <= 0 || !$user) {
+    flash_message('error', 'Error', 'Gagal memuat data atau ID tidak valid.');
+    return redirect('/klien/pengajuan-order');
+  }
+
+  $pengajuan = pengajuan_order_get_by_id($db, $id);
+
+  if (!$pengajuan || $pengajuan['id_user'] !== $user['id']) {
+    flash_message('error', 'Akses Ditolak', 'Anda tidak diizinkan melihat pengajuan ini.');
+    return redirect('/klien/pengajuan-order');
+  }
+
+  $pengajuan['status_badge'] = generate_status_badge_klien($pengajuan['status_pengajuan']);
+
+  $data = [
+    'page_title' => $pengajuan['nomor_pengajuan'],
+    'active_menu' => 'pengajuan_order_klien',
+    'pengajuan' => $pengajuan,
+  ];
+
+  view('klien.pengajuan_order.detail', $data);
+}
+
 function create_action()
 {
   $data = [
-    'page_title' => 'Buat Pengajuan Order Baru',
+    'page_title' => 'Pengajuan Order Baru',
     'active_menu' => 'pengajuan_order_klien',
   ];
   view('klien.pengajuan_order.create', $data);
