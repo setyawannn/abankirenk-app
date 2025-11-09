@@ -143,7 +143,7 @@ function ajax_get_source_details_action()
 
   $response = [
     'id_sekolah' => $data['id_sekolah'],
-    'narahubung' => $data['narahubung'] ?? $data['narahbung'],
+    'narahubung' => $data['narahubung'] ?? $data['narahubung'],
     'no_narahubung' => $data['no_narahubung'],
     'id_klien_existing' => $data['id_user'] ?? null
   ];

@@ -50,6 +50,8 @@ route_post('/project-officer/pengajuan-order/{id}/update', ['actions/project_off
 
 // Order
 route_get('/project-officer/order', ['actions/project_officer/order_action.php', 'index_action'], 'auth');
+route_get('/project-officer/order/create', ['actions/project_officer/order_action.php', 'create_action'], 'auth');
+route_post('/project-officer/order/store', ['actions/project_officer/order_action.php', 'store_action'], 'auth');
 // (Tambahkan rute edit/update untuk nanti)
 // route_get('/project-officer/order/{id}/edit', ['actions/project_officer/order_action.php', 'edit_action'], 'auth');
 // route_post('/project-officer/order/{id}/update', ['actions/project_officer/order_action.php', 'update_action'], 'auth');

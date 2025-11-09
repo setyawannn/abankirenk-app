@@ -24,7 +24,7 @@ Manajemen Prospek
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="txt-title-df">Narahubung</label>
-                        <p class="txt-desc-df">{{ $prospek['narahbung'] ?? $prospek['narahubung'] }} ( {{ $prospek['no_narahubung'] }})</p>
+                        <p class="txt-desc-df">{{ $prospek['narahubung'] ?? $prospek['narahubung'] }} ( {{ $prospek['no_narahubung'] }})</p>
                     </div>
                     <div>
                         <label class="txt-title-df">Nama Sekolah</label>

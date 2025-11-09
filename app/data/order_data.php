@@ -17,7 +17,7 @@ function generate_nomor_order(mysqli $mysqli): string
 function order_create(mysqli $mysqli, array $data): int
 {
   $sql = "INSERT INTO order_produksi (
-                nomor_order, sequence, id_sekolah, id_mou, id_user, 
+                nomor_order, sequence, id_sekolah, id_mou, id_klien, 
                 status_order, narahubung, no_narahubung, kuantitas, 
                 halaman, konsep, deadline
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -48,7 +48,7 @@ function order_get_successful_sources(mysqli $mysqli): array
                     p.id_prospek as source_id, 
                     s.nama as nama_sekolah, 
                     p.id_sekolah, 
-                    p.narahbung as narahubung, 
+                    p.narahubung, 
                     p.no_narahubung, 
                     NULL as id_klien_existing 
                    FROM prospek p
@@ -67,7 +67,7 @@ function order_get_successful_sources(mysqli $mysqli): array
                      JOIN sekolah s ON p.id_sekolah = s.id_sekolah
                      WHERE p.status_pengajuan = 'berhasil'";
 
-  $sql = "($sqlProspek) UNION ($sqlPengajuan) ORDER BY nama_sekolah";
+  $sql = "$sqlProspek UNION $sqlPengajuan ORDER BY nama_sekolah";
 
   $result = db_query($mysqli, $sql);
   return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
