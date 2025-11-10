@@ -49,10 +49,10 @@ route_get('/project-officer/pengajuan-order/{id}/edit', ['actions/project_office
 route_post('/project-officer/pengajuan-order/{id}/update', ['actions/project_officer/pengajuan_order_action.php', 'update_action'], 'auth');
 
 // Order
-route_get('/project-officer/order', ['actions/project_officer/order_action.php', 'index_action'], 'auth');
-route_get('/project-officer/order/create', ['actions/project_officer/order_action.php', 'create_action'], 'auth');
-route_post('/project-officer/order/store', ['actions/project_officer/order_action.php', 'store_action'], 'auth');
-route_get('/project-officer/order/{id}/detail', ['actions/project_officer/order_action.php', 'detail_action'], 'auth');
+// route_get('/project-officer/order', ['actions/project_officer/order_action.php', 'index_action'], 'auth');
+// route_get('/project-officer/order/create', ['actions/project_officer/order_action.php', 'create_action'], 'auth');
+// route_post('/project-officer/order/store', ['actions/project_officer/order_action.php', 'store_action'], 'auth');
+// route_get('/project-officer/order/{id}/detail', ['actions/project_officer/order_action.php', 'detail_action'], 'auth');
 
 // Desainer
 route_get('/desainer/template-desain', ['actions/desainer/template_desain_action.php', 'index_action'], 'desainer');
@@ -70,6 +70,13 @@ route_post('/klien/pengajuan-order/store', ['actions/klien/pengajuan_order_actio
 route_get('/klien/pengajuan-order/{id}', ['actions/klien/pengajuan_order_action.php', 'detail_action'], 'klien');
 
 
+// Dynamic Role Route
+route_get('/order', ['actions/order_action.php', 'index_action'], 'auth');
+route_get('/order/create', ['actions/order_action.php', 'create_action'], 'auth');
+route_post('/order/store', ['actions/order_action.php', 'store_action'], 'project_officer');
+route_get('/order/{id}/detail', ['actions/order_action.php', 'detail_action'], 'auth');
+
+
 // AJAX Routes
 route_get('/ajax/prospek', ['actions/manajer_marketing/prospek_action.php', 'ajax_list_action'], 'auth');
 route_post('/ajax/prospek/update-status', ['actions/manajer_marketing/prospek_action.php', 'ajax_update_status_action'], 'auth');
@@ -84,3 +91,8 @@ route_get('/ajax/po/order-list', ['actions/project_officer/order_action.php', 'a
 route_get('/ajax/po/order-list', ['actions/project_officer/order_action.php', 'ajax_list_action'], 'auth');
 route_get('/ajax/po/get-source-details', ['actions/project_officer/order_action.php', 'ajax_get_source_details_action'], 'auth');
 route_post('/ajax/order/update-status', ['actions/project_officer/order_action.php', 'ajax_update_status_action'], 'auth');
+
+// Tabbing Dynamic Order
+route_get('/ajax/order/{id}/timeline', ['actions/timeline_action.php', 'ajax_get_timeline'], 'auth');
+route_get('/ajax/order/{id}/mou', ['actions/mou_action.php', 'ajax_get_mou'], 'auth');
+route_get('/ajax/order/{id}/desain', ['actions/desain_action.php', 'ajax_get_desain'], 'auth');

@@ -58,10 +58,10 @@ return [
       'redirect_url' => '/project-officer/pengajuan-order'
     ],
     [
-      'id' => 'order_po',
+      'id' => 'order',
       'nama' => 'Order',
       'icon' => 'briefcase-outline',
-      'redirect_url' => '/project-officer/order'
+      'redirect_url' => '/order'
     ],
     [
       'id' => 'purna_jual_po',
