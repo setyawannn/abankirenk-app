@@ -127,3 +127,33 @@ function order_get_all_for_po(mysqli $mysqli, array $options = []): array
     'total' => (int) $totalRows
   ];
 }
+
+function order_get_by_id_for_detail(mysqli $mysqli, int $id): ?array
+{
+  $sql = "SELECT 
+                o.*, 
+                s.nama AS nama_sekolah, 
+                s.lokasi AS lokasi_sekolah,
+                k.nama AS nama_klien,
+                k.email AS email_klien,
+                m.mou AS file_mou,
+                DATE_FORMAT(o.deadline, '%d %M %Y') AS formatted_deadline,
+                DATE_FORMAT(o.created_at, '%d/%m/%y %H:%i') AS formatted_created_at
+            FROM order_produksi o
+            JOIN sekolah s ON o.id_sekolah = s.id_sekolah
+            JOIN users k ON o.id_klien = k.id_user
+            LEFT JOIN mou m ON o.id_mou = m.id_mou
+            WHERE o.id_order_produksi = ?";
+
+  $result = db_query($mysqli, $sql, [$id]);
+  return $result ? $result->fetch_assoc() : null;
+}
+
+function order_update_status(mysqli $mysqli, int $id, string $status): int
+{
+  $sql = "UPDATE order_produksi SET status_order = ? WHERE id_order_produksi = ?";
+  $params = [$status, $id];
+
+  $affectedRows = db_query($mysqli, $sql, $params);
+  return (int) $affectedRows;
+}

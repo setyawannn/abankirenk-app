@@ -129,26 +129,26 @@ Manajemen Order Produksi
       }
 
       data.forEach((order, index) => {
-        // Arahkan ke 'edit'
-        const editUrl = `{{ url('/project-officer/order') }}/${order.id_order_produksi}/edit`;
+        // const editUrl = `{{ url('/project-officer/order') }}/${order.id_order_produksi}/edit`;
+
+        const detailUrl = `{{ url('/project-officer/order') }}/${order.id_order_produksi}/detail`;
 
         const row = `
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary hover:underline">
-              <a href="${editUrl}">${escapeHTML(order.nomor_order)}</a>
+              <a href="${detailUrl}">${escapeHTML(order.nomor_order)}</a>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${escapeHTML(order.nama_sekolah)}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm">${order.status_badge}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <td class="px-6 py-4 ...">${escapeHTML(order.nama_sekolah)}</td>
+            <td class="px-6 py-4 ...">${order.status_badge}</td>
+            <td class="px-6 py-4 ...">
                 <div>${escapeHTML(order.narahubung)}</div>
                 <div class="text-xs text-gray-400">${escapeHTML(order.no_narahubung)}</div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.formatted_updated_at}</td>
+            <td class="px-6 py-4 ...">${order.formatted_updated_at}</td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-base font-medium">
-              <a href="${editUrl}" class="text-primary hover:text-primary-700">
-                <ion-icon name="create-outline"></ion-icon>
+              <a href="${detailUrl}" class="text-green-600 hover:text-green-700">
+                <ion-icon name="eye-outline"></ion-icon>
               </a>
-              {{-- Tombol Hapus bisa ditambahkan di sini nanti --}}
             </td>
           </tr>
         `;

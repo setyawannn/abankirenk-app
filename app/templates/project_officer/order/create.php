@@ -6,6 +6,9 @@ Buat Order Produksi Baru
 
 @section('breadcrumbs')
 <div class="flex gap-2 items-center">
+  <span class="text-primary font-medium">
+    Order
+  </span>
   <span>
     /
   </span>

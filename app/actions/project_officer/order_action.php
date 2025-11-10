@@ -20,6 +20,34 @@ function index_action()
   view('project_officer.order.index', $data);
 }
 
+function detail_action($params)
+{
+  $db = db_connect();
+  $id = (int) ($params['id'] ?? 0);
+
+  if (!$db || $id <= 0) {
+    flash_message('error', 'Error', 'Gagal terhubung atau ID Order tidak valid.');
+    return redirect('/project-officer/order');
+  }
+
+  $order = order_get_by_id_for_detail($db, $id);
+
+  if (!$order) {
+    flash_message('error', 'Data Tidak Ditemukan', 'Order produksi tidak ditemukan.');
+    return redirect('/project-officer/order');
+  }
+
+  $order['status_badge'] = generate_order_status_badge($order['status_order']);
+
+  $data = [
+    'page_title' => $order['nama_sekolah'],
+    'active_menu' => 'order_po',
+    'order' => $order,
+    'status_options_po' => ['baru', 'proses', 'batal']
+  ];
+  view('project_officer.order.detail', $data);
+}
+
 function create_action()
 {
   $db = db_connect();
@@ -113,6 +141,62 @@ function store_action()
   }
 
   return redirect($success ? '/project-officer/dashboard' : '/project-officer/order/create');
+}
+
+function ajax_update_status_action()
+{
+  header('Content-Type: application/json');
+  $db = db_connect();
+  $po_user = auth();
+
+  if (!$db || !$po_user) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Otentikasi gagal.']);
+    exit();
+  }
+
+  try {
+    $id = (int) ($_POST['id_order_produksi'] ?? 0);
+    $status = (string) ($_POST['status'] ?? '');
+
+    if ($id <= 0 || empty($status)) {
+      http_response_code(400);
+      throw new Exception('ID Order atau Status tidak valid.');
+    }
+
+    $allowed_statuses_po = ['baru', 'proses', 'batal'];
+    if (!in_array($status, $allowed_statuses_po)) {
+      http_response_code(403);
+      throw new Exception("Anda (PO) tidak diizinkan mengubah status menjadi '{$status}'.");
+    }
+
+    db_begin_transaction($db);
+
+    $affectedRows = order_update_status($db, $id, $status);
+
+    if ($affectedRows > 0) {
+      db_commit($db);
+      echo json_encode([
+        'success' => true,
+        'message' => 'Status order berhasil diperbarui.'
+      ]);
+    } else {
+      db_rollback($db);
+      throw new Exception('Gagal memperbarui status (data mungkin sama atau ID tidak ditemukan).');
+    }
+  } catch (Exception $e) {
+    if ($db) db_rollback($db);
+    error_log('AJAX Order Status Error: ' . $e->getMessage());
+    if (http_response_code() == 200) {
+      http_response_code(500);
+    }
+    echo json_encode([
+      'success' => false,
+      'message' => $e->getMessage()
+    ]);
+  }
+
+  exit();
 }
 
 function ajax_get_source_details_action()
