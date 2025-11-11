@@ -27,7 +27,7 @@ function order_create(mysqli $mysqli, array $data): int
     $data['sequence'],
     $data['id_sekolah'],
     $data['id_mou'],
-    $data['id_user_klien'],
+    $data['id_klien'],
     'baru',
     $data['narahubung'],
     $data['no_narahubung'],
@@ -156,4 +156,15 @@ function order_update_status(mysqli $mysqli, int $id, string $status): int
 
   $affectedRows = db_query($mysqli, $sql, $params);
   return (int) $affectedRows;
+}
+
+function order_get_by_nomor_order(mysqli $mysqli, string $nomor_order)
+{
+  $sql = "SELECT o.*, s.nama AS nama_sekolah
+            FROM order_produksi o
+            JOIN sekolah s ON o.id_sekolah = s.id_sekolah
+            WHERE o.nomor_order = ?";
+
+  $result = db_query($mysqli, $sql, [$nomor_order]);
+  return $result ? $result->fetch_assoc() : null;
 }

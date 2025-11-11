@@ -40,7 +40,7 @@ function detail_action($params)
 
   // Otorisasi (Contoh sederhana)
   $user_role = $user['role'];
-  $is_owner = ($user_role == 'klien' && $user['id_user'] == $order['id_klien']);
+  $is_owner = ($user_role == 'klien' && $user['id'] == $order['id_klien']);
   $is_staff = in_array($user_role, ['project_officer', 'manajer_marketing', 'manajer_produksi', 'desainer']);
 
   if (!$is_owner && !$is_staff) {
@@ -51,13 +51,15 @@ function detail_action($params)
   $allowed_tabs = [];
   $baseUrl = '/ajax/order/' . $id;
 
-  $allowed_tabs[] = ['id' => 'timeline', 'label' => 'Timeline Produksi', 'url' => url($baseUrl . '/timeline')];
+  if ($user_role != 'klien') {
+    $allowed_tabs[] = ['id' => 'timeline', 'label' => 'Timeline Produksi', 'url' => url($baseUrl . '/timeline')];
+  }
 
-  if (in_array($user_role, ['project_officer', 'manajer_marketing', 'manajer_produksi'])) {
+  if (in_array($user_role, ['project_officer', 'manajer_marketing', 'manajer_produksi', 'klien'])) {
     $allowed_tabs[] = ['id' => 'mou', 'label' => 'MoU', 'url' => url($baseUrl . '/mou')];
   }
 
-  if (in_array($user_role, ['project_officer', 'manajer_produksi', 'manajer_marketing', 'desainer'])) {
+  if (in_array($user_role, ['project_officer', 'manajer_produksi', 'manajer_marketing', 'desainer', 'klien'])) {
     $allowed_tabs[] = ['id' => 'desain', 'label' => 'Desain', 'url' => url($baseUrl . '/desain')];
   }
 
@@ -65,9 +67,9 @@ function detail_action($params)
 
   $data = [
     'page_title' => 'Detail Order: ' . $order['nomor_order'],
-    'active_menu' => 'order', // (atau menu yang relevan)
+    'active_menu' => 'order',
     'order' => $order,
-    'tabs' => $allowed_tabs // <-- Kirim data tab ke view
+    'tabs' => $allowed_tabs,
   ];
 
   if ($user_role == 'project_officer') {
@@ -149,7 +151,7 @@ function store_action()
       'sequence' => $sequence,
       'id_sekolah' => (int) $_POST['id_sekolah'],
       'id_mou' => $id_mou,
-      'id_user_klien' => $id_klien,
+      'id_klien' => $id_klien,
       'narahubung' => $_POST['narahubung'],
       'no_narahubung' => $_POST['no_narahubung'],
       'kuantitas' => (int) $_POST['kuantitas'],
@@ -309,6 +311,22 @@ function ajax_list_action()
   ];
 
   echo json_encode($response);
+  exit();
+}
+
+function ajax_get_timeline_tab($params)
+{
+  $db = db_connect();
+  $nomor_order = $params['nomor_order'] ?? null;
+
+  $items = timeline_get_by_order_id($db, $nomor_order);
+
+  $data = [
+    'items' => $items,
+    'nomor_order' => $nomor_order,
+  ];
+
+  view('order.partials._timeline_tab', $data);
   exit();
 }
 

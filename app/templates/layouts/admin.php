@@ -50,6 +50,7 @@
   <div id="sidebar-overlay" class="fixed inset-0 bg-gray-300/10 backdrop-blur-md z-20 lg:hidden hidden duration-100"></div>
 
   <script src="{{ url('/js/jquery.js') }}"></script>
+  <script src="{{ url('/js/jquery-ui.js') }}"></script>
   <script src="{{ url('/js/helper.js') }}"></script>
   <script>
     $(document).ready(function() {

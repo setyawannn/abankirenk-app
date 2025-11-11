@@ -57,7 +57,7 @@ Detail Order: {{ $order['nomor_order'] }}
     </div>
   </div>
 
-  <div class="rounded-b-none border-b border-gray-200 mb-4">
+  <div class="-mb-px border-b border-gray-200">
     <div role="tablist" id="order-tabs" class="flex gap-1">
 
       @foreach($tabs as $index => $tab)
@@ -75,11 +75,12 @@ Detail Order: {{ $order['nomor_order'] }}
     </div>
   </div>
 
-  <div id="order-tab-content" class="mt-0">
+  <div id="order-tab-content" class="mt-4">
     @foreach($tabs as $index => $tab)
     <div role="tabpanel"
       id="tab-pane-{{ $tab['id'] }}"
       class="tab-pane {{ $index > 0 ? 'hidden' : '' }}">
+      {{-- Skeleton loader untuk tab pertama --}}
       @if ($index == 0)
       <div class="card-df rounded-t-none skeleton-loader text-center p-8 text-gray-400">
         <ion-icon name="sync-outline" class="text-3xl animate-spin"></ion-icon>
@@ -93,6 +94,7 @@ Detail Order: {{ $order['nomor_order'] }}
 @endsection
 
 @push('modals')
+{{-- Modal Konfirmasi Status (Kode Anda sudah benar) --}}
 <div
   id="modal-konfirmasi-status"
   class="modal-container fixed inset-0 z-40 p-4
@@ -146,9 +148,13 @@ Detail Order: {{ $order['nomor_order'] }}
 @endpush
 
 @push('scripts')
+{{-- Asumsi helper.js (showGlobalToast, showModal, hideModal, debounce, escapeHTML) dimuat di admin.php --}}
 <script>
   $(document).ready(function() {
 
+    // ==========================================================
+    //  BAGIAN 1: LOGIKA UPDATE STATUS (Modal)
+    // ==========================================================
     const $confirmButton = $('#btn-confirm-status-update');
     const $statusSelect = $('#status_order');
 
@@ -193,19 +199,19 @@ Detail Order: {{ $order['nomor_order'] }}
         },
         success: function(response) {
           $statusSelect.data('original-value', newStatus);
-
           showGlobalToast('success', 'Update Berhasil', response.message);
         },
         error: function(xhr) {
           const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'Gagal memperbarui status.';
-
           showGlobalToast('error', 'Update Gagal', errorMsg + ' Status dikembalikan.');
-
           $statusSelect.val(originalStatus);
         }
       });
     });
 
+    // ==========================================================
+    //  BAGIAN 2: LOGIKA TABBING AJAX (Menggunakan .load())
+    // ==========================================================
     const $tabs = $('#order-tabs');
     const $contentContainer = $('#order-tab-content');
 
@@ -214,9 +220,11 @@ Detail Order: {{ $order['nomor_order'] }}
       const url = $tabLink.data('url');
       const $pane = $contentContainer.find('#tab-pane-' + tabId);
 
+      // 1. Tampilkan pane, sembunyikan yang lain
       $contentContainer.find('.tab-pane').addClass('hidden');
       $pane.removeClass('hidden');
 
+      // 2. Tandai tab aktif (Sesuai UI baru Anda)
       $tabs.find('.tab-link')
         .removeClass('border-primary text-primary')
         .addClass('border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300')
@@ -227,40 +235,67 @@ Detail Order: {{ $order['nomor_order'] }}
         .removeClass('border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300')
         .attr('aria-selected', 'true');
 
+      // 3. Cek jika sudah di-load
       if ($tabLink.data('loaded') === true) {
         return;
       }
 
-      $pane.html(`<div class="card-df rounded-t-none p-6 skeleton-loader text-center p-8 text-gray-400">
+      // 4. Tampilkan skeleton (Ini sudah ada di HTML untuk tab pertama)
+      if ($pane.find('.skeleton-loader').length === 0) {
+        $pane.html(`<div class="card-df rounded-t-none p-6 skeleton-loader text-center p-8 text-gray-400">
                                 <ion-icon name="sync-outline" class="text-3xl animate-spin"></ion-icon>
                                 <p>Memuat konten...</p>
                             </div>`);
+      }
 
-      $.ajax({
-        url: url,
-        type: 'GET',
-        success: function(responseHtml) {
-          $pane.html(responseHtml);
-          $tabLink.data('loaded', true);
-        },
-        error: function() {
+      // 5. Fetch konten (HTML + <script> + <style>)
+      //    Menggunakan .load() untuk eksekusi skrip yang aman
+      $pane.load(url, function(response, status, xhr) {
+        if (status == "error") {
+          const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'Gagal memuat konten.';
           $pane.html(`<div class="card-df rounded-t-none p-6 text-center p-8 text-red-500">
-                                      Gagal memuat konten. Coba muat ulang halaman.
-                                  </div>`);
+                                  <strong>Gagal memuat tab.</strong><br>
+                                  <span class="text-sm text-gray-500">${errorMsg}</span>
+                                </div>`);
+          showGlobalToast('error', 'Gagal Memuat', errorMsg);
+        } else {
+          // Sukses: Tandai sudah di-load
+          $tabLink.data('loaded', true);
         }
       });
     }
 
+    // --- Event listener (Tidak berubah) ---
     $tabs.on('click', '.tab-link', function(e) {
       e.preventDefault();
       loadTabContent($(this));
     });
 
-    // Muat tab pertama saat halaman dibuka
+    // --- Muat tab pertama (Tidak berubah) ---
     const $firstTab = $tabs.find('.tab-link').first();
     if ($firstTab.length) {
       loadTabContent($firstTab);
     }
   });
 </script>
+@endpush
+
+@push('styles')
+<style>
+  .timeline-card-placeholder {
+    background-color: #e5e7eb;
+    border: 2px dashed #9ca3af;
+    height: 120px;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+    width: auto;
+    display: block;
+  }
+
+  .dragging-card-helper {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: rotate(3deg);
+    cursor: grabbing !important;
+  }
+</style>
 @endpush

@@ -76,6 +76,12 @@ route_get('/order/create', ['actions/order_action.php', 'create_action'], 'auth'
 route_post('/order/store', ['actions/order_action.php', 'store_action'], 'project_officer');
 route_get('/order/{id}/detail', ['actions/order_action.php', 'detail_action'], 'auth');
 
+route_get('/order/{id}/timeline/create', ['actions/timeline_action.php', 'create_action'], 'auth');
+route_post('/order/{id}/timeline/store', ['actions/timeline_action.php', 'store_action'], 'auth');
+route_get('/timeline/{id_task}/edit', ['actions/timeline_action.php', 'edit_action'], 'auth');
+route_post('/timeline/{id_task}/update', ['actions/timeline_action.php', 'update_action'], 'auth');
+route_post('/timeline/{id_task}/delete', ['actions/timeline_action.php', 'delete_action'], 'auth');
+
 
 // AJAX Routes
 route_get('/ajax/prospek', ['actions/manajer_marketing/prospek_action.php', 'ajax_list_action'], 'auth');
@@ -88,11 +94,12 @@ route_get('/ajax/template-desain', ['actions/desainer/template_desain_action.php
 route_get('/ajax/klien/pengajuan-order', ['actions/klien/pengajuan_order_action.php', 'ajax_list_action'], 'auth');
 route_get('/ajax/po/pengajuan-order', ['actions/project_officer/pengajuan_order_action.php', 'ajax_list_action'], 'auth');
 route_get('/ajax/po/order-list', ['actions/project_officer/order_action.php', 'ajax_list_action'], 'auth');
-route_get('/ajax/po/order-list', ['actions/project_officer/order_action.php', 'ajax_list_action'], 'auth');
 route_get('/ajax/po/get-source-details', ['actions/project_officer/order_action.php', 'ajax_get_source_details_action'], 'auth');
 route_post('/ajax/order/update-status', ['actions/project_officer/order_action.php', 'ajax_update_status_action'], 'auth');
+// route_get('/ajax/order/{id}/timeline', ['actions/timeline_action.php', 'ajax_get_timeline'], 'auth');
+route_post('/ajax/timeline/update-status', ['actions/timeline_action.php', 'ajax_update_status_action'], 'auth');
 
 // Tabbing Dynamic Order
-route_get('/ajax/order/{id}/timeline', ['actions/timeline_action.php', 'ajax_get_timeline'], 'auth');
+route_get('/ajax/order/{id}/timeline', ['actions/timeline_action.php', 'ajax_get_timeline_tab'], 'auth');
 route_get('/ajax/order/{id}/mou', ['actions/mou_action.php', 'ajax_get_mou'], 'auth');
 route_get('/ajax/order/{id}/desain', ['actions/desain_action.php', 'ajax_get_desain'], 'auth');
