@@ -14,7 +14,7 @@
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-gray-50 max-w-screen">
   @include('partials.flash_alert')
 
   <div class="min-h-screen flex">

@@ -22,6 +22,8 @@
             }
         }
     }
+
+    $isAdminRole = in_array(auth()['role'], ['project_officer', 'manajer_produksi']);
 @endphp
 
 {{-- KARTU KONTEN (HTML) --}}
@@ -61,21 +63,29 @@
                              data-task-id="{{ $item['id_timeline'] }}">
                             
                             <div class="flex justify-between items-center">
-                                <a href="{{ url('/timeline/' . $item['id_timeline'] . '/detail') }}" 
+                                @php
+                                    $taskUrl = $isAdminRole 
+                                        ? url('/timeline/' . $item['id_timeline'] . '/edit') 
+                                        : url('/timeline/' . $item['id_timeline'] . '/detail');
+                                @endphp
+                                <a href="{{ $taskUrl }}" 
                                    class="text-lg font-semibold text-gray-800 kanban-card-title hover:text-primary hover:underline">
                                     {{ $item['judul'] }}
                                 </a>
                                 @if(in_array(auth()['role'], ['project_officer', 'manajer_produksi']))
-                                <div class="flex gap-2">
-                                    <a href="{{ url('/timeline/' . $item['id_timeline'] . '/edit') }}" class="text-primary">
-                                        <ion-icon name="create-outline"></ion-icon>
-                                    </a>
-                                    <form action="{{ url('/timeline/' . $item['id_timeline'] . '/delete') }}" method="POST" onsubmit="return confirm('Anda yakin?');">
-                                        <button type="submit" class="text-red-600">
-                                            <ion-icon name="trash-outline"></ion-icon>
-                                        </button>
-                                    </form>
-                                </div>
+                                    @if($isAdminRole)
+                                        <div class="flex gap-2 pl-2 flex-shrink-0">
+                                            <a href="{{ url('/timeline/' . $item['id_timeline'] . '/edit') }}" class="text-primary">
+                                                <ion-icon name="create-outline"></ion-icon>
+                                            </a>
+                                            <button type="button" 
+                                                    class="text-red-600 open-delete-modal cursor-pointer"
+                                                    data-modal-target="#modal-konfirmasi-hapus"
+                                                    data-url="{{ url('/timeline/' . $item['id_timeline'] . '/delete') }}">
+                                                <ion-icon name="trash-outline"></ion-icon>
+                                            </button>
+                                        </div>
+                                    @endif
                                 @endif
                             </div>
                             
@@ -232,5 +242,14 @@
             }
         }).disableSelection();
     }
+
+    $(document).off('click', '.open-delete-modal').on('click', '.open-delete-modal', function() {
+            const deleteUrl = $(this).data('url');
+            $('#form-delete-modal').attr('action', deleteUrl);
+            
+            $('#modal-konfirmasi-hapus .modal-box p').text('Anda yakin ingin menghapus task timeline ini?');
+            
+            showModal('#modal-konfirmasi-hapus');
+        });
 })();
 </script>

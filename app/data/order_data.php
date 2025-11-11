@@ -168,3 +168,14 @@ function order_get_by_nomor_order(mysqli $mysqli, string $nomor_order)
   $result = db_query($mysqli, $sql, [$nomor_order]);
   return $result ? $result->fetch_assoc() : null;
 }
+
+function order_get_by_id(mysqli $mysqli, string $id_order_produksi)
+{
+  $sql = "SELECT o.*, s.nama AS nama_sekolah
+            FROM order_produksi o
+            JOIN sekolah s ON o.id_sekolah = s.id_sekolah
+            WHERE o.id_order_produksi = ?";
+
+  $result = db_query($mysqli, $sql, [$id_order_produksi]);
+  return $result ? $result->fetch_assoc() : null;
+}

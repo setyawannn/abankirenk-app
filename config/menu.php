@@ -113,6 +113,12 @@ return [
       'nama' => 'Template Desain',
       'icon' => 'layers-outline',
       'redirect_url' => '/desainer/template-desain'
+    ],
+    [
+      'id' => 'order',
+      'nama' => 'Order',
+      'icon' => 'clipboard-outline',
+      'redirect_url' => '/order'
     ]
   ],
   'manajer_produksi' => [

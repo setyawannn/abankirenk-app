@@ -118,7 +118,7 @@ function detail_action($params)
     return redirect('/dashboard');
   }
 
-  $order = order_get_by_nomor_order($db, $task['id_order_produksi']);
+  $order = order_get_by_id($db, $task['id_order_produksi']);
   if (!$order) {
     flash_message('error', 'Error', 'Order induk tidak ditemukan.');
     return redirect('/dashboard');
@@ -141,7 +141,7 @@ function detail_action($params)
 
   // 4. Siapkan data untuk view
   $data = [
-    'page_title' => 'Detail Task: ' . $task['judul'],
+    'page_title' => 'Detail Task',
     'active_menu' => 'order',
     'task' => $task,
     'order' => $order

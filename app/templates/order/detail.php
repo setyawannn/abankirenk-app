@@ -94,9 +94,8 @@ Detail Order: {{ $order['nomor_order'] }}
 @endsection
 
 @push('modals')
-{{-- Modal Konfirmasi Status (Kode Anda sudah benar) --}}
 <div
-  id="modal-konfirmasi-status"
+  id="modal-konfirmasi-hapus"
   class="modal-container fixed inset-0 z-40 p-4
            flex items-center justify-center 
            invisible">
@@ -107,54 +106,46 @@ Detail Order: {{ $order['nomor_order'] }}
   <div class="modal-box relative z-50 w-full max-w-md rounded-lg bg-white p-6 shadow-xl 
                 opacity-0 scale-95 transition-all duration-300 ease-out">
 
-    <div class="flex items-center justify-between">
-      <h3 class="text-xl font-semibold text-gray-900">
-        Konfirmasi Perubahan Status
-      </h3>
-      <button
-        type="button"
-        data-modal-dismiss="#modal-konfirmasi-status"
-        class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
-        <ion-icon name="close" class="h-6 w-6"></ion-icon>
-      </button>
-    </div>
-
-    <div class="mt-4">
-      <p class="text-gray-600">
-        Anda yakin ingin mengubah status order ini dari
-        <strong id="modal-status-old" class="font-medium text-gray-900">...</strong>
-        menjadi
-        <strong id="modal-status-new" class="font-medium text-gray-900">...</strong>?
-      </p>
-    </div>
-
-    <div class="mt-6 flex justify-end gap-3">
-      <button
-        type="button"
-        data-modal-dismiss="#modal-konfirmasi-status"
-        class="btn-outline-df"
-        id="btn-cancel-status">
-        Batal
-      </button>
-      <button
-        type="button"
-        id="btn-confirm-status-update"
-        class="btn-df">
-        Ya, Ubah Status
-      </button>
-    </div>
+    {{-- Form ini akan di-submit --}}
+    <form id="form-delete-modal" action="" method="POST">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-semibold text-gray-900">
+          Konfirmasi Hapus
+        </h3>
+        <button
+          type="button"
+          data-modal-dismiss="#modal-konfirmasi-hapus"
+          class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+          <ion-icon name="close" class="h-6 w-6"></ion-icon>
+        </button>
+      </div>
+      <div class="mt-4">
+        <p class="text-gray-600">
+          Apakah Anda yakin ingin menghapus <strong>task timeline</strong> ini? Tindakan ini tidak dapat dibatalkan.
+        </p>
+      </div>
+      <div class="mt-6 flex justify-end gap-3">
+        <button
+          type="button"
+          data-modal-dismiss="#modal-konfirmasi-hapus"
+          class="btn-outline-df">
+          Batal
+        </button>
+        <button
+          type="submit"
+          class="btn-danger-df">
+          Ya, Hapus
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 @endpush
 
 @push('scripts')
-{{-- Asumsi helper.js (showGlobalToast, showModal, hideModal, debounce, escapeHTML) dimuat di admin.php --}}
 <script>
   $(document).ready(function() {
 
-    // ==========================================================
-    //  BAGIAN 1: LOGIKA UPDATE STATUS (Modal)
-    // ==========================================================
     const $confirmButton = $('#btn-confirm-status-update');
     const $statusSelect = $('#status_order');
 
@@ -220,28 +211,33 @@ Detail Order: {{ $order['nomor_order'] }}
       $contentContainer.find('.tab-pane').addClass('hidden');
       $pane.removeClass('hidden');
 
-      $tabs.find('.tab-link').removeClass('border-primary text-primary').attr('aria-selected', 'false');
-      $tabLink.addClass('border-primary text-primary').attr('aria-selected', 'true');
+      $tabs.find('.tab-link')
+        .removeClass('border-primary text-primary')
+        .addClass('border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300')
+        .attr('aria-selected', 'false');
+      $tabLink
+        .addClass('border-primary text-primary')
+        .removeClass('border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300')
+        .attr('aria-selected', 'true');
 
       if ($tabLink.data('loaded') === true) {
         return;
       }
 
-      // Tampilkan skeleton
-      $pane.html(`<div class="card-df rounded-t-none p-6 skeleton-loader text-center p-8 text-gray-400">
-                            <ion-icon name="sync-outline" class="text-3xl animate-spin"></ion-icon>
-                            <p>Memuat konten...</p>
-                        </div>`);
+      if ($pane.find('.skeleton-loader').length === 0) {
+        $pane.html(`<div class="card-df rounded-t-none p-6 skeleton-loader text-center p-8 text-gray-400">
+                           <ion-icon name="sync-outline" class="text-3xl animate-spin"></ion-icon>
+                           <p>Memuat konten...</p>
+                       </div>`);
+      }
 
-      // ==================================================
-      //  PERBAIKAN: Gunakan .load()
-      // ==================================================
-      // .load() akan mengambil HTML DAN mengeksekusi <script> di dalamnya
-      // dengan aman, memperbaiki error 'appendChild'.
       $pane.load(url, function(response, status, xhr) {
         if (status == "error") {
           const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'Gagal memuat konten.';
-          $pane.html(`<div class="card-df rounded-t-none p-6 text-center ...">Gagal memuat.</div>`);
+          $pane.html(`<div class="card-df rounded-t-none p-6 text-center text-red-500">
+                        <strong>Gagal memuat tab.</strong><br>
+                        <span class="text-sm text-gray-500">${errorMsg}</span>
+                      </div>`);
           showGlobalToast('error', 'Gagal Memuat', errorMsg);
         } else {
           $tabLink.data('loaded', true);
