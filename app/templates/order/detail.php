@@ -209,9 +209,6 @@ Detail Order: {{ $order['nomor_order'] }}
       });
     });
 
-    // ==========================================================
-    //  BAGIAN 2: LOGIKA TABBING AJAX (Menggunakan .load())
-    // ==========================================================
     const $tabs = $('#order-tabs');
     const $contentContainer = $('#order-tab-content');
 
@@ -220,46 +217,33 @@ Detail Order: {{ $order['nomor_order'] }}
       const url = $tabLink.data('url');
       const $pane = $contentContainer.find('#tab-pane-' + tabId);
 
-      // 1. Tampilkan pane, sembunyikan yang lain
       $contentContainer.find('.tab-pane').addClass('hidden');
       $pane.removeClass('hidden');
 
-      // 2. Tandai tab aktif (Sesuai UI baru Anda)
-      $tabs.find('.tab-link')
-        .removeClass('border-primary text-primary')
-        .addClass('border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300')
-        .attr('aria-selected', 'false');
+      $tabs.find('.tab-link').removeClass('border-primary text-primary').attr('aria-selected', 'false');
+      $tabLink.addClass('border-primary text-primary').attr('aria-selected', 'true');
 
-      $tabLink
-        .addClass('border-primary text-primary')
-        .removeClass('border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300')
-        .attr('aria-selected', 'true');
-
-      // 3. Cek jika sudah di-load
       if ($tabLink.data('loaded') === true) {
         return;
       }
 
-      // 4. Tampilkan skeleton (Ini sudah ada di HTML untuk tab pertama)
-      if ($pane.find('.skeleton-loader').length === 0) {
-        $pane.html(`<div class="card-df rounded-t-none p-6 skeleton-loader text-center p-8 text-gray-400">
-                                <ion-icon name="sync-outline" class="text-3xl animate-spin"></ion-icon>
-                                <p>Memuat konten...</p>
-                            </div>`);
-      }
+      // Tampilkan skeleton
+      $pane.html(`<div class="card-df rounded-t-none p-6 skeleton-loader text-center p-8 text-gray-400">
+                            <ion-icon name="sync-outline" class="text-3xl animate-spin"></ion-icon>
+                            <p>Memuat konten...</p>
+                        </div>`);
 
-      // 5. Fetch konten (HTML + <script> + <style>)
-      //    Menggunakan .load() untuk eksekusi skrip yang aman
+      // ==================================================
+      //  PERBAIKAN: Gunakan .load()
+      // ==================================================
+      // .load() akan mengambil HTML DAN mengeksekusi <script> di dalamnya
+      // dengan aman, memperbaiki error 'appendChild'.
       $pane.load(url, function(response, status, xhr) {
         if (status == "error") {
           const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'Gagal memuat konten.';
-          $pane.html(`<div class="card-df rounded-t-none p-6 text-center p-8 text-red-500">
-                                  <strong>Gagal memuat tab.</strong><br>
-                                  <span class="text-sm text-gray-500">${errorMsg}</span>
-                                </div>`);
+          $pane.html(`<div class="card-df rounded-t-none p-6 text-center ...">Gagal memuat.</div>`);
           showGlobalToast('error', 'Gagal Memuat', errorMsg);
         } else {
-          // Sukses: Tandai sudah di-load
           $tabLink.data('loaded', true);
         }
       });
@@ -270,8 +254,6 @@ Detail Order: {{ $order['nomor_order'] }}
       e.preventDefault();
       loadTabContent($(this));
     });
-
-    // --- Muat tab pertama (Tidak berubah) ---
     const $firstTab = $tabs.find('.tab-link').first();
     if ($firstTab.length) {
       loadTabContent($firstTab);

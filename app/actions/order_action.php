@@ -7,6 +7,7 @@ require_once __DIR__ . '/../data/order_data.php';
 require_once __DIR__ . '/../data/mou_data.php';
 require_once __DIR__ . '/../data/user_data.php';
 require_once __DIR__ . '/../data/prospek_data.php';
+require_once __DIR__ . '/../data/timeline_data.php';
 require_once __DIR__ . '/../data/pengajuan_order_data.php';
 
 
@@ -38,13 +39,28 @@ function detail_action($params)
     return redirect('/dashboard');
   }
 
-  // Otorisasi (Contoh sederhana)
   $user_role = $user['role'];
-  $is_owner = ($user_role == 'klien' && $user['id'] == $order['id_klien']);
-  $is_staff = in_array($user_role, ['project_officer', 'manajer_marketing', 'manajer_produksi', 'desainer']);
+  $id_user = $user['id'];
 
-  if (!$is_owner && !$is_staff) {
+  $is_owner = ($user_role == 'klien' && $id_user == $order['id_klien']);
+
+  $is_core_staff = in_array($user_role, [
+    'project_officer',
+    'manajer_marketing',
+    'manajer_produksi'
+  ]);
+
+  $is_assigned_staff = false;
+  if (in_array($user_role, ['desainer', 'tim_percetakan'])) {
+    $is_assigned_staff = timeline_is_user_assigned_to_order_by_nomor($db, $id_user, $order['id_order_produksi']);
+  }
+
+  if ($is_owner || (!$is_core_staff && !$is_assigned_staff)) {
     flash_message('error', 'Akses Ditolak', 'Anda tidak memiliki izin untuk melihat order ini.');
+
+    if ($is_owner) {
+      return redirect('/klien/pengajuan-order');
+    }
     return redirect('/dashboard');
   }
 

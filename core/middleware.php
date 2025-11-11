@@ -32,8 +32,8 @@ function run_middleware($name)
 
   switch ($name) {
 
-    case 'supervisor_marketing':
-      if ($userRole !== 'supervisor_marketing') {
+    case 'manajer_marketing':
+      if ($userRole !== 'manajer_marketing') {
         abort_403();
       }
       break;
@@ -68,8 +68,8 @@ function run_middleware($name)
       }
       break;
 
-    case 'tim_percetakan':
-      if ($userRole !== 'tim_percetakan') {
+    case 'manajer_produksi':
+      if ($userRole !== 'manajer_produksi') {
         abort_403();
       }
       break;

@@ -76,11 +76,12 @@ route_get('/order/create', ['actions/order_action.php', 'create_action'], 'auth'
 route_post('/order/store', ['actions/order_action.php', 'store_action'], 'project_officer');
 route_get('/order/{id}/detail', ['actions/order_action.php', 'detail_action'], 'auth');
 
-route_get('/order/{id}/timeline/create', ['actions/timeline_action.php', 'create_action'], 'auth');
-route_post('/order/{id}/timeline/store', ['actions/timeline_action.php', 'store_action'], 'auth');
-route_get('/timeline/{id_task}/edit', ['actions/timeline_action.php', 'edit_action'], 'auth');
-route_post('/timeline/{id_task}/update', ['actions/timeline_action.php', 'update_action'], 'auth');
-route_post('/timeline/{id_task}/delete', ['actions/timeline_action.php', 'delete_action'], 'auth');
+route_get('/order/{id}/timeline/create', ['actions/timeline_action.php', 'create_action'], 'manajer_produksi');
+route_post('/order/{id}/timeline/store', ['actions/timeline_action.php', 'store_action'], 'manajer_produksi');
+route_get('/timeline/{id_task}/detail', ['actions/timeline_action.php', 'detail_action'], 'auth');
+route_get('/timeline/{id_task}/edit', ['actions/timeline_action.php', 'edit_action'], 'manajer_produksi');
+route_post('/timeline/{id_task}/update', ['actions/timeline_action.php', 'update_action'], 'manajer_produksi');
+route_post('/timeline/{id_task}/delete', ['actions/timeline_action.php', 'delete_action'], 'manajer_produksi');
 
 
 // AJAX Routes

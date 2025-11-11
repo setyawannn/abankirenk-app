@@ -123,10 +123,10 @@ return [
       'redirect_url' => '/dashboard/produksi'
     ],
     [
-      'id' => 'order_prod',
+      'id' => 'order',
       'nama' => 'Antrian Order',
       'icon' => 'clipboard-outline',
-      'redirect_url' => '/order/produksi'
+      'redirect_url' => '/order'
     ]
   ],
   'tim_percetakan' => [

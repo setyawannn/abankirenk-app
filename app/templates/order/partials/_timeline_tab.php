@@ -1,3 +1,4 @@
+{{-- templates/order/partials/_timeline_tab.php --}}
 @php
     // Tentukan kolom Kanban kita
     $columns = [
@@ -23,106 +24,118 @@
     }
 @endphp
 
-{{-- 
-  Kartu Konten.
-  Kita menggunakan $order['id_order_produksi'] (INT) untuk link 'create'.
-  Kita menggunakan $order['nomor_order'] (VARCHAR) untuk ditampilkan.
---}}
+{{-- KARTU KONTEN (HTML) --}}
 <div class="card-df rounded-t-none">
     <div class="p-6">
         
         <div class="flex justify-between items-center mb-4">
-            <h4 class="text-lg font-medium">Timeline Produksi </h4>
-            
-            {{-- Tombol "Tambah" sekarang mengarah ke halaman 'create' --}}
+            <h4 class="text-lg font-medium">Timeline Produksi</h4>
             @if(in_array(auth()['role'], ['project_officer', 'manajer_produksi']))
-            <a href="{{ url('/order/' . $order['id_order_produksi'] . '/timeline/create') }}" class="btn-df btn-sm">
-                <ion-icon name="add"></ion-icon>
-                Tambah Task
-            </a>
+                <a href="{{ url('/order/' . $order['id_order_produksi'] . '/timeline/create') }}" class="btn-df btn-sm">
+                    <ion-icon name="add"></ion-icon>
+                    Tambah Task
+                </a>
             @endif
         </div>
 
-        {{-- ========================================================== --}}
-        {{--  PERBAIKAN: Loop 'columns' di luar, 'tasks' di dalam     --}}
-        {{-- ========================================================== --}}
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
-            @foreach ($columns as $status => $style)
-            <div class="kanban-column bg-gray-100 p-4 border border-gray-200 rounded-lg h-[80vh] space-y-6 overflow-y-auto">
+        @if (empty($items))
+            <p class="text-gray-500 text-center p-4 col-span-3">Belum ada timeline yang dibuat.</p>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 
-                <div class="{{ $style['badge_color'] }} text-white px-4 py-1 w-fit text-sm rounded-full">
-                    <span>{{ $status }}</span>
-                </div>
-                
-                <div class="kanban-column-content flex flex-col gap-4 min-h-[50px]" data-status="{{ $status }}">
+                @foreach ($columns as $status => $style)
+                <div class="kanban-column bg-gray-100 p-4 border border-gray-200 rounded-lg h-[80vh] space-y-6 overflow-y-auto">
                     
-                    {{-- Loop tasks HANYA untuk kolom ini --}}
-                    @if (empty($tasks_by_status[$status]))
-                        <p class="kanban-empty-message text-sm text-gray-400 p-4 text-center italic">Belum ada task.</p>
-                    @endif
-                    @foreach ($tasks_by_status[$status] as $item)
-                    <div class="timeline-card bg-white p-4 rounded-md space-y-2 shadow-sm" 
-                            data-task-id="{{ $item['id_timeline'] }}">
-                        
-                        <div class="flex justify-between items-center">
-                            <h4 class="text-lg font-semibold text-gray-800">{{ $item['judul'] }}</h4>
-                            {{-- Tombol Edit/Hapus --}}
-                            @if(in_array(auth()['role'], ['project_officer', 'manajer_produksi']))
-                            <div class="flex gap-2">
-                                <a href="{{ url('/timeline/' . $item['id_timeline'] . '/edit') }}" class="text-primary hover:text-primary-700">
-                                    <ion-icon name="create-outline"></ion-icon>
-                                </a>
-                                <form action="{{ url('/timeline/' . $item['id_timeline'] . '/delete') }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus task ini?');">
-                                    <button type="submit" class="text-red-600 hover:text-red-700">
-                                        <ion-icon name="trash-outline"></ion-icon>
-                                    </button>
-                                </form>
-                            </div>
-                            @endif
-                        </div>
-                        
-                        {{-- Info Card --}}
-                        <div class="flex flex-col gap-2">
-                            <div class="text-base text-gray-500 space-x-1">
-                                <ion-icon name="person-outline" class="text-primary"></ion-icon>
-                                <span>{{ $item['nama_user'] ?? 'N/A' }}</span>
-                            </div>
-                            <div class="text-base text-gray-500 space-x-1">
-                                <ion-icon name="calendar-clear-outline" class="text-primary"></ion-icon>
-                                <span>{{ date('d/m/Y', strtotime($item['deadline'])) }}</span>
-                            </div>
-                        </div>
+                    <div class="{{ $style['badge_color'] }} text-white px-4 py-1 w-fit text-sm rounded-full">
+                        <span>{{ $status }}</span>
                     </div>
-                    @endforeach
                     
+                    <div class="kanban-column-content flex flex-col gap-4 min-h-[50px]" data-status="{{ $status }}">
+                        
+                        @if (empty($tasks_by_status[$status]))
+                            <p class="kanban-empty-message text-sm text-gray-400 p-4 text-center italic">Belum ada task.</p>
+                        @endif
+                        
+                        @foreach ($tasks_by_status[$status] as $item)
+                        <div class="timeline-card bg-white p-4 rounded-md space-y-2 cursor-move shadow-sm hover:shadow-md transition-shadow" 
+                             data-task-id="{{ $item['id_timeline'] }}">
+                            
+                            <div class="flex justify-between items-center">
+                                <a href="{{ url('/timeline/' . $item['id_timeline'] . '/detail') }}" 
+                                   class="text-lg font-semibold text-gray-800 kanban-card-title hover:text-primary hover:underline">
+                                    {{ $item['judul'] }}
+                                </a>
+                                @if(in_array(auth()['role'], ['project_officer', 'manajer_produksi']))
+                                <div class="flex gap-2">
+                                    <a href="{{ url('/timeline/' . $item['id_timeline'] . '/edit') }}" class="text-primary">
+                                        <ion-icon name="create-outline"></ion-icon>
+                                    </a>
+                                    <form action="{{ url('/timeline/' . $item['id_timeline'] . '/delete') }}" method="POST" onsubmit="return confirm('Anda yakin?');">
+                                        <button type="submit" class="text-red-600">
+                                            <ion-icon name="trash-outline"></ion-icon>
+                                        </button>
+                                    </form>
+                                </div>
+                                @endif
+                            </div>
+                            
+                            <div class="flex flex-col gap-2">
+                                <div class="text-base text-gray-500 space-x-1">
+                                    <ion-icon name="person-outline" class="text-primary"></ion-icon>
+                                    <span>{{ $item['nama_user'] ?? 'N/A' }}</span>
+                                </div>
+                                <div class="text-base text-gray-500 space-x-1">
+                                    <ion-icon name="calendar-clear-outline" class="text-primary"></ion-icon>
+                                    <span>{{ date('d/m/Y', strtotime($item['deadline'])) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
+                @endforeach
             </div>
-            @endforeach
-            
-        </div>
-        
+        @endif
     </div>
 </div>
 
+{{-- ========================================================== --}}
+{{--  STYLE & SCRIPT KHUSUS KANBAN                            --}}
+{{-- ========================================================== --}}
 <style>
-.timeline-card-placeholder {
-    background-color: #e5e7eb;
-    border: 2px dashed #9ca3af; 
-    height: 120px; 
-    border-radius: 0.375rem;
-    margin-bottom: 1rem;
+.kanban-card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Tentukan tinggi 2 baris agar layout stabil */
+    min-height: 3.5rem; /* (1.75rem * 2) */
+    line-height: 1.75rem; /* (sesuai text-lg) */
+    word-break: break-word; /* Memecah kata jika 1 kata terlalu panjang */
 }
 
+/* 2. Placeholder (Slot kosong) */
+.timeline-card-placeholder {
+    background-color: #e5e7eb;
+    border: 2px dashed #9ca3af;
+    height: 120px;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+    cursor: grabbing !important;
+}
+
+/* 3. Helper (Bayangan yang diseret) */
 .dragging-card-helper {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     transform: rotate(3deg); 
     cursor: grabbing !important; 
+    max-width: 20rem;
 }
 </style>
 
 <script>
+// Panggil fungsi inisialisasi
 (function() {
     try {
         if (typeof $.fn.sortable === 'function') {
@@ -134,9 +147,6 @@
         console.error("Gagal inisialisasi Kanban:", e);
     }
 
-    // ==================================================
-    //  FUNGSI KANBAN (DIPERBARUI TOTAL)
-    // ==================================================
     function initKanbanTab() {
         
         // --- Helper untuk mengelola pesan "kosong" ---
@@ -146,14 +156,11 @@
             $(".kanban-column-content").each(function() {
                 const $column = $(this);
                 const $emptyMsg = $column.find('.kanban-empty-message');
-
                 if ($column.find('.timeline-card').length === 0) {
-                    // Kolom kosong, tambahkan pesan jika belum ada
                     if ($emptyMsg.length === 0) {
                         $column.append(emptyMessageHtml);
                     }
                 } else {
-                    // Kolom ada isinya, hapus pesan
                     if ($emptyMsg.length > 0) {
                         $emptyMsg.remove();
                     }
@@ -162,7 +169,6 @@
         }
         // --- Akhir Helper ---
 
-        // Cek jika sudah diinisialisasi
         if ($(".kanban-column-content.ui-sortable").length > 0) {
             try {
                 $(".kanban-column-content").sortable("destroy");
@@ -173,15 +179,19 @@
             connectWith: ".kanban-column-content",
             helper: "clone",
             appendTo: "body",
-            tolerance: "intersect", // (Sesuai permintaan: 50%)
+            tolerance: "intersect",
             placeholder: "timeline-card-placeholder", 
             
+
             start: function(event, ui) {
                 ui.helper.addClass('dragging-card-helper');
-                ui.helper.width(ui.item.width());
                 
-                // PERBAIKAN UX:
-                // Cek kolom ASAL setelah card diangkat
+                // 2. 'outerWidth()' & 'outerHeight()'
+                //    Memaksa "bayangan" memiliki ukuran yang SAMA PERSIS
+                //    dengan card aslinya, termasuk padding/border.
+                ui.helper.outerWidth(ui.item.outerWidth());
+                ui.helper.outerHeight(ui.item.outerHeight());
+                
                 setTimeout(updateKanbanEmptyMessages, 50);
             },
             
@@ -192,9 +202,6 @@
                 const newStatus = $newColumn.data('status');
 
                 $card.css('opacity', 0.5);
-
-                // PERBAIKAN UX:
-                // Hapus pesan "kosong" dari kolom TUJUAN segera
                 $newColumn.find('.kanban-empty-message').remove();
 
                 $.ajax({
@@ -209,15 +216,12 @@
                         if (window.showGlobalToast) {
                             showGlobalToast('success', 'Status Diperbarui', response.message);
                         }
-                        // Cek status semua kolom setelah sukses
-                        updateKanbanEmptyMessages();
+                        updateKanbanEmptyMessages(); // Cek semua kolom
                     },
                     error: function(xhr) {
-                        $(ui.sender).sortable('cancel'); // Batalkan
+                        $(ui.sender).sortable('cancel'); 
                         $card.css('opacity', 1);
-                        
-                        // Cek status semua kolom setelah gagal/batal
-                        updateKanbanEmptyMessages();
+                        updateKanbanEmptyMessages(); // Cek semua kolom
                         
                         const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'Gagal update status.';
                         if (window.showGlobalToast) {

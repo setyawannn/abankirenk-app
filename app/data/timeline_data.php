@@ -80,3 +80,24 @@ function timeline_update_status(mysqli $mysqli, int $id_timeline, string $status
   $affectedRows = db_query($mysqli, $sql, $params);
   return (int) $affectedRows;
 }
+
+function timeline_is_user_assigned_to_order_by_nomor(mysqli $mysqli, int $id_user, string $nomor_order): bool
+{
+  $sql = "SELECT 1 FROM timeline WHERE id_user = ? AND id_order_produksi = ? LIMIT 1";
+  $result = db_query($mysqli, $sql, [$id_user, $nomor_order]);
+  return $result && $result->num_rows > 0;
+}
+
+function timeline_get_by_order_id_and_user_id(mysqli $mysqli, string $nomor_order, int $id_user): array
+{
+  $sql = "SELECT t.*, u.nama AS nama_user
+            FROM timeline t
+            LEFT JOIN users u ON t.id_user = u.id_user
+            WHERE t.id_order_produksi = ? AND t.id_user = ?
+            ORDER BY 
+                FIELD(t.status_timeline, 'Ditugaskan', 'Dalam Proses', 'Selesai'),
+                t.deadline ASC";
+
+  $result = db_query($mysqli, $sql, [$nomor_order, $id_user]);
+  return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+}

@@ -14,8 +14,17 @@ function get_order_from_id_int(mysqli $db, int $id_order_produksi): ?array
 function ajax_get_timeline_tab($params)
 {
   $db = db_connect();
-  $id_order_produksi = (int) ($params['id'] ?? 0); // Ambil ID integer (auto-increment)
+  $user = auth(); // Ambil user yang sedang login
+  $id_order_produksi = (int) ($params['id'] ?? 0); // Ambil ID integer
 
+  if (!$db || !$user || $id_order_produksi <= 0) {
+    http_response_code(403);
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => 'Akses ditolak atau ID order tidak valid.']);
+    exit();
+  }
+
+  // 1. Ambil data Order (untuk mendapatkan nomor_order)
   $order = order_get_by_id_for_detail($db, $id_order_produksi);
   if (!$order) {
     http_response_code(404);
@@ -24,17 +33,36 @@ function ajax_get_timeline_tab($params)
     exit();
   }
 
-  // Ambil task timeline menggunakan ID (INT)
-  $items = timeline_get_by_order_id($db, $id_order_produksi);
+  // 2. Tentukan role
+  $user_role = $user['role'];
+  $id_user = $user['id'];
+  $id_order_produksi = $order['id_order_produksi']; // Ini adalah VARCHAR 'ORD...'
 
+  // Tentukan "Core" role (sesuai permintaan Anda, PO & Manajer Produksi)
+  $core_roles = ['project_officer', 'manajer_produksi'];
+
+  // 3. Logika Pengambilan Data Berdasarkan Role
+  $items = [];
+  if (in_array($user_role, $core_roles)) {
+    // Core user: Get ALL tasks (menggunakan id_or$id_order_produksi VARCHAR)
+    $items = timeline_get_by_order_id($db, $id_order_produksi);
+  } else {
+    // Non-core user: Get ONLY their tasks
+    $items = timeline_get_by_order_id_and_user_id($db, $id_order_produksi, $id_user);
+  }
+
+  // 4. Ambil staf (untuk modal, jika Anda menggunakannya nanti)
   $staff_desain = user_get_all_by_role($db, 'desainer');
   $staff_cetak = user_get_all_by_role($db, 'tim_percetakan');
 
   $data = [
     'items' => $items,
     'order' => $order, // Kirim data order lengkap
+    'staff_list' => array_merge($staff_desain, $staff_cetak), // Untuk form modal
+    'status_options' => ['Ditugaskan', 'Dalam Proses', 'Selesai'] // Untuk form modal
   ];
 
+  // 5. Render HANYA file partial-nya (tampilan Kanban)
   view('order.partials._timeline_tab', $data);
   exit();
 }
@@ -71,6 +99,55 @@ function create_action($params)
   ];
 
   view('order.timeline.create', $data);
+}
+
+function detail_action($params)
+{
+  $db = db_connect();
+  $id_task = (int) ($params['id_task'] ?? 0);
+  $user = auth();
+
+  if (!$db || $id_task <= 0 || !$user) {
+    flash_message('error', 'Error', 'Task tidak valid atau Anda tidak login.');
+    return redirect('/dashboard');
+  }
+
+  $task = timeline_get_by_id($db, $id_task);
+  if (!$task) {
+    flash_message('error', 'Error', 'Task timeline tidak ditemukan.');
+    return redirect('/dashboard');
+  }
+
+  $order = order_get_by_nomor_order($db, $task['id_order_produksi']);
+  if (!$order) {
+    flash_message('error', 'Error', 'Order induk tidak ditemukan.');
+    return redirect('/dashboard');
+  }
+
+  $user_role = $user['role'];
+  $is_owner = ($user_role == 'klien' && $user['id_user'] == $order['id_klien']);
+
+  $is_staff_allowed = in_array($user_role, [
+    'project_officer',
+    'manajer_produksi',
+    'desainer',
+    'tim_percetakan'
+  ]);
+
+  if (!$is_owner && !$is_staff_allowed) {
+    flash_message('error', 'Akses Ditolak', 'Anda tidak memiliki izin untuk melihat detail order ini.');
+    return redirect('/dashboard');
+  }
+
+  // 4. Siapkan data untuk view
+  $data = [
+    'page_title' => 'Detail Task: ' . $task['judul'],
+    'active_menu' => 'order',
+    'task' => $task,
+    'order' => $order
+  ];
+
+  view('order.timeline.detail', $data);
 }
 
 /**
