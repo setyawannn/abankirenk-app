@@ -179,3 +179,17 @@ function order_get_by_id(mysqli $mysqli, string $id_order_produksi)
   $result = db_query($mysqli, $sql, [$id_order_produksi]);
   return $result ? $result->fetch_assoc() : null;
 }
+
+function order_get_completed_for_klien(mysqli $mysqli, int $id_klien): array
+{
+  $sql = "SELECT DISTINCT o.id_order_produksi, o.nomor_order, s.nama AS nama_sekolah
+            FROM order_produksi o
+            JOIN pengiriman p ON o.id_order_produksi = p.id_order_produksi
+            JOIN sekolah s ON o.id_sekolah = s.id_sekolah
+            WHERE o.id_klien = ? 
+            AND p.tanggal_sampai IS NOT NULL
+            ORDER BY o.created_at DESC";
+
+  $result = db_query($mysqli, $sql, [$id_klien]);
+  return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+}

@@ -44,6 +44,8 @@ function detail_action($params)
 
   $is_owner = ($user_role == 'klien' && $id_user == $order['id_klien']);
 
+  $is_cs = ($user_role == 'customer_service');
+
   $is_core_staff = in_array($user_role, [
     'project_officer',
     'manajer_marketing',
@@ -55,7 +57,7 @@ function detail_action($params)
     $is_assigned_staff = timeline_is_user_assigned_to_order_by_nomor($db, $id_user, $id);
   }
 
-  if (!$is_owner && !$is_core_staff && !$is_assigned_staff) {
+  if (!$is_owner && !$is_core_staff && !$is_assigned_staff && !$is_cs) {
     flash_message('error', 'Akses Ditolak', 'Anda tidak memiliki izin untuk melihat order ini.');
 
     if (!$is_owner) {
@@ -67,7 +69,7 @@ function detail_action($params)
   $allowed_tabs = [];
   $baseUrl = '/ajax/order/' . $id;
 
-  if ($user_role != 'klien') {
+  if (!in_array($user_role, ['klien', 'customer_service'])) {
     $allowed_tabs[] = ['id' => 'timeline', 'label' => 'Timeline Produksi', 'url' => url($baseUrl . '/timeline')];
   }
 
@@ -85,6 +87,10 @@ function detail_action($params)
 
   if (in_array($user_role, ['project_officer', 'manajer_produksi', 'manajer_marketing', 'tim_percetakan', 'klien'])) {
     $allowed_tabs[] = ['id' => 'pengiriman', 'label' => 'Pengiriman', 'url' => url($baseUrl . '/pengiriman')];
+  }
+
+  if (in_array($user_role, ['project_officer', 'customer_service', 'klien'])) {
+    $allowed_tabs[] = ['id' => 'tiket', 'label' => 'Tiket Komplain', 'url' => url($baseUrl . '/tiket')];
   }
 
   // (Tambahkan tab QC, Pengiriman, Tiket, dll. di sini nanti)

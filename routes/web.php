@@ -100,6 +100,12 @@ route_get('/pengiriman/{id_pengiriman}/detail', ['actions/pengiriman_action.php'
 route_post('/pengiriman/{id_pengiriman}/delete', ['actions/pengiriman_action.php', 'delete_action'], 'manajer_produksi');
 route_post('/pengiriman/{id_pengiriman}/konfirmasi', ['actions/pengiriman_action.php', 'konfirmasi_action'], 'klien');
 
+// Tiket Retur
+route_get('/order/{id_order}/tiket/create', ['actions/tiket_action.php', 'create_action'], 'klien');
+route_post('/order/{id_order}/tiket/store', ['actions/tiket_action.php', 'store_action'], 'klien');
+route_get('/tiket/{id_tiket}/detail', ['actions/tiket_action.php', 'detail_action'], 'auth');
+route_post('/tiket/{id_tiket}/update', ['actions/tiket_action.php', 'update_action'], 'customer_service');
+
 
 // AJAX Routes
 route_get('/ajax/prospek', ['actions/manajer_marketing/prospek_action.php', 'ajax_list_action'], 'auth');
@@ -123,3 +129,4 @@ route_get('/ajax/order/{id}/mou', ['actions/mou_action.php', 'ajax_get_mou'], 'a
 route_get('/ajax/order/{id}/desain', ['actions/desain_action.php', 'ajax_get_desain_tab'], 'auth');
 route_get('/ajax/order/{id}/qc', ['actions/qc_action.php', 'ajax_get_qc_tab'], 'auth');
 route_get('/ajax/order/{id}/pengiriman', ['actions/pengiriman_action.php', 'ajax_get_pengiriman_tab'], 'auth');
+route_get('/ajax/order/{id}/tiket', ['actions/tiket_action.php', 'ajax_get_tiket_tab'], 'auth');
