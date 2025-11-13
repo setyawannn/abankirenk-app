@@ -13,8 +13,8 @@ require_once __DIR__ . '/../data/timeline_data.php'; // (Penting untuk otorisasi
 function can_user_access_desain(mysqli $db, array $user, array $order): bool
 {
   $user_role = $user['role'];
+  $id_user = $user['id'];
 
-  // 1. Core staff selalu bisa
   $is_core_staff = in_array($user_role, [
     'project_officer',
     'manajer_produksi',
@@ -24,12 +24,15 @@ function can_user_access_desain(mysqli $db, array $user, array $order): bool
     return true;
   }
 
-  // 2. Desainer HANYA jika ditugaskan
-  if ($user_role == 'desainer') {
-    return timeline_is_user_assigned_to_order_by_nomor($db, $user['id'], $order['id_order_produksi']);
+  $is_owner = ($user_role == 'klien' && $id_user == $order['id_klien']);
+  if ($is_owner) {
+    return true;
   }
 
-  // 3. Role lain (termasuk Klien) tidak bisa
+  if ($user_role == 'desainer') {
+    return timeline_is_user_assigned_to_order($db, $id_user, $order['id_order_produksi']);
+  }
+
   return false;
 }
 

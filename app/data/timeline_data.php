@@ -88,16 +88,9 @@ function timeline_is_user_assigned_to_order_by_nomor(mysqli $mysqli, int $id_use
   return $result && $result->num_rows > 0;
 }
 
-function timeline_get_by_order_id_and_user_id(mysqli $mysqli, string $id_order_produksi, int $id_user): array
+function timeline_is_user_assigned_to_order(mysqli $mysqli, int $id_user, int $id_order_produksi): bool
 {
-  $sql = "SELECT t.*, u.nama AS nama_user
-            FROM timeline t
-            LEFT JOIN users u ON t.id_user = u.id_user
-            WHERE t.id_order_produksi = ? AND t.id_user = ?
-            ORDER BY 
-                FIELD(t.status_timeline, 'Ditugaskan', 'Dalam Proses', 'Selesai'),
-                t.deadline ASC";
-
-  $result = db_query($mysqli, $sql, [$id_order_produksi, $id_user]);
-  return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+  $sql = "SELECT 1 FROM timeline WHERE id_user = ? AND id_order_produksi = ? LIMIT 1";
+  $result = db_query($mysqli, $sql, [$id_user, $id_order_produksi]);
+  return $result && $result->num_rows > 0;
 }

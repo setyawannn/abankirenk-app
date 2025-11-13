@@ -15,7 +15,7 @@ Detail Pengiriman: {{ $pengiriman['no_resi'] }}
 @endsection
 
 @section('content')
-<div class="w-full mx-auto"> {{-- Saya perbaiki ini agar konsisten --}}
+<div class="w-full mx-auto"> {{-- Tidak perlu menambahkan max-w-2xl --}}
   <div class="card-df">
     <div class="p-6 border-b border-gray-200">
       <h3 class="text-xl font-semibold text-gray-900">Detail Pengiriman</h3>
@@ -69,11 +69,20 @@ Detail Pengiriman: {{ $pengiriman['no_resi'] }}
         Hapus Data
       </button>
       @else
-      <div></div> {{-- Placeholder --}}
+      <div></div> {{-- Placeholder agar justify-between berfungsi --}}
       @endif
 
       <div class="flex gap-3">
-        <a href="{{ url('/order/' . $order['id_order_produksi'] . '/detail/#pengiriman') }}" class="btn-outline-df">Kembali ke Order</a>
+        <a href="{{ url('/order/' . $order['id_order_produksi'] . '/detail') }}" class="btn-outline-df">Kembali ke Order</a>
+
+        @if(auth()['role'] == 'klien' && auth()['id'] == $order['id_klien'] && empty($pengiriman['tanggal_sampai']))
+        <form action="{{ url('/pengiriman/' . $pengiriman['id_pengiriman'] . '/konfirmasi') }}" method="POST">
+          <button type="button" class="btn-df" data-modal-target="#modal-konfirmasi-diterima">
+            <ion-icon name="checkmark-done-outline" class="mr-2"></ion-Icon>
+            Konfirmasi Paket Diterima
+          </button>
+        </form>
+        @endif
       </div>
     </div>
   </div>
@@ -81,7 +90,6 @@ Detail Pengiriman: {{ $pengiriman['no_resi'] }}
 @endsection
 
 @push('modals')
-{{-- Modal Konfirmasi Hapus (Kode HTML Anda sudah benar) --}}
 <div id="modal-konfirmasi-hapus" class="modal-container fixed inset-0 z-40 p-4 flex items-center justify-center invisible">
   <div class="modal-overlay fixed inset-0 bg-gray-900/50 backdrop-blur-sm opacity-0 transition-opacity duration-300 ease-out"></div>
   <div class="modal-box relative z-50 w-full max-w-md rounded-lg bg-white p-6 shadow-xl opacity-0 scale-95 transition-all duration-300 ease-out">
@@ -102,26 +110,39 @@ Detail Pengiriman: {{ $pengiriman['no_resi'] }}
     </form>
   </div>
 </div>
+
+<div id="modal-konfirmasi-diterima" class="modal-container fixed inset-0 z-40 p-4 flex items-center justify-center invisible">
+  <div class="modal-overlay fixed inset-0 bg-gray-900/50 backdrop-blur-sm opacity-0 transition-opacity duration-300 ease-out"></div>
+  <div class="modal-box relative z-50 w-full max-w-md rounded-lg bg-white p-6 shadow-xl opacity-0 scale-95 transition-all duration-300 ease-out">
+
+    <form id="form-konfirmasi-diterima" action="{{ url('/pengiriman/' . $pengiriman['id_pengiriman'] . '/konfirmasi') }}" method="POST">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-semibold text-gray-900">Konfirmasi Penerimaan</h3>
+        <button type="button" data-modal-dismiss="#modal-konfirmasi-diterima" class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"><ion-icon name="close" class="h-6 w-6"></ion-icon></button>
+      </div>
+      <div class="mt-4">
+        <p class="text-gray-600">
+          Apakah Anda yakin ingin mengonfirmasi bahwa paket (Resi: <strong>{{ $pengiriman['no_resi'] }}</strong>) telah diterima?
+        </p>
+        <p class="text-sm text-gray-500 mt-2">Tindakan ini akan menandai order sebagai telah sampai pada tanggal hari ini.</p>
+      </div>
+      <div class="mt-6 flex justify-end gap-3">
+        <button type="button" data-modal-dismiss="#modal-konfirmasi-diterima" class="btn-outline-df">Batal</button>
+        <button type="submit" class="btn-df">Ya, Konfirmasi</button>
+      </div>
+    </form>
+  </div>
+</div>
 @endpush
 
-{{-- ========================================================== --}}
-{{-- PERBAIKAN: @push('scripts') diperbarui                  --}}
-{{-- ========================================================== --}}
 @push('scripts')
-{{-- Asumsi helper.js (showModal) dimuat di admin.php --}}
 <script>
   $(document).ready(function() {
-    // PERBAIKAN:
-    // Hapus '#order-tab-content' karena tombol ini dimuat 
-    // langsung di halaman, bukan di dalam tab AJAX.
     $('.open-delete-modal').on('click', function() {
       const deleteUrl = $(this).data('url');
 
-      // Set action form di dalam modal
       $('#form-delete-modal').attr('action', deleteUrl);
 
-      // Tampilkan modal
-      // (Teks modal sudah benar di HTML)
       showModal('#modal-konfirmasi-hapus');
     });
   });

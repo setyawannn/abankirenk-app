@@ -70,3 +70,13 @@ function pengiriman_delete(mysqli $mysqli, int $id_pengiriman): int
   $affectedRows = db_query($mysqli, $sql, [$id_pengiriman]);
   return (int) $affectedRows;
 }
+
+function pengiriman_konfirmasi_diterima(mysqli $mysqli, int $id_pengiriman): int
+{
+  // Set tanggal_sampai ke waktu server saat ini
+  $sql = "UPDATE pengiriman SET tanggal_sampai = NOW() WHERE id_pengiriman = ?";
+  $params = [$id_pengiriman];
+
+  $affectedRows = db_query($mysqli, $sql, $params);
+  return (int) $affectedRows;
+}

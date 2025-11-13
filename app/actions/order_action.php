@@ -52,13 +52,13 @@ function detail_action($params)
 
   $is_assigned_staff = false;
   if (in_array($user_role, ['desainer', 'tim_percetakan'])) {
-    $is_assigned_staff = timeline_is_user_assigned_to_order_by_nomor($db, $id_user, $order['id_order_produksi']);
+    $is_assigned_staff = timeline_is_user_assigned_to_order_by_nomor($db, $id_user, $id);
   }
 
-  if ($is_owner || (!$is_core_staff && !$is_assigned_staff)) {
+  if (!$is_owner && !$is_core_staff && !$is_assigned_staff) {
     flash_message('error', 'Akses Ditolak', 'Anda tidak memiliki izin untuk melihat order ini.');
 
-    if ($is_owner) {
+    if (!$is_owner) {
       return redirect('/klien/pengajuan-order');
     }
     return redirect('/dashboard');
@@ -83,7 +83,7 @@ function detail_action($params)
     $allowed_tabs[] = ['id' => 'qc', 'label' => 'Quality Control', 'url' => url($baseUrl . '/qc')];
   }
 
-  if (in_array($user_role, ['project_officer', 'manajer_produksi', 'manajer_marketing', 'tim_percetakan'])) {
+  if (in_array($user_role, ['project_officer', 'manajer_produksi', 'manajer_marketing', 'tim_percetakan', 'klien'])) {
     $allowed_tabs[] = ['id' => 'pengiriman', 'label' => 'Pengiriman', 'url' => url($baseUrl . '/pengiriman')];
   }
 

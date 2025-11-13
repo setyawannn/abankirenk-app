@@ -98,6 +98,7 @@ route_get('/order/{id_order}/pengiriman/create', ['actions/pengiriman_action.php
 route_post('/order/{id_order}/pengiriman/store', ['actions/pengiriman_action.php', 'store_action'], 'auth');
 route_get('/pengiriman/{id_pengiriman}/detail', ['actions/pengiriman_action.php', 'detail_action'], 'auth');
 route_post('/pengiriman/{id_pengiriman}/delete', ['actions/pengiriman_action.php', 'delete_action'], 'manajer_produksi');
+route_post('/pengiriman/{id_pengiriman}/konfirmasi', ['actions/pengiriman_action.php', 'konfirmasi_action'], 'klien');
 
 
 // AJAX Routes
