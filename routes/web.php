@@ -71,17 +71,33 @@ route_get('/klien/pengajuan-order/{id}', ['actions/klien/pengajuan_order_action.
 
 
 // Dynamic Role Route
+// Order
 route_get('/order', ['actions/order_action.php', 'index_action'], 'auth');
 route_get('/order/create', ['actions/order_action.php', 'create_action'], 'auth');
 route_post('/order/store', ['actions/order_action.php', 'store_action'], 'project_officer');
 route_get('/order/{id}/detail', ['actions/order_action.php', 'detail_action'], 'auth');
 
+// Timeline
 route_get('/order/{id}/timeline/create', ['actions/timeline_action.php', 'create_action'], 'manajer_produksi');
 route_post('/order/{id}/timeline/store', ['actions/timeline_action.php', 'store_action'], 'manajer_produksi');
 route_get('/timeline/{id_task}/detail', ['actions/timeline_action.php', 'detail_action'], 'auth');
 route_get('/timeline/{id_task}/edit', ['actions/timeline_action.php', 'edit_action'], 'manajer_produksi');
 route_post('/timeline/{id_task}/update', ['actions/timeline_action.php', 'update_action'], 'manajer_produksi');
 route_post('/timeline/{id_task}/delete', ['actions/timeline_action.php', 'delete_action'], 'manajer_produksi');
+
+// Desain
+route_post('/order/{id}/desain/store', ['actions/desain_action.php', 'store_action'], 'auth');
+
+// QC
+route_get('/order/{id_order}/qc/create', ['actions/qc_action.php', 'create_action'], 'auth');
+route_post('/order/{id_order}/qc/store', ['actions/qc_action.php', 'store_action'], 'auth');
+route_get('/qc/{id_qc}/detail', ['actions/qc_action.php', 'detail_action'], 'auth');
+
+// Pengiriman
+route_get('/order/{id_order}/pengiriman/create', ['actions/pengiriman_action.php', 'create_action'], 'auth');
+route_post('/order/{id_order}/pengiriman/store', ['actions/pengiriman_action.php', 'store_action'], 'auth');
+route_get('/pengiriman/{id_pengiriman}/detail', ['actions/pengiriman_action.php', 'detail_action'], 'auth');
+route_post('/pengiriman/{id_pengiriman}/delete', ['actions/pengiriman_action.php', 'delete_action'], 'manajer_produksi');
 
 
 // AJAX Routes
@@ -103,4 +119,6 @@ route_post('/ajax/timeline/update-status', ['actions/timeline_action.php', 'ajax
 // Tabbing Dynamic Order
 route_get('/ajax/order/{id}/timeline', ['actions/timeline_action.php', 'ajax_get_timeline_tab'], 'auth');
 route_get('/ajax/order/{id}/mou', ['actions/mou_action.php', 'ajax_get_mou'], 'auth');
-route_get('/ajax/order/{id}/desain', ['actions/desain_action.php', 'ajax_get_desain'], 'auth');
+route_get('/ajax/order/{id}/desain', ['actions/desain_action.php', 'ajax_get_desain_tab'], 'auth');
+route_get('/ajax/order/{id}/qc', ['actions/qc_action.php', 'ajax_get_qc_tab'], 'auth');
+route_get('/ajax/order/{id}/pengiriman', ['actions/pengiriman_action.php', 'ajax_get_pengiriman_tab'], 'auth');

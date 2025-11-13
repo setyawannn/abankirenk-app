@@ -220,6 +220,8 @@ Detail Order: {{ $order['nomor_order'] }}
         .removeClass('border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300')
         .attr('aria-selected', 'true');
 
+      window.history.replaceState(null, '', '#' + tabId);
+
       if ($tabLink.data('loaded') === true) {
         return;
       }
@@ -250,9 +252,21 @@ Detail Order: {{ $order['nomor_order'] }}
       e.preventDefault();
       loadTabContent($(this));
     });
-    const $firstTab = $tabs.find('.tab-link').first();
-    if ($firstTab.length) {
-      loadTabContent($firstTab);
+
+
+    let $initialTab = null;
+    const hash = window.location.hash;
+
+    if (hash) {
+      $initialTab = $tabs.find('.tab-link[data-tab-id="' + hash.substring(1) + '"]');
+    }
+
+    if (!$initialTab || $initialTab.length === 0) {
+      $initialTab = $tabs.find('.tab-link').first();
+    }
+
+    if ($initialTab.length) {
+      loadTabContent($initialTab);
     }
   });
 </script>
