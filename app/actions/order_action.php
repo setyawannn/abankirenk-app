@@ -83,6 +83,10 @@ function detail_action($params)
     $allowed_tabs[] = ['id' => 'qc', 'label' => 'Quality Control', 'url' => url($baseUrl . '/qc')];
   }
 
+  if (in_array($user_role, ['project_officer', 'manajer_produksi', 'manajer_marketing', 'tim_percetakan'])) {
+    $allowed_tabs[] = ['id' => 'pengiriman', 'label' => 'Pengiriman', 'url' => url($baseUrl . '/pengiriman')];
+  }
+
   // (Tambahkan tab QC, Pengiriman, Tiket, dll. di sini nanti)
 
   $data = [
