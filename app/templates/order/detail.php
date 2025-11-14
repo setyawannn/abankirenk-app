@@ -1,3 +1,4 @@
+<!-- templates/order/detail.php -->
 @extends('layouts.admin')
 
 @section('title')
@@ -94,6 +95,58 @@ Detail Order: {{ $order['nomor_order'] }}
 @endsection
 
 @push('modals')
+<div
+  id="modal-konfirmasi-status"
+  class="modal-container fixed inset-0 z-40 p-4
+           flex items-center justify-center 
+           invisible">
+  <div class="modal-overlay fixed inset-0 bg-gray-900/50 backdrop-blur-sm
+                opacity-0 transition-opacity duration-300 ease-out">
+  </div>
+
+  <div class="modal-box relative z-50 w-full max-w-md rounded-lg bg-white p-6 shadow-xl 
+                opacity-0 scale-95 transition-all duration-300 ease-out">
+
+    <div class="flex items-center justify-between">
+      <h3 class="text-xl font-semibold text-gray-900">
+        Konfirmasi Perubahan Status
+      </h3>
+      <button
+        type="button"
+        data-modal-dismiss="#modal-konfirmasi-status"
+        class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+        <ion-icon name="close" class="h-6 w-6"></ion-icon>
+      </button>
+    </div>
+
+    <div class="mt-4">
+      <p class="text-gray-600">
+        Anda yakin ingin mengubah status order ini dari
+        <strong id="modal-status-old" class="font-medium text-gray-900">...</strong>
+        menjadi
+        <strong id="modal-status-new" class="font-medium text-gray-900">...</strong>?
+      </p>
+    </div>
+
+    <div class="mt-6 flex justify-end gap-3">
+      <button
+        type="button"
+        data-modal-dismiss="#modal-konfirmasi-status"
+        class="btn-outline-df"
+        id="btn-cancel-status">
+        Batal
+      </button>
+      <button
+        type="button"
+        id="btn-confirm-status-update"
+        class="btn-df">
+        Ya, Ubah Status
+      </button>
+    </div>
+  </div>
+</div>
+
+
 <div
   id="modal-konfirmasi-hapus"
   class="modal-container fixed inset-0 z-40 p-4

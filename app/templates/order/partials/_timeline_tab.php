@@ -31,7 +31,7 @@ $isAdminRole = in_array(auth()['role'], ['project_officer', 'manajer_produksi'])
 
         <div class="flex justify-between items-center mb-4">
             <h4 class="text-lg font-medium">Timeline Produksi</h4>
-            @if(in_array(auth()['role'], ['project_officer', 'manajer_produksi']))
+            @if(in_array(auth()['role'], ['manajer_produksi']))
             <a href="{{ url('/order/' . $order['id_order_produksi'] . '/timeline/create') }}" class="btn-df btn-sm">
                 <ion-icon name="add"></ion-icon>
                 Tambah Task
@@ -71,7 +71,7 @@ $isAdminRole = in_array(auth()['role'], ['project_officer', 'manajer_produksi'])
                                 class="text-lg font-semibold text-gray-800 kanban-card-title hover:text-primary hover:underline">
                                 {{ $item['judul'] }}
                             </a>
-                            @if(in_array(auth()['role'], ['project_officer', 'manajer_produksi']))
+                            @if(in_array(auth()['role'], ['manajer_produksi']))
                             @if($isAdminRole)
                             <div class="flex gap-2 pl-2 flex-shrink-0">
                                 <a href="{{ url('/timeline/' . $item['id_timeline'] . '/edit') }}" class="text-primary">
