@@ -235,7 +235,7 @@ function delete_action($params)
 function konfirmasi_action($params)
 {
   $db = db_connect();
-  $user = auth(); // Klien yang sedang login
+  $user = auth();
   $id_pengiriman = (int) ($params['id_pengiriman'] ?? 0);
 
   if (!$db || !$user || $id_pengiriman <= 0) {
@@ -243,35 +243,45 @@ function konfirmasi_action($params)
     return redirect('/dashboard');
   }
 
+  $id_order_redirect = null;
+
   try {
-    // 1. Dapatkan data pengiriman
     $pengiriman = pengiriman_get_by_id($db, $id_pengiriman);
     if (!$pengiriman) {
       throw new Exception("Data pengiriman tidak ditemukan.");
     }
 
-    // 2. Dapatkan data order induk
-    $order = order_get_by_id_for_detail($db, $pengiriman['id_order_produksi']);
+    $id_order_redirect = $pengiriman['id_order_produksi'];
+
+    $order = order_get_by_id_for_detail($db, $id_order_redirect);
     if (!$order) {
       throw new Exception("Data order induk tidak ditemukan.");
     }
 
-    // 3. OTORISASI:
-    // Cek apakah user adalah Klien DAN Klien tersebut adalah pemilik order ini
     if ($user['role'] !== 'klien' || $user['id'] !== $order['id_klien']) {
       throw new Exception("Anda tidak memiliki izin untuk melakukan konfirmasi pada order ini.");
     }
 
-    // 4. Lakukan Update
+    db_begin_transaction($db);
+
     if (!pengiriman_konfirmasi_diterima($db, $id_pengiriman)) {
       throw new Exception("Gagal memperbarui status penerimaan.");
     }
 
-    flash_message('success', 'Berhasil', 'Konfirmasi penerimaan paket telah disimpan. Terima kasih!');
+    if (!order_update_status($db, $order['id_order_produksi'], 'selesai')) {
+      throw new Exception("Gagal memperbarui status order menjadi 'selesai'.");
+    }
+
+    db_commit($db);
+    flash_message('success', 'Berhasil', 'Konfirmasi penerimaan paket telah disimpan. Status order kini "Selesai".');
   } catch (Exception $e) {
+    if ($db) db_rollback($db);
     flash_message('error', 'Gagal', $e->getMessage());
   }
 
-  // 5. Redirect kembali ke halaman detail pengiriman
-  return redirect('/pengiriman/' . $id_pengiriman . '/detail');
+  if ($id_order_redirect) {
+    redirect('/order/' . $id_order_redirect . '/detail#feedback');
+  }
+
+  redirect('/dashboard');
 }

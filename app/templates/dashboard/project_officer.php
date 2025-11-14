@@ -111,7 +111,7 @@ Dashboard Project Officer
             </tr>
             @else
             @foreach ($pending_pengajuan as $pengajuan)
-            <tr class="hover:bg-gray-50 border border-gray-300 rounded-lg flex justify-between items-center">
+            <tr class="hover:bg-gray-50 border border-gray-300 rounded-lg flex justify-between items-center mb-4">
               <td class="p-4">
                 <p class="font-medium text-primary">{{ $pengajuan['nama_sekolah'] }}</p>
                 <p class="text-sm text-gray-500">{{ $pengajuan['narahubung'] }} ({{ $pengajuan['no_narahubung'] }})</p>

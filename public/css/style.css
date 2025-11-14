@@ -827,6 +827,9 @@
     --tw-border-style: none;
     border-style: none;
   }
+  .border-gray-100 {
+    border-color: var(--color-gray-100);
+  }
   .border-gray-200 {
     border-color: var(--color-gray-200);
   }
@@ -979,6 +982,9 @@
   }
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
+  }
+  .py-12 {
+    padding-block: calc(var(--spacing) * 12);
   }
   .pr-3 {
     padding-right: calc(var(--spacing) * 3);

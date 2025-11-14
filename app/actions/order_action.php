@@ -108,7 +108,7 @@ function detail_action($params)
   if ($user_role == 'project_officer') {
     $data['status_options'] = ['baru', 'proses', 'batal'];
   } elseif ($user_role == 'manajer_produksi') {
-    $data['status_options'] = ['proses', 'selesai'];
+    $data['status_options'] = ['baru', 'proses', 'selesai', 'batal'];
   }
 
   view('order.detail', $data);

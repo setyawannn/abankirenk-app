@@ -11,7 +11,7 @@ function register_form_action()
 function register_process_action()
 {
   $db = db_connect();
-  if (empty($_POST['full_name']) || empty($_POST['email']) || empty($_POST['password'])) {
+  if (empty($_POST['nama']) || empty($_POST['email']) || empty($_POST['password'])) {
     flash_message('error', 'Semua kolom wajib diisi.');
     redirect('/register');
     exit();
@@ -30,7 +30,7 @@ function register_process_action()
   $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
   $user_data = [
-    'nama'  => $_POST['full_name'],
+    'nama'  => $_POST['nama'],
     'email'         => $_POST['email'],
     'nomor_telepon' => $_POST['phone_number'] ?? '',
     'password'      => $hashed_password,
