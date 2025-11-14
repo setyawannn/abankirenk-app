@@ -9,7 +9,7 @@ function index_action()
 {
   $data = [
     'page_title' => 'Manajemen Pengajuan Order',
-    'active_menu' => 'pengajuan_po',
+    'active_menu' => 'pengajuan_order_po',
     'status_options' => ['dalam proses', 'berhasil', 'gagal', 'batal']
   ];
   view('project_officer.pengajuan_order.index', $data);
@@ -57,7 +57,7 @@ function edit_action($params)
 
   $data = [
     'page_title' => $pengajuan['nomor_pengajuan'],
-    'active_menu' => 'pengajuan_po',
+    'active_menu' => 'pengajuan_order_po',
     'pengajuan' => $pengajuan,
     'status_options' => ['dalam proses', 'berhasil', 'gagal', 'batal']
   ];

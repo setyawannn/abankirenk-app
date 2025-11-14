@@ -24,6 +24,20 @@ function timeline_get_by_id(mysqli $mysqli, int $id_timeline)
   return $result ? $result->fetch_assoc() : null;
 }
 
+function timeline_get_by_order_id_and_user_id(mysqli $mysqli, int $id_order_produksi, int $id_user): array
+{
+  $sql = "SELECT t.*, u.nama AS nama_user
+            FROM timeline t
+            LEFT JOIN users u ON t.id_user = u.id_user
+            WHERE t.id_order_produksi = ? AND t.id_user = ?
+            ORDER BY 
+                FIELD(t.status_timeline, 'Ditugaskan', 'Dalam Proses', 'Selesai'),
+                t.deadline ASC";
+
+  $result = db_query($mysqli, $sql, [$id_order_produksi, $id_user]);
+  return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+}
+
 function timeline_create(mysqli $mysqli, array $data): int
 {
   $sql = "INSERT INTO timeline (id_order_produksi, id_user, judul, deskripsi, status_timeline, deadline)

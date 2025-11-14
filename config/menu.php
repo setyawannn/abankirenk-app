@@ -5,7 +5,7 @@
 return [
   'manajer_marketing' => [
     [
-      'id' => 'dash_mm',
+      'id' => 'dashboard',
       'nama' => 'Dashboard',
       'icon' => 'home-outline',
       'redirect_url' => '/dashboard'
@@ -25,10 +25,10 @@ return [
   ],
   'tim_marketing' => [
     [
-      'id' => 'dash_tm',
-      'nama' => 'Dashboard Saya',
+      'id' => 'Dashboard',
+      'nama' => 'Dashboard',
       'icon' => 'home-outline',
-      'redirect_url' => '/dashboard/marketing'
+      'redirect_url' => '/dashboard'
     ],
     [
       'id' => 'prospek_tm',
@@ -40,10 +40,10 @@ return [
   ],
   'project_officer' => [
     [
-      'id' => 'dash_po',
-      'nama' => 'Dashboard Proyek',
+      'id' => 'dashboard',
+      'nama' => 'Dashboard',
       'icon' => 'home-outline',
-      'redirect_url' => '/dashboard/project'
+      'redirect_url' => '/dashboard'
     ],
     [
       'id' => 'template_mou_po',
@@ -103,10 +103,10 @@ return [
   ],
   'desainer' => [
     [
-      'id' => 'dash_ds',
-      'nama' => 'Tugas Desain Saya',
+      'id' => 'dashboard',
+      'nama' => 'Dashboard',
       'icon' => 'home-outline',
-      'redirect_url' => '/dashboard/desain'
+      'redirect_url' => '/dashboard'
     ],
     [
       'id' => 'template_desain_ds',
@@ -123,24 +123,30 @@ return [
   ],
   'manajer_produksi' => [
     [
-      'id' => 'dash_prod',
-      'nama' => 'Dashboard Produksi',
+      'id' => 'dashboard',
+      'nama' => 'Dashboard',
       'icon' => 'home-outline',
-      'redirect_url' => '/dashboard/produksi'
+      'redirect_url' => '/dashboard'
     ],
     [
       'id' => 'order',
-      'nama' => 'Antrian Order',
+      'nama' => 'Order',
       'icon' => 'clipboard-outline',
       'redirect_url' => '/order'
     ]
   ],
   'tim_percetakan' => [
     [
-      'id' => 'dash_prc',
-      'nama' => 'Dashboard Percetakan',
+      'id' => 'dashboard',
+      'nama' => 'Dashboard',
       'icon' => 'home-outline',
-      'redirect_url' => '/dashboard/percetakan'
+      'redirect_url' => '/dashboard'
+    ],
+    [
+      'id' => 'order',
+      'nama' => 'Antrian Order',
+      'icon' => 'clipboard-outline',
+      'redirect_url' => '/order'
     ],
     [
       'id' => 'qc_prc',
@@ -151,7 +157,7 @@ return [
   ],
   'klien' => [
     [
-      'id' => 'dash_klien',
+      'id' => 'dashboard',
       'nama' => 'Dashboard',
       'icon' => 'home-outline',
       'redirect_url' => '/dashboard'
@@ -163,10 +169,10 @@ return [
       'redirect_url' => '/klien/pengajuan-order'
     ],
     [
-      'id' => 'order_klien',
+      'id' => 'order',
       'nama' => 'List Order',
       'icon' => 'briefcase-outline',
-      'redirect_url' => '/klien/order'
+      'redirect_url' => '/order'
     ],
     [
       'id' => 'komplain_klien',
