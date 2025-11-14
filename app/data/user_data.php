@@ -1,39 +1,53 @@
 <?php
 
-/**
- * Mencari pengguna berdasarkan alamat email.
- *
- * @param mysqli $mysqli
- * @param string $email
- * @return array|null
- */
+// data/user_data.php
+
 function user_find_by_email(mysqli $mysqli, string $email): ?array
 {
-  $stmt = mysqli_prepare($mysqli, "SELECT * FROM users WHERE email = ?");
-  mysqli_stmt_bind_param($stmt, "s", $email);
-  mysqli_stmt_execute($stmt);
-  $result = mysqli_stmt_get_result($stmt);
-  return mysqli_fetch_assoc($result);
+  $sql = "SELECT * FROM users WHERE email = ? LIMIT 1";
+  $params = [$email];
+
+  $result = db_query($mysqli, $sql, $params);
+
+  return $result ? $result->fetch_assoc() : null;
 }
 
-/**
- * Membuat pengguna baru di database.
- *
- * @param mysqli $mysqli
- * @param array $data
- * @return bool
- */
-function user_create(mysqli $mysqli, array $data): bool
+function user_find_by_id(mysqli $mysqli, int $id): ?array
 {
-  $stmt = mysqli_prepare($mysqli, "INSERT INTO users (full_name, email, phone_number, password, role) VALUES (?, ?, ?, ?, ?)");
-  mysqli_stmt_bind_param(
-    $stmt,
-    "sssss",
-    $data['full_name'],
+  $sql = "SELECT * FROM users WHERE id_user = ? LIMIT 1";
+  $params = [$id];
+
+  $result = db_query($mysqli, $sql, $params);
+
+  return $result ? $result->fetch_assoc() : null;
+}
+
+function user_create(mysqli $mysqli, array $data): int
+{
+  $sql = "INSERT INTO users (nama, email, username, password, role) 
+            VALUES (?, ?, ?, ?, ?)";
+
+  $params = [
+    $data['nama'],
     $data['email'],
-    $data['phone_number'],
+    $data['username'],
     $data['password'],
     $data['role']
-  );
-  return mysqli_stmt_execute($stmt);
+  ];
+
+  $newId = db_query($mysqli, $sql, $params);
+  return (int) $newId;
+}
+
+
+function user_get_all_by_role(mysqli $mysqli, string $role): array
+{
+  $sql = "SELECT id_user, nama, username, email, role 
+            FROM users 
+            WHERE role = ?";
+
+  $params = [$role];
+  $result = db_query($mysqli, $sql, $params);
+
+  return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 }

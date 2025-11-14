@@ -1,1 +1,80 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+@theme {
+  --color-primary: #4d94df;
+  --color-primary-50: #e7f5ff;
+  --color-primary-100: #cfe8ff;
+  --color-primary-200: #99d0ff;
+  --color-primary-300: #66b8ff;
+  --color-primary-400: #33a0ff;
+  --color-primary-500: #4d94df;
+  --color-primary-600: #0072e6;
+  --color-primary-700: #005cbf;
+  --color-primary-800: #004699;
+  --color-primary-900: #003073;
+
+  --color-secondary: #df984d;
+  --color-secondary-50: #fcf5ed;
+  --color-secondary-100: #f9eadb;
+  --color-secondary-200: #f2d6b8;
+  --color-secondary-300: #ecc194;
+  --color-secondary-400: #e5ad71;
+  --color-secondary-500: #df984d;
+  --color-secondary-600: #b37a3e;
+  --color-secondary-700: #875c2f;
+  --color-secondary-800: #5c3e1f;
+  --color-secondary-900: #302010;
+}
+
+* {
+  font-family: "Inter", sans-serif;
+}
+
+.card-df {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200;
+}
+
+.input-df {
+  @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-sm placeholder-gray-400 outline-none;
+}
+
+.input-file-df {
+  @apply block w-full text-sm text-slate-500
+        file:mr-4 file:py-2 file:px-4 file:rounded-md
+        file:border-0 file:text-sm file:font-semibold
+        file:bg-primary-50 file:text-primary
+        hover:file:bg-primary-100;
+}
+
+.label-df {
+  @apply block mb-2 text-sm font-medium text-gray-700;
+}
+
+.desc-df {
+  @apply mt-1.5 text-xs text-gray-500;
+}
+
+.btn-df {
+  @apply inline-flex items-center px-5 py-2.5 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors cursor-pointer;
+}
+
+.btn-outline-df {
+  @apply inline-flex items-center px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors cursor-pointer;
+}
+
+.btn-danger-df {
+  @apply inline-flex items-center px-5 py-2.5 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors cursor-pointer;
+}
+
+.txt-title-df {
+  @apply text-sm font-semibold text-gray-700 mb-2 block uppercase tracking-wide;
+}
+
+.txt-desc-df {
+  @apply text-lg text-gray-500 font-normal;
+}
+
+.txt-editor-df {
+  @apply max-w-none text-gray-700 mt-2 p-4 border border-gray-200 rounded-md bg-gray-50 min-h-[150px];
+}

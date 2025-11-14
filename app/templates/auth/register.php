@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section('title')
 Register
@@ -6,48 +6,76 @@ Register
 
 @section('content')
 
-@php
-$errorMessage = flash_message('error');
-@endphp
+<div class="flex flex-col items-center justify-center min-h-screen px-4 py-12">
 
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
-  <div class="px-8 py-6 mt-4 text-left bg-white shadow-lg rounded-lg">
-    <h3 class="text-2xl font-bold text-center">Buat Akun Baru</h3>
+  <div class="flex items-center gap-2 mb-6">
+    <ion-icon name="book-outline" class="text-3xl text-primary"></ion-icon>
+    <h1 class="text-3xl font-bold text-gray-800">AbankIrenk</h1>
+  </div>
 
-    @if ($errorMessage)
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative my-4" role="alert">
-      {{ $errorMessage }}
-    </div>
-    @endif
+  <div class="w-full max-w-md bg-white shadow-xl rounded-lg overflow-hidden">
+    <div class="p-8">
+      <h2 class="text-2xl font-bold text-center text-gray-900">Buat Akun Baru</h2>
+      <p class="text-center text-sm text-gray-500 mt-1">Daftar untuk mulai mengelola order Anda.</p>
 
-    <form action="{{ url('register') }}" method="POST">
-      <div class="mt-4">
+      <form action="{{ url('/register') }}" method="POST" class="mt-6 space-y-4">
         <div>
-          <label class="block" for="full_name">Nama Lengkap<label>
-              <input type="text" placeholder="Nama Lengkap" name="full_name"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600">
+          <label for="nama" class="label-df">Nama Lengkap</label>
+          <input
+            type="text"
+            placeholder="Nama Lengkap Anda"
+            name="nama"
+            id="nama"
+            class="input-df"
+            required>
         </div>
-        <div class="mt-4">
-          <label class="block" for="email">Email<label>
-              <input type="email" placeholder="Email" name="email"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600">
+
+        <div>
+          <label for="username" class="label-df">Username</label>
+          <input
+            type="text"
+            placeholder="Username (tanpa spasi)"
+            name="username"
+            id="username"
+            class="input-df"
+            required>
         </div>
-        <div class="mt-4">
-          <label class="block" for="phone_number">No. HP (Opsional)<label>
-              <input type="text" placeholder="No. HP" name="phone_number"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600">
+
+        <div>
+          <label for="email" class="label-df">Email</label>
+          <input
+            type="email"
+            placeholder="Email Anda"
+            name="email"
+            id="email"
+            class="input-df"
+            required>
         </div>
-        <div class="mt-4">
-          <label class="block">Password<label>
-              <input type="password" placeholder="Password" name="password"
-                class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600">
+
+        <div>
+          <label for="password" class="label-df">Password</label>
+          <input
+            type="password"
+            placeholder="Password"
+            name="password"
+            id="password"
+            class="input-df"
+            required>
         </div>
-        <div class="flex items-baseline justify-between">
-          <button class="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900">Register</button>
-          <a href="{{ url('/login') }}" class="text-sm text-blue-600 hover:underline">Sudah punya akun?</a>
+
+        <div>
+          <button type="submit" class="btn-df w-full flex justify-center items-center">Register</button>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
+
+    <div class="bg-gray-50 p-4 text-center border-t border-gray-100">
+      <p class="text-sm text-gray-600">
+        Sudah punya akun?
+        <a href="{{ url('/login') }}" class="font-medium text-primary hover:underline">Login di sini</a>
+      </p>
+    </div>
   </div>
 </div>
+
 @endsection

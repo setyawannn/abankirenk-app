@@ -1,5 +1,10 @@
 <?php
 
+
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\WebpEncoder;
+
 /**
  * Menampilkan file view beserta datanya.
  *
@@ -32,21 +37,154 @@ function redirect(string $to)
 }
 
 
-function flash_message(string $key, ?string $message = null)
+function flash_message(string $key, ?string $title = null, ?string $message = null)
 {
-    if (!isset($_SESSION['flash'])) {
-        $_SESSION['flash'] = [];
+    $_SESSION['flash_message'] = [
+        'key' => $key,
+        'title' => $title,
+        'message' => $message
+    ];
+}
+
+function format_role_name(string $role_string): string
+{
+    $role_string = str_replace('manajer', 'Manager', $role_string);
+    $with_spaces = str_replace('_', ' ', $role_string);
+
+    $formatted_name = ucwords($with_spaces);
+    return $formatted_name;
+}
+
+function handle_file_upload(
+    array $fileData,
+    string $grouping,
+    string $storageType = 'images',
+    ?string $old_file_url = null
+): array {
+    $manager = new ImageManager(Driver::class);
+
+    try {
+
+        if (!in_array($storageType, ['images', 'documents'])) {
+            throw new Exception("Tipe storage tidak valid. Hanya 'images' atau 'documents'.");
+        }
+
+        if ($fileData['error'] !== UPLOAD_ERR_OK) {
+            throw new Exception('Gagal meng-upload file. Error code: ' . $fileData['error']);
+        }
+
+        $maxSize = 10 * 1024 * 1024; // 10 MB
+        if ($fileData['size'] > $maxSize) {
+            throw new Exception('Ukuran file tidak boleh lebih dari 10 MB.');
+        }
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $fileData['tmp_name']);
+        finfo_close($finfo);
+
+        $imageMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $documentMimes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ];
+        $allowedMimeTypes = array_merge($imageMimes, $documentMimes);
+
+        if (!in_array($mimeType, $allowedMimeTypes)) {
+            throw new Exception('Format file tidak diizinkan. Hanya (JPG, PNG, PDF, DOCX, XLSX).');
+        }
+
+        $baseDir = __DIR__ . "/../storage/{$storageType}";
+        $year = date('y');
+        $month = date('m');
+        $day = date('d');
+        $subDir = "{$year}/{$month}/{$day}/{$grouping}";
+        $uploadDir = "{$baseDir}/{$subDir}";
+
+        if (!is_dir($uploadDir)) {
+            if (!mkdir($uploadDir, 0755, true)) {
+                throw new Exception('Gagal membuat direktori upload.');
+            }
+        }
+
+        $originalName = basename($fileData['name']);
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+        $filenameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
+        $safeFilename = preg_replace('/[^a-zA-Z0-9-_\.]/', '', str_replace(' ', '-', $filenameWithoutExt));
+        $shortRand = substr(md5(uniqid()), 0, 8);
+
+        $originalNewFilename = "{$shortRand}-{$safeFilename}.{$extension}";
+        $originalFilePath = "{$uploadDir}/{$originalNewFilename}";
+
+        if (!move_uploaded_file($fileData['tmp_name'], $originalFilePath)) {
+            throw new Exception('Gagal memindahkan file yang di-upload.');
+        }
+
+        $finalFilename = $originalNewFilename;
+
+        if (in_array($mimeType, $imageMimes)) {
+            try {
+                $webpFilename = "{$shortRand}-{$safeFilename}.webp";
+                $webpFilePath = "{$uploadDir}/{$webpFilename}";
+                $image = $manager->read($originalFilePath);
+
+                $image->encode(new WebpEncoder(80))->save($webpFilePath);
+
+                unlink($originalFilePath);
+
+                $finalFilename = $webpFilename;
+            } catch (Exception $e) {
+                error_log("Konversi ke WebP gagal: " . $e->getMessage());
+            }
+        }
+
+        $publicUrl = "/storage/{$storageType}/{$subDir}/{$finalFilename}";
+
+        if (!empty($old_file_url)) {
+            delete_storage_file($old_file_url);
+        }
+
+        return [
+            'success' => true,
+            'url' => $publicUrl,
+            'fileName' => $finalFilename
+        ];
+    } catch (Exception $e) {
+        error_log("Upload Error: " . $e->getMessage());
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
     }
-    if ($message) {
-        $_SESSION['flash'][$key] = $message;
-        return null;
+}
+
+
+function delete_storage_file(string $publicUrl): bool
+{
+    try {
+        $projectRoot = __DIR__ . '/../';
+
+        $relativePath = ltrim($publicUrl, '/');
+
+        $serverPath = $projectRoot . $relativePath;
+        $serverPath = str_replace('/', DIRECTORY_SEPARATOR, $serverPath);
+
+        if (file_exists($serverPath)) {
+            if (unlink($serverPath)) {
+                return true;
+            } else {
+                error_log("Gagal menghapus file (permission issue?): " . $serverPath);
+                return false;
+            }
+        } else {
+            return true;
+        }
+    } catch (Exception $e) {
+        error_log("Error saat delete_storage_file: " . $e->getMessage());
+        return false;
     }
-    if (isset($_SESSION['flash'][$key])) {
-        $message = $_SESSION['flash'][$key];
-        unset($_SESSION['flash'][$key]);
-        return $message;
-    }
-    return null;
 }
 
 /**
@@ -188,9 +326,23 @@ function compile_view(string $viewName): string
             return $sections[$matches[1]] ?? '';
         }, $content);
 
-        $content = preg_replace_callback('/@include\s*\(\s*\'(.*)\'\s*\)/', function ($matches) {
-            return '<?php require compile_view(\'' . $matches[1] . '\'); ?>';
-        }, $content);
+        $content = preg_replace_callback(
+            '/@include\s*\(\s*\'(.*?)\'\s*(?:,\s*(.*?))?\s*\)/s',
+            function ($matches) {
+                $viewName = $matches[1];
+                $dataString = $matches[2] ?? null;
+
+                if ($dataString) {
+                    return '<?php 
+                        extract(' . $dataString . ');
+                        require compile_view(\'' . $viewName . '\');
+                    ?>';
+                } else {
+                    return '<?php require compile_view(\'' . $viewName . '\'); ?>';
+                }
+            },
+            $content
+        );
 
         $content = preg_replace_callback('/@stack\s*\(\s*\'(.*?)\'\s*\)/', function ($matches) use ($stacks) {
             $stackName = $matches[1];

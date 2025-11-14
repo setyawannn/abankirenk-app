@@ -1,14 +1,12 @@
 <?php
+// core/router.php
 
 // Variabel global untuk menyimpan semua rute yang terdaftar
 $routes = [];
 
 /**
  * Mendaftarkan sebuah rute dengan method GET.
- *
- * @param string $uri URL yang akan dicocokkan.
- * @param array  $action File controller dan fungsi yang akan dijalankan.
- * @param string|null $middleware Nama middleware yang akan dijalankan sebelumnya.
+ * (Tidak ada perubahan di fungsi ini)
  */
 function route_get(string $uri, array $action, ?string $middleware = null)
 {
@@ -17,11 +15,8 @@ function route_get(string $uri, array $action, ?string $middleware = null)
 }
 
 /**
- * PENAMBAHAN: Mendaftarkan sebuah rute dengan method POST.
- *
- * @param string $uri URL yang akan dicocokkan.
- * @param array  $action File controller dan fungsi yang akan dijalankan.
- * @param string|null $middleware Nama middleware yang akan dijalankan sebelumnya.
+ * Mendaftarkan sebuah rute dengan method POST.
+ * (Tidak ada perubahan di fungsi ini)
  */
 function route_post(string $uri, array $action, ?string $middleware = null)
 {
@@ -30,7 +25,11 @@ function route_post(string $uri, array $action, ?string $middleware = null)
 }
 
 /**
- * Mencari rute yang cocok dan menjalankan aksi yang sesuai.
+ * ====================================================================
+ * FUNGSI DISPATCH YANG DIPERBARUI
+ * ====================================================================
+ * * Mencari rute yang cocok (termasuk parameter dinamis) 
+ * dan menjalankan aksi yang sesuai.
  */
 function dispatch()
 {
@@ -41,31 +40,58 @@ function dispatch()
     $uri = '/' . trim(str_replace($basePath, '', $requestUri), '/');
     $method = $_SERVER['REQUEST_METHOD'];
 
-    if (isset($routes[$method][$uri])) {
-        $route = $routes[$method][$uri];
-        $action = $route['action'];
-        $middleware = $route['middleware'];
+    if (!isset($routes[$method])) {
+        abort_404();
+        return;
+    }
 
-        require_once __DIR__ . '/middleware.php';
-        run_middleware($middleware);
+    $routeFound = false;
+    $params = [];
 
-        $controllerFile = __DIR__ . '/../app/' . $action[0];
-        $functionName = $action[1];
+    foreach ($routes[$method] as $routeUri => $routeDetails) {
 
-        if (file_exists($controllerFile)) {
-            require_once $controllerFile;
+        preg_match_all('/\{([a-zA-Z0-9_]+)\}/', $routeUri, $paramNames);
+        $paramNames = $paramNames[1];
 
-            if (function_exists($functionName)) {
-                $functionName();
+        $pattern = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([^/]+)', $routeUri);
+        $pattern = '#^' . $pattern . '$#';
+
+        if (preg_match($pattern, $uri, $matches)) {
+            $routeFound = true;
+            array_shift($matches);
+
+            if (count($paramNames) === count($matches)) {
+                $params = array_combine($paramNames, $matches);
+            }
+
+            $action = $routeDetails['action'];
+            $middleware = $routeDetails['middleware'];
+
+            require_once __DIR__ . '/middleware.php';
+            run_middleware($middleware);
+
+            $controllerFile = __DIR__ . '/../app/' . $action[0];
+            $functionName = $action[1];
+
+            if (file_exists($controllerFile)) {
+                require_once $controllerFile;
+
+                if (function_exists($functionName)) {
+                    $functionName($params);
+                } else {
+                    error_log("Fungsi '$functionName' tidak ada di file '$controllerFile'");
+                    abort_500();
+                }
             } else {
-                error_log("Fungsi '$functionName' tidak ada di file '$controllerFile'");
+                error_log("File controller '$controllerFile' tidak ditemukan untuk URI '$uri'");
                 abort_500();
             }
-        } else {
-            error_log("File controller '$controllerFile' tidak ditemukan untuk URI '$uri'");
-            abort_500();
+
+            break;
         }
-    } else {
+    }
+
+    if (!$routeFound) {
         abort_404();
     }
 }
@@ -73,13 +99,23 @@ function dispatch()
 function abort_404()
 {
     http_response_code(404);
-    require_once __DIR__ . '/../app/templates/errors/404.php';
+    $viewPath = __DIR__ . '/../app/templates/errors/404.php';
+    if (file_exists($viewPath)) {
+        require_once $viewPath;
+    } else {
+        echo "404 Not Found";
+    }
     exit();
 }
 
 function abort_500()
 {
     http_response_code(500);
-    require_once __DIR__ . '/../app/templates/errors/500.php';
+    $viewPath = __DIR__ . '/../app/templates/errors/500.php';
+    if (file_exists($viewPath)) {
+        require_once $viewPath;
+    } else {
+        echo "500 Internal Server Error";
+    }
     exit();
 }
