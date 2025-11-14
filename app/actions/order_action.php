@@ -93,7 +93,10 @@ function detail_action($params)
     $allowed_tabs[] = ['id' => 'tiket', 'label' => 'Tiket Komplain', 'url' => url($baseUrl . '/tiket')];
   }
 
-  // (Tambahkan tab QC, Pengiriman, Tiket, dll. di sini nanti)
+  if (!in_array($user_role, ['tim_produksi', 'desainer'])) {
+    $allowed_tabs[] = ['id' => 'feedback', 'label' => 'Feedback & Review', 'url' => url($baseUrl . '/feedback')];
+  }
+
 
   $data = [
     'page_title' => 'Detail Order: ' . $order['nomor_order'],

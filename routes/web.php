@@ -106,6 +106,9 @@ route_post('/order/{id_order}/tiket/store', ['actions/tiket_action.php', 'store_
 route_get('/tiket/{id_tiket}/detail', ['actions/tiket_action.php', 'detail_action'], 'auth');
 route_post('/tiket/{id_tiket}/update', ['actions/tiket_action.php', 'update_action'], 'customer_service');
 
+// Feedback
+route_post('/feedback/store', ['actions/feedback_action.php', 'store_action'], 'klien');
+
 
 // AJAX Routes
 route_get('/ajax/prospek', ['actions/manajer_marketing/prospek_action.php', 'ajax_list_action'], 'auth');
@@ -130,3 +133,4 @@ route_get('/ajax/order/{id}/desain', ['actions/desain_action.php', 'ajax_get_des
 route_get('/ajax/order/{id}/qc', ['actions/qc_action.php', 'ajax_get_qc_tab'], 'auth');
 route_get('/ajax/order/{id}/pengiriman', ['actions/pengiriman_action.php', 'ajax_get_pengiriman_tab'], 'auth');
 route_get('/ajax/order/{id}/tiket', ['actions/tiket_action.php', 'ajax_get_tiket_tab'], 'auth');
+route_get('/ajax/order/{id}/feedback', ['actions/feedback_action.php', 'ajax_get_feedback_tab'], 'auth');

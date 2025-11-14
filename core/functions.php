@@ -326,9 +326,23 @@ function compile_view(string $viewName): string
             return $sections[$matches[1]] ?? '';
         }, $content);
 
-        $content = preg_replace_callback('/@include\s*\(\s*\'(.*)\'\s*\)/', function ($matches) {
-            return '<?php require compile_view(\'' . $matches[1] . '\'); ?>';
-        }, $content);
+        $content = preg_replace_callback(
+            '/@include\s*\(\s*\'(.*?)\'\s*(?:,\s*(.*?))?\s*\)/s',
+            function ($matches) {
+                $viewName = $matches[1];
+                $dataString = $matches[2] ?? null;
+
+                if ($dataString) {
+                    return '<?php 
+                        extract(' . $dataString . ');
+                        require compile_view(\'' . $viewName . '\');
+                    ?>';
+                } else {
+                    return '<?php require compile_view(\'' . $viewName . '\'); ?>';
+                }
+            },
+            $content
+        );
 
         $content = preg_replace_callback('/@stack\s*\(\s*\'(.*?)\'\s*\)/', function ($matches) use ($stacks) {
             $stackName = $matches[1];
