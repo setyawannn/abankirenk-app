@@ -181,6 +181,7 @@ Dashboard
 
                 const editUrl = `{{ url('/manajer-marketing/manajemen-prospek') }}/${prospek.id_prospek}/edit`;
                 const deleteUrl = `{{ url('/manajer-marketing/manajemen-prospek') }}/${prospek.id_prospek}/destroy`;
+                const showUrl = `{{ url('/manajer-marketing/manajemen-prospek') }}/${prospek.id_prospek}`;
 
                 const row = `
                 <tr class="hover:bg-gray-50">
@@ -189,7 +190,10 @@ Dashboard
                     <td class="px-6 py-4 whitespace-nowrap text-sm">${prospek.status_badge}</td>
                     <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">${prospek.deskripsi || '-'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-base font-medium">
-                        <a href="${editUrl}" class="text-primary hover:text-primary-700">
+                        <a href="${showUrl}" class="text-green-600 hover:text-green-600">
+                            <ion-icon name="eye-outline"></ion-icon>
+                        </a>
+                        <a href="${editUrl}" class="text-primary hover:text-primary-700 ml-4">
                             <ion-icon name="create-outline"></ion-icon>
                         </a>
                         <button

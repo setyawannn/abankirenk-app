@@ -25,7 +25,7 @@ return [
   ],
   'tim_marketing' => [
     [
-      'id' => 'Dashboard',
+      'id' => 'dashboard',
       'nama' => 'Dashboard',
       'icon' => 'home-outline',
       'redirect_url' => '/dashboard'

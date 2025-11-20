@@ -23,6 +23,7 @@ route_get('/admin/settings', ['actions/admin_action.php', 'settings_action'], 'a
 route_get('/manajer-marketing/manajemen-prospek', ['actions/manajer_marketing/prospek_action.php', 'index_action'], 'auth');
 route_get('/manajer-marketing/manajemen-prospek/create', ['actions/manajer_marketing/prospek_action.php', 'create_action'], 'auth');
 route_post('/manajer-marketing/manajemen-prospek/store', ['actions/manajer_marketing/prospek_action.php', 'store_action'], 'auth');
+route_get('/manajer-marketing/manajemen-prospek/{id}', ['actions/manajer_marketing/prospek_action.php', 'show_action'], 'auth');
 route_get('/manajer-marketing/manajemen-prospek/{id}/edit', ['actions/manajer_marketing/prospek_action.php', 'edit_action'], 'auth');
 route_post('/manajer-marketing/manajemen-prospek/{id}/update', ['actions/manajer_marketing/prospek_action.php', 'update_action'], 'auth');
 route_post('/manajer-marketing/manajemen-prospek/{id}/destroy', ['actions/manajer_marketing/prospek_action.php', 'delete_action'], 'auth');

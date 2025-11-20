@@ -41,6 +41,51 @@ function create_action()
   view('manajer_marketing.manajemen_prospek.create', $data);
 }
 
+/**
+ * Menampilkan detail prospek (Read-only).
+ *
+ * @param array $params Parameter dari router (berisi ID).
+ */
+function show_action($params)
+{
+  $db = db_connect();
+  if (!$db) {
+    flash_message('error', 'Database Error', 'Gagal terhubung ke database.');
+    return redirect('/manajer-marketing/manajemen-prospek');
+  }
+
+  $id = (int) ($params['id'] ?? 0);
+  if ($id <= 0) {
+    flash_message('error', 'Error', 'ID Prospek tidak valid.');
+    return redirect('/manajer-marketing/manajemen-prospek');
+  }
+
+  $prospek = prospek_get_by_id($db, $id);
+
+  if (!$prospek) {
+    flash_message('error', 'Data Prospek', 'Prospek tidak ditemukan.');
+    return redirect('/manajer-marketing/manajemen-prospek');
+  }
+
+  $sekolah = sekolah_get_by_id($db, $prospek['id_sekolah']);
+  $staff = user_find_by_id($db, $prospek['id_user']);
+
+  $current_user = auth();
+  $is_my_job = ($current_user['id'] == $prospek['id_user']);
+
+  $data = [
+    'page_title' => 'Detail Prospek',
+    'active_menu' => 'prospek_mm',
+    'prospek' => $prospek,
+    'sekolah' => $sekolah,
+    'staff' => $staff,
+    'is_my_job' => $is_my_job
+  ];
+
+  // Pastikan nama view sesuai dengan lokasi file Anda
+  view('manajer_marketing.manajemen_prospek.show', $data);
+}
+
 function store_action()
 {
   $db = db_connect();
