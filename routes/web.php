@@ -72,6 +72,10 @@ route_get('/klien/pengajuan-order/{id}', ['actions/klien/pengajuan_order_action.
 
 
 // Dynamic Role Route
+
+// Feeback Manajemen
+route_get('/feedback-management', ['actions/feedback_management_action.php', 'index_action'], 'auth');
+
 // Order
 route_get('/order', ['actions/order_action.php', 'index_action'], 'auth');
 route_get('/order/create', ['actions/order_action.php', 'create_action'], 'auth');
@@ -126,6 +130,7 @@ route_get('/ajax/po/get-source-details', ['actions/project_officer/order_action.
 route_post('/ajax/order/update-status', ['actions/project_officer/order_action.php', 'ajax_update_status_action'], 'auth');
 // route_get('/ajax/order/{id}/timeline', ['actions/timeline_action.php', 'ajax_get_timeline'], 'auth');
 route_post('/ajax/timeline/update-status', ['actions/timeline_action.php', 'ajax_update_status_action'], 'auth');
+route_get('/ajax/feedback-list', ['actions/feedback_management_action.php', 'ajax_list_reviews'], 'auth');
 
 // Tabbing Dynamic Order
 route_get('/ajax/order/{id}/timeline', ['actions/timeline_action.php', 'ajax_get_timeline_tab'], 'auth');

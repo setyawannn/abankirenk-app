@@ -363,6 +363,9 @@ function compile_view(string $viewName): string
         $content = preg_replace('/@foreach\s*\((.*)\)/', '<?php foreach($1): ?>', $content);
         $content = preg_replace('/@endforeach/', '<?php endforeach; ?>', $content);
 
+        $content = preg_replace('/@for\s*\((.*)\)/', '<?php for($1): ?>', $content);
+        $content = preg_replace('/@endfor/', '<?php endfor; ?>', $content);
+
         $content = preg_replace('/@auth/', '<?php if(isset($_SESSION[\'user\'])): ?>', $content);
         $content = preg_replace('/@endauth/', '<?php endif; ?>', $content);
         $content = preg_replace('/@guest/', '<?php if(!isset($_SESSION[\'user\'])): ?>', $content);

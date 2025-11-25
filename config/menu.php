@@ -74,9 +74,9 @@ return [
           'redirect_url' => '/tiket'
         ],
         [
-          'id' => 'feedback_po',
+          'id' => 'feedback',
           'nama' => 'Feedback Klien',
-          'redirect_url' => '/feedback'
+          'redirect_url' => '/feedback-management'
         ]
       ]
     ]

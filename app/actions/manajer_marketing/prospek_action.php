@@ -12,7 +12,7 @@ function index_action()
   $data = [
     'page_title' => 'Manajemen Prospek',
     'active_menu' => 'prospek_mm',
-    'status_options' => ['berhasil', 'gagal', 'batal', 'dalam proses']
+    'status_options' => ['baru', 'berhasil', 'gagal', 'batal', 'dalam proses']
   ];
   view('manajer_marketing.manajemen_prospek.index', $data);
 }
