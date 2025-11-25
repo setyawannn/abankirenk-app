@@ -304,7 +304,8 @@ function compile_view(string $viewName): string
         foreach ($pushMatches as $match) {
             $stackName = $match[1];
             $stackContent = $match[2];
-            if (!isset($stacks[$stackName])) $stacks[$stackName] = [];
+            if (!isset($stacks[$stackName]))
+                $stacks[$stackName] = [];
             $stacks[$stackName][] = $stackContent;
         }
         $content = preg_replace('/@push\s*\(\s*\'(.*?)\'\s*\)(.*?)@endpush/s', '', $content);
@@ -318,8 +319,10 @@ function compile_view(string $viewName): string
         }
 
         if ($layoutName) {
-            $layoutContentPath = compile_view($layoutName);
-            $content = file_get_contents($layoutContentPath);
+            $layoutPath = __DIR__ . '/../app/templates/' . str_replace('.', '/', $layoutName) . '.php';
+            if (file_exists($layoutPath)) {
+                $content = file_get_contents($layoutPath);
+            }
         }
 
         $content = preg_replace_callback('/@yield\s*\(\s*\'(.*)\'\s*\)/', function ($matches) use ($sections) {
@@ -346,7 +349,8 @@ function compile_view(string $viewName): string
 
         $content = preg_replace_callback('/@stack\s*\(\s*\'(.*?)\'\s*\)/', function ($matches) use ($stacks) {
             $stackName = $matches[1];
-            if (!isset($stacks[$stackName])) return '';
+            if (!isset($stacks[$stackName]))
+                return '';
 
             return implode("\n", $stacks[$stackName]);
         }, $content);
