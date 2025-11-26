@@ -37,7 +37,18 @@ function dispatch()
 
     $basePath = dirname($_SERVER['SCRIPT_NAME']);
     $requestUri = strtok($_SERVER['REQUEST_URI'], '?');
-    $uri = '/' . trim(str_replace($basePath, '', $requestUri), '/');
+
+    // Normalisasi separator (Windows menggunakan backslash)
+    $basePath = str_replace('\\', '/', $basePath);
+
+    // Jika basePath bukan root ('/'), hapus hanya jika ada di awal string
+    if ($basePath !== '/' && strpos($requestUri, $basePath) === 0) {
+        $uri = substr($requestUri, strlen($basePath));
+    } else {
+        $uri = $requestUri;
+    }
+
+    $uri = '/' . trim($uri, '/');
     $method = $_SERVER['REQUEST_METHOD'];
 
     if (!isset($routes[$method])) {
