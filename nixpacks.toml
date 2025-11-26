@@ -21,7 +21,4 @@ cmds = [
 ]
 
 [start]
-# PERUBAHAN PENTING:
-# 1. Nyalakan PHP-FPM di background
-# 2. Nyalakan Nginx menggunakan file 'nginx.conf' yang ada di folder kode Anda (/app/nginx.conf)
-cmd = "php-fpm -D && nginx -c /app/nginx.conf"
+cmd = "php -S 0.0.0.0:80 -t public server.php"
