@@ -1,0 +1,15 @@
+# nixpacks.toml
+
+[phases.setup]
+# Memastikan library sistem untuk manipulasi gambar ada
+nixPkgs = ["php82", "php82Extensions.gd", "php82Extensions.mysqli", "nginx"]
+
+[phases.build]
+# Install dependency (standar)
+cmds = ["composer install --no-dev --optimize-autoloader", "npm install", "npm run build"]
+
+[start]
+# PERINTAH PENTING:
+# Ini menjalankan Nginx dengan root folder diarahkan ke /app/public
+# Sehingga domain Anda langsung mengakses index.php tanpa embel-embel /public
+cmd = "nginx -c /etc/nginx/nginx.conf && php-fpm -D && chmod -R 777 storage && php -S 0.0.0.0:80 -t public"
