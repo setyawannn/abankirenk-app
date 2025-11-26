@@ -1,14 +1,14 @@
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.gd", "php82Extensions.mysqli", "php82Extensions.pdo", "php82Extensions.opcache", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.zip", "nginx", "git", "nodejs_22", "curl", "unzip"]
+# Daftar paket sistem
+nixPkgs = ["php82", "php82Extensions.gd", "php82Extensions.mysqli", "php82Extensions.pdo", "php82Extensions.opcache", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.zip", "git", "nodejs_22", "curl", "unzip"]
 
-# Install Composer manual
+# Install Composer Manual
 cmds = [
     "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer"
 ]
 
 [phases.install]
 cmds = [
-    "mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx",
     "/usr/local/bin/composer install --ignore-platform-reqs",
     "npm ci"
 ]
@@ -20,4 +20,4 @@ cmds = [
 ]
 
 [start]
-cmd = "php-fpm -D && nginx -c /etc/nginx/nginx.conf"
+cmd = "php -S 0.0.0.0:80 -t public"
