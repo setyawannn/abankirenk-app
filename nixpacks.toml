@@ -1,8 +1,19 @@
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.gd", "php82Extensions.mysqli", "php82Extensions.pdo", "php82Extensions.opcache", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.zip", "nginx", "git", "composer", "nodejs_22"]
+# HAPUS 'composer' dari sini agar tidak error
+nixPkgs = ["php82", "php82Extensions.gd", "php82Extensions.mysqli", "php82Extensions.pdo", "php82Extensions.opcache", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.zip", "nginx", "git", "nodejs_22", "curl", "unzip"]
+
+# Kita install Composer secara manual agar PASTI berhasil
+cmds = [
+    "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer"
+]
 
 [phases.build]
-cmds = ["mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx", "composer install --ignore-platform-reqs --no-dev --optimize-autoloader", "npm install", "npm run build"]
+cmds = [
+    "mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx",
+    "composer install --ignore-platform-reqs --no-dev --optimize-autoloader",
+    "npm install",
+    "npm run build"
+]
 
 [start]
 cmd = "nginx -c /etc/nginx/nginx.conf && php-fpm -D && php -S 0.0.0.0:80 -t public"
