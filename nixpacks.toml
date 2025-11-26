@@ -1,6 +1,6 @@
 [phases.setup]
-# Daftar paket sistem
-nixPkgs = ["php82", "php82Extensions.gd", "php82Extensions.mysqli", "php82Extensions.pdo", "php82Extensions.opcache", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.zip", "git", "nodejs_22", "curl", "unzip"]
+# Paket sistem (sama seperti sebelumnya)
+nixPkgs = ["php82", "php82Extensions.gd", "php82Extensions.mysqli", "php82Extensions.pdo", "php82Extensions.opcache", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.zip", "nginx", "git", "nodejs_22", "curl", "unzip"]
 
 # Install Composer Manual
 cmds = [
@@ -9,6 +9,7 @@ cmds = [
 
 [phases.install]
 cmds = [
+    "mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx",
     "/usr/local/bin/composer install --ignore-platform-reqs",
     "npm ci"
 ]
@@ -20,4 +21,7 @@ cmds = [
 ]
 
 [start]
-cmd = "php -S 0.0.0.0:80 -t public"
+# PERUBAHAN PENTING:
+# 1. Nyalakan PHP-FPM di background
+# 2. Nyalakan Nginx menggunakan file 'nginx.conf' yang ada di folder kode Anda (/app/nginx.conf)
+cmd = "php-fpm -D && nginx -c /app/nginx.conf"
