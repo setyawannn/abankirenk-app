@@ -1,17 +1,24 @@
 [phases.setup]
-# HAPUS 'composer' dari sini agar tidak error
+# Paket sistem wajib
 nixPkgs = ["php82", "php82Extensions.gd", "php82Extensions.mysqli", "php82Extensions.pdo", "php82Extensions.opcache", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.zip", "nginx", "git", "nodejs_22", "curl", "unzip"]
 
-# Kita install Composer secara manual agar PASTI berhasil
+# Install Composer ke folder /usr/local/bin
 cmds = [
     "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer"
 ]
 
-[phases.build]
+[phases.install]
+# MENGGUNAKAN PATH LENGKAP AGAR TIDAK ERROR "COMMAND NOT FOUND"
 cmds = [
     "mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx",
-    "composer install --ignore-platform-reqs --no-dev --optimize-autoloader",
-    "npm install",
+    "/usr/local/bin/composer install --ignore-platform-reqs",
+    "npm ci"
+]
+
+[phases.build]
+# MENGGUNAKAN PATH LENGKAP DI SINI JUGA
+cmds = [
+    "/usr/local/bin/composer install --ignore-platform-reqs --no-dev --optimize-autoloader",
     "npm run build"
 ]
 
